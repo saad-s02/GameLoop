@@ -22,3 +22,12 @@ When dispatching via the Agent tool, pass the `model` parameter explicitly per t
 - Zod at every boundary: requests, tool results, memory, model outputs.
 - Never commit raw NHL payloads or secrets (research/raw/ is gitignored). Fixtures are reduced JSON only.
 - Write all documents in plain prose without em dashes.
+
+## API-era notes (locked 2026-07-14, from BASELINE.md)
+
+- AI SDK is v7 (ai 7.0.26, @ai-sdk/anthropic 4.0.14, ESM only, Node >= 22).
+- Structured output: generateText/streamText with Output.object({ schema }). generateObject and streamObject are deprecated, never use them.
+- Streaming partial objects: partialOutputStream. Full event stream: stream (renamed from fullStream).
+- Model IDs: extraction claude-haiku-4-5-20251001, narrative claude-sonnet-5 (dateless ID is the pinned snapshot, never append a date).
+- Sonnet 5 defaults are latency-hostile: adaptive thinking on, effort high. Every Sonnet 5 call sets thinking disabled (path per DECISIONS ADR-002). Haiku 4.5 calls omit thinking entirely. maxRetries 1 on demo-path calls.
+- Structured-output schema grammars compile on first use and cache about 24h: the warmup route exists to absorb that latency, re-trigger on demo day.

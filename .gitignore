@@ -1,3 +1,16 @@
 research/raw/
 .env*
 node_modules/
+.next/
+out/
+build/
+coverage/
+.vercel
+*.tsbuildinfo
+next-env.d.ts
+.DS_Store
+*.pem
+npm-debug.log*
+test-results/
+playwright-report/
+.superpowers/
