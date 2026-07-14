@@ -83,6 +83,7 @@ export default function RelivePage() {
           <span className="text-xs font-semibold uppercase tracking-wide text-black/50">Experimental: live game lookup</span>
           <div className="flex gap-2">
             <input
+              aria-label="NHL game id"
               value={liveGameId}
               onChange={(e) => setLiveGameId(e.target.value)}
               placeholder="NHL game id"
