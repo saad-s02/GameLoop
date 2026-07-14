@@ -1,0 +1,32 @@
+{
+  "family": {
+    "constraints": [
+      { "type": "party", "value": { "adults": 2, "children": 2 }, "priority": "hard", "sourceText": "I'm bringing my dad and two kids" },
+      { "type": "dietary", "value": { "need": "gluten-free", "severity": "intolerance" }, "priority": "hard", "sourceText": "One child needs gluten-free food" },
+      { "type": "arrival", "value": { "statedClock": "6:18", "normalizedClock": "18:18", "mode": "train" }, "priority": "hard", "sourceText": "Our train arrives at 6:18" },
+      { "type": "seated_by", "value": { "milestone": "warmups" }, "priority": "high", "sourceText": "seeing warmups matters more than having many food choices" },
+      { "type": "food_preference", "value": { "preference": "many-choices" }, "priority": "medium", "sourceText": "seeing warmups matters more than having many food choices" }
+    ],
+    "clarificationsNeeded": [],
+    "offTopic": false
+  },
+  "budget": {
+    "constraints": [
+      { "type": "party", "value": { "adults": 2, "children": 0 }, "priority": "hard", "sourceText": "There are two of us" },
+      { "type": "budget", "value": { "maxTotalCad": 80 }, "priority": "high", "sourceText": "keep the whole night under $80 including food" },
+      { "type": "noise", "value": { "preference": "quieter-preferred" }, "priority": "medium", "sourceText": "we'd rather skip the loudest crowds at the main gate" }
+    ],
+    "clarificationsNeeded": [],
+    "offTopic": false
+  },
+  "access": {
+    "constraints": [
+      { "type": "accessibility", "value": { "need": "step-free" }, "priority": "hard", "sourceText": "My mom uses a wheelchair, so we need step-free access the whole way" },
+      { "type": "dietary", "value": { "need": "vegetarian", "severity": "preference" }, "priority": "hard", "sourceText": "She's vegetarian" },
+      { "type": "seated_by", "value": { "milestone": "puck_drop" }, "priority": "hard", "sourceText": "We just need to be in our seats before puck drop" },
+      { "type": "party", "value": { "adults": 2, "children": 0 }, "priority": "hard", "sourceText": "My mom uses a wheelchair" }
+    ],
+    "clarificationsNeeded": [],
+    "offTopic": false
+  }
+}
