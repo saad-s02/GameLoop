@@ -35,3 +35,13 @@ How it was caught: the venue consistency test pinned both outcomes exactly; the 
 Correction: main thread set gate-1's 18:30 to 19:00 band to 6 minutes, which lands the disrupted path at exactly 18:48 while touching no other pinned path (the 18:15 baseline uses the earlier band, and the gate-wait disruption overrides every band to 22). Plan document updated to match.
 
 Lesson: authored fixture arithmetic must be traced through every band boundary it crosses, and the block-instead-of-tune rule did its job: the agent surfaced the contradiction instead of silently bending the data.
+
+## 2026-07-14 The gate-wait disruption pin named the wrong gate
+
+What happened: the plan pinned the "Gate 1 wait rises to 22" disruption as flipping the family plan to gate-5b, mirroring the PRD's illustrative Gate 5B prose. The planner implementation agent began verifying gate-5b's stand connectivity and the main thread completed the trace: gate-5b's two reachable stands offer no gluten-free item, so no gate-5b candidate can cover the hard dietary constraint, and gate-5b's own timing misses warmups anyway. Under the full four-gate arithmetic, gate-3 dominates (gluten-free via North Shore Grill, seated 18:34, gate wait 7 against the disrupted 22).
+
+How it was caught: the implementer treated a pinned disruption expectation as something to verify against the authored venue before coding to it, and the main thread finished the arithmetic across all four gates.
+
+Correction: conscious re-pin of the disruption expectation to gate-3. The venue data was not touched; it had already passed review, and bending data to rescue a pin is the failure mode the rules exist to prevent. The PRD's Gate 5B passage is illustrative prose about the kind of trade-off the explanation should narrate, not a binding requirement; the Decision Log narrates the real computed numbers.
+
+Lesson: a pin derived from a two-way comparison is not a pin about the world; expectations must be derived against the full enumeration space they will be tested in.
