@@ -1,0 +1,105 @@
+{
+  "snapshotDate": "2026-07-07",
+  "sourceUrl": "https://assets.metrolinx.com/raw/upload/Documents/Metrolinx/Open%20Data/GO-GTFS.zip",
+  "feedVersion": "20260707085724",
+  "serviceDate": "2026-07-14",
+  "attribution": "Contains information licensed under the Open Government Licence - Ontario - Metrolinx.",
+  "notes": [
+    "scheduledDeparture is the departure from the trip origin terminal (first stop of the GTFS trip); scheduledArrival is the arrival at Union Station GO (stop_id UN).",
+    "walkingMinutes is a placeholder value of 12; the venue simulation owns walking times and must replace it.",
+    "GTFS times in this feed exceed 24:00:00 for post-midnight trips (81,531 stop_times rows); none occur in this 17:00 to 19:30 window, but any general GTFS time parser must handle hours >= 24.",
+    "All options are Union-bound weekday trains for service date 2026-07-14 (Tuesday), Lakeshore West (route_id 06260926-LW) and Lakeshore East (route_id 06260926-LE)."
+  ],
+  "options": [
+    {
+      "routeId": "06260926-LE",
+      "origin": "Lakeshore East from Durham College Oshawa GO",
+      "scheduledDeparture": "16:09:00",
+      "scheduledArrival": "17:12:00",
+      "walkingMinutes": 12,
+      "reliability": "scheduled-only",
+      "source": "gtfs-snapshot"
+    },
+    {
+      "routeId": "06260926-LW",
+      "origin": "Lakeshore West from Aldershot GO",
+      "scheduledDeparture": "16:07:00",
+      "scheduledArrival": "17:15:00",
+      "walkingMinutes": 12,
+      "reliability": "scheduled-only",
+      "source": "gtfs-snapshot"
+    },
+    {
+      "routeId": "06260926-LE",
+      "origin": "Lakeshore East from Durham College Oshawa GO",
+      "scheduledDeparture": "16:39:00",
+      "scheduledArrival": "17:42:00",
+      "walkingMinutes": 12,
+      "reliability": "scheduled-only",
+      "source": "gtfs-snapshot"
+    },
+    {
+      "routeId": "06260926-LW",
+      "origin": "Lakeshore West from West Harbour GO",
+      "scheduledDeparture": "16:23:00",
+      "scheduledArrival": "17:45:00",
+      "walkingMinutes": 12,
+      "reliability": "scheduled-only",
+      "source": "gtfs-snapshot"
+    },
+    {
+      "routeId": "06260926-LE",
+      "origin": "Lakeshore East from Durham College Oshawa GO",
+      "scheduledDeparture": "17:09:00",
+      "scheduledArrival": "18:12:00",
+      "walkingMinutes": 12,
+      "reliability": "scheduled-only",
+      "source": "gtfs-snapshot"
+    },
+    {
+      "routeId": "06260926-LW",
+      "origin": "Lakeshore West from Aldershot GO",
+      "scheduledDeparture": "17:03:00",
+      "scheduledArrival": "18:15:00",
+      "walkingMinutes": 12,
+      "reliability": "scheduled-only",
+      "source": "gtfs-snapshot"
+    },
+    {
+      "routeId": "06260926-LE",
+      "origin": "Lakeshore East from Durham College Oshawa GO",
+      "scheduledDeparture": "17:39:00",
+      "scheduledArrival": "18:42:00",
+      "walkingMinutes": 12,
+      "reliability": "scheduled-only",
+      "source": "gtfs-snapshot"
+    },
+    {
+      "routeId": "06260926-LW",
+      "origin": "Lakeshore West from West Harbour GO",
+      "scheduledDeparture": "17:23:00",
+      "scheduledArrival": "18:45:00",
+      "walkingMinutes": 12,
+      "reliability": "scheduled-only",
+      "source": "gtfs-snapshot"
+    },
+    {
+      "routeId": "06260926-LE",
+      "origin": "Lakeshore East from Durham College Oshawa GO",
+      "scheduledDeparture": "18:09:00",
+      "scheduledArrival": "19:12:00",
+      "walkingMinutes": 12,
+      "reliability": "scheduled-only",
+      "source": "gtfs-snapshot"
+    },
+    {
+      "routeId": "06260926-LW",
+      "origin": "Lakeshore West from Aldershot GO",
+      "scheduledDeparture": "18:03:00",
+      "scheduledArrival": "19:15:00",
+      "walkingMinutes": 12,
+      "reliability": "scheduled-only",
+      "source": "gtfs-snapshot"
+    }
+  ]
+}
