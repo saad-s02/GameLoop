@@ -1,0 +1,165 @@
+{
+  "regPeriods": 3,
+  "homeTeam": {
+    "id": 54,
+    "abbrev": "VGK",
+    "placeName": { "default": "Vegas" },
+    "commonName": { "default": "Golden Knights" }
+  },
+  "awayTeam": {
+    "id": 12,
+    "abbrev": "CAR",
+    "placeName": { "default": "Carolina" },
+    "commonName": { "default": "Hurricanes" }
+  },
+  "venue": { "default": "T-Mobile Arena" },
+  "rosterSpots": [
+    {
+      "teamId": 12,
+      "playerId": 8480830,
+      "firstName": { "default": "Andrei" },
+      "lastName": { "default": "Svechnikov" },
+      "sweaterNumber": 37,
+      "positionCode": "R",
+      "headshot": "https://assets.nhle.com/x.png"
+    },
+    {
+      "teamId": 54,
+      "playerId": 8477447,
+      "firstName": { "default": "Shea" },
+      "lastName": { "default": "Theodore" },
+      "sweaterNumber": 27,
+      "positionCode": "D",
+      "headshot": "https://assets.nhle.com/x.png"
+    }
+  ],
+  "plays": [
+    {
+      "eventId": 800,
+      "periodDescriptor": { "number": 2, "periodType": "REG", "maxRegulationPeriods": 3 },
+      "timeInPeriod": "16:52",
+      "timeRemaining": "03:08",
+      "situationCode": "1551",
+      "typeCode": 505,
+      "typeDescKey": "goal",
+      "sortOrder": 650,
+      "details": {
+        "eventOwnerTeamId": 54,
+        "scoringPlayerId": 8477447,
+        "awayScore": 3,
+        "homeScore": 4
+      }
+    },
+    {
+      "eventId": 1000,
+      "periodDescriptor": { "number": 3, "periodType": "REG", "maxRegulationPeriods": 3 },
+      "timeInPeriod": "00:00",
+      "timeRemaining": "20:00",
+      "situationCode": "1551",
+      "typeCode": 520,
+      "typeDescKey": "period-start",
+      "sortOrder": 700
+    },
+    {
+      "eventId": 900,
+      "periodDescriptor": { "number": 3, "periodType": "REG", "maxRegulationPeriods": 3 },
+      "timeInPeriod": "05:00",
+      "timeRemaining": "15:00",
+      "situationCode": "1551",
+      "typeCode": 506,
+      "typeDescKey": "shot-on-goal",
+      "sortOrder": 750,
+      "details": {
+        "eventOwnerTeamId": 12,
+        "shootingPlayerId": 8480830,
+        "goalieInNetId": 8479394
+      }
+    },
+    {
+      "eventId": 901,
+      "periodDescriptor": { "number": 3, "periodType": "REG", "maxRegulationPeriods": 3 },
+      "timeInPeriod": "06:10",
+      "timeRemaining": "13:50",
+      "situationCode": "1551",
+      "typeCode": 509,
+      "typeDescKey": "penalty",
+      "sortOrder": 760,
+      "details": {
+        "typeCode": "PS",
+        "descKey": "ps-slash-on-breakaway",
+        "duration": 0,
+        "eventOwnerTeamId": 54
+      }
+    },
+    {
+      "eventId": 902,
+      "periodDescriptor": { "number": 3, "periodType": "REG", "maxRegulationPeriods": 3 },
+      "timeInPeriod": "06:15",
+      "timeRemaining": "13:45",
+      "situationCode": "1551",
+      "typeCode": 516,
+      "typeDescKey": "stoppage",
+      "sortOrder": 770,
+      "details": {
+        "reason": "chlg-vis-off-side"
+      }
+    },
+    {
+      "eventId": 221,
+      "periodDescriptor": { "number": 3, "periodType": "REG", "maxRegulationPeriods": 3 },
+      "timeInPeriod": "18:18",
+      "timeRemaining": "01:42",
+      "situationCode": "0641",
+      "typeCode": 505,
+      "typeDescKey": "goal",
+      "sortOrder": 892,
+      "details": {
+        "eventOwnerTeamId": 12,
+        "scoringPlayerId": 8480830,
+        "assist1PlayerId": 8473533,
+        "assist2PlayerId": 8478427,
+        "awayScore": 4,
+        "homeScore": 4,
+        "highlightClipSharingUrl": "https://nhle.com/clip"
+      }
+    },
+    {
+      "eventId": 1500,
+      "periodDescriptor": { "number": 3, "periodType": "REG", "maxRegulationPeriods": 3 },
+      "timeInPeriod": "20:00",
+      "timeRemaining": "00:00",
+      "situationCode": "1551",
+      "typeCode": 521,
+      "typeDescKey": "period-end",
+      "sortOrder": 900
+    },
+    {
+      "eventId": 1700,
+      "periodDescriptor": { "number": 5, "periodType": "OT", "otPeriods": 2, "maxRegulationPeriods": 3 },
+      "timeInPeriod": "00:00",
+      "timeRemaining": "20:00",
+      "situationCode": "1551",
+      "typeCode": 520,
+      "typeDescKey": "period-start",
+      "sortOrder": 1200
+    },
+    {
+      "eventId": 1785,
+      "periodDescriptor": { "number": 5, "periodType": "OT", "otPeriods": 2, "maxRegulationPeriods": 3 },
+      "timeInPeriod": "05:38",
+      "timeRemaining": "14:22",
+      "situationCode": "1551",
+      "typeCode": 505,
+      "typeDescKey": "goal",
+      "sortOrder": 1291,
+      "details": {
+        "eventOwnerTeamId": 54,
+        "scoringPlayerId": 8477447,
+        "assist1PlayerId": 8475188,
+        "assist2PlayerId": 8479353,
+        "awayScore": 4,
+        "homeScore": 5
+      }
+    }
+  ]
+}
