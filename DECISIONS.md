@@ -10,6 +10,20 @@ Why not template the explanation instead: the violation and trade-off space is c
 
 Status: accepted (PRD v1.0, spec section 14). Date: 2026-07-14.
 
+## ADR-002: lib/ai verification spike findings (completed after key rotation)
+
+Verified live on 2026-07-14 against the production stack (ai 7.0.26, @ai-sdk/anthropic 4.0.14, zod 4.4.3, model claude-sonnet-5), request bodies observed via an injected fetch wrapper.
+
+Finding a, thinking disable path: passing providerOptions { anthropic: { thinking: { type: "disabled" } } } through generateText emits a top-level thinking: { type: "disabled" } field in the outgoing Anthropic request body, and the API accepts it. The v7 option maxOutputTokens maps to max_tokens. Plain-call latency observed: 1465 ms.
+
+Finding b, structured output mechanism: Output.object({ schema }) on this provider version uses native output_config constrained decoding (format json_schema with the converted JSON Schema inline; tool_choice null, no tools array). It is not forced-tool emulation. Consequence: schema conformance is enforced by the API's constrained decoding, thinking disabled is accepted alongside it, and the Zod-failure fallback paths in the routes remain defense in depth rather than a routine path. First structured call latency observed: 3740 ms, which includes first-use grammar compilation; this is the latency the warmup route exists to absorb, re-triggered on demo day since compiled grammars cache for roughly 24 hours.
+
+Finding c, zod 4 round-trip: a discriminated union with optional fields round-trips through Output.object intact (optional field omitted rather than nulled), and the returned object re-parses under the same zod schema.
+
+Environment note recorded with these findings: a stale ANTHROPIC_API_KEY set as a Windows environment variable shadows .env.local for every Node and Next process, because --env-file and Next env loading never override an already-set variable. Local scripts run with env -u ANTHROPIC_API_KEY until the variable is removed from the user environment.
+
+Status: accepted. Date: 2026-07-14.
+
 ## ADR-003: Test and script tooling dev dependencies
 
 Decision: add tsx 4.20.3 (TS script runner for scripts/ and evals/), @testing-library/react 16.3.0 and jsdom 26.1.0 (the two component tests required by the PRD test plan). No other new dependencies without a new ADR.
@@ -47,3 +61,5 @@ Prompt discipline: every user supplied string passed to the model goes through w
 Verification performed for this ADR: npx vitest run lib/ai/prompts.test.ts, 3 of 3 tests passing (delimiter injection, no-geography rule presence on both narrative prompts, ExplainInputSchema strict rejection of smuggled game data). Full suite npx vitest run, 53 of 53 tests passing across 8 files, no regressions. npx tsc --noEmit, clean, exit code 0. No live Anthropic call was made anywhere in this work, per the standing instruction that the key is invalid and everything must be statically verifiable.
 
 Status: accepted for the code complete, statically verified phase, Task 10 brief steps 1 through 4. Live confirmation of Output.object's mechanism and measured latency is deferred to ADR-002's completion once the API key is fixed. Date: 2026-07-14.
+
+Addendum, same day: ADR-002 completed after the key rotation. Output.object confirmed as native output_config constrained decoding (not tool emulation), the zod 4 discriminated union round trips cleanly, and thinking disabled is accepted on structured calls. The Zod re-validation in outputs.ts is therefore defense in depth, not a routine path. Measured spike latencies: 1465 ms plain, 3740 ms first structured call including grammar compile.

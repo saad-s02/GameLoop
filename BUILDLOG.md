@@ -45,3 +45,13 @@ How it was caught: the implementer treated a pinned disruption expectation as so
 Correction: conscious re-pin of the disruption expectation to gate-3. The venue data was not touched; it had already passed review, and bending data to rescue a pin is the failure mode the rules exist to prevent. The PRD's Gate 5B passage is illustrative prose about the kind of trade-off the explanation should narrate, not a binding requirement; the Decision Log narrates the real computed numbers.
 
 Lesson: a pin derived from a two-way comparison is not a pin about the world; expectations must be derived against the full enumeration space they will be tested in.
+
+## 2026-07-14 A stale environment variable shadowed every key fix
+
+What happened: the API key kept returning 401 through three separate key rotations, and every diagnostic pointed at the .env.local file. The real cause: an old ANTHROPIC_API_KEY set as a Windows user environment variable. Node's --env-file and Next's env loading never override an already-set process variable, so every run silently used the dead key while the file held a perfectly good one. The user's edits had been landing correctly for some time.
+
+How it was caught: the user pushed back that the key was definitely correct, which forced a re-examination of the assumption that process.env reflected the file; reading the file's raw bytes and the shell environment separately showed two different keys.
+
+Correction: local scripts run with env -u ANTHROPIC_API_KEY until the Windows variable is removed; ADR-002 completed immediately afterward. During diagnosis the dead key's value was echoed into the session log; it is invalid, and the recommendation to revoke it in the console was passed to the user.
+
+Lesson: when a fix that obviously should work repeatedly does not, stop debugging the fix and re-verify the assumption underneath it, and listen when the human says the fix is correct. Precedence between environment variables and env files is exactly the kind of invisible layer that produces this failure.
