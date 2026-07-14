@@ -394,7 +394,9 @@ wc -c research/raw/fixture-b-boxscore.json
 node -e "const b=require('./research/raw/fixture-b-boxscore.json'); console.log('goalies:', b.playerByGameStats.awayTeam.goalies.length, b.playerByGameStats.homeTeam.goalies.length)"
 ```
 
-Expected: HTTP:200, a byte count near 13,000, and goalie arrays present. Record the exact byte count in BUILDLOG.md (it goes into showcase-game-b.json sourceMeta.rawBytes.boxscore in Task 6). Verify no goalie on either team has 35 or more saves (research/02 predicts a max in the low 20s); if one does, escalate: the Task 8 goalie-performance threshold pin needs a conscious edit.
+Expected: HTTP:200, a byte count near 13,000, and goalie arrays present. Record the exact byte count in BUILDLOG.md (it goes into showcase-game-b.json sourceMeta.rawBytes.boxscore in Task 6).
+
+RESOLVED 2026-07-14 (main thread, conscious pin edit): the fetch measured 13,522 bytes and revealed MTL goalie Jakub Dobes with 36 saves on 39 shots, at or above the 35-save goalie-performance threshold. Decision: keep the threshold at 35 (tuning it to dodge real data would be a silent adjustment) and re-pin Fixture B's top 3 to [ot-winner Svechnikov, goalie-performance Dobes 36 of 39, Hutson]. Task 8's pins below already reflect this.
 
 - [ ] **Step 2: Confirm git ignores it, commit the BUILDLOG note**
 
@@ -702,7 +704,7 @@ export const MomentSchema = z.object({
   headline: z.string(),                      // deterministic, code-built
   teamAbbrev: z.string().optional(),
   outcome: z.enum(["won", "led", "tied", "fell-short"]).optional(),  // comeback arcs only
-  memberPlays: z.array(MemberPlayRefSchema).min(1),
+  memberPlays: z.array(MemberPlayRefSchema),   // empty for goalie-performance moments (boxscore-derived, no play events)
   childRuns: z.array(z.object({ spanSeconds: z.number().int(), memberEventIds: z.array(z.number().int()) })).optional(),
   assistNames: z.array(z.string()).optional(),   // first field dropped by the trim
 });
@@ -1437,7 +1439,7 @@ Scoring and grouping rules (pin these exactly; record as ADR-004):
 2. Runs: per team, candidate runs are consecutive-goal subsequences satisfying 2 goals inside 180s, or 3 or more inside 300s; keep only maximal candidates (not a subset of another candidate). Run group score = `4 * count + (limit - spanSeconds) / 30` where limit is 180 for 2-goal runs, 300 otherwise (the rapid-run rarity bonus).
 3. Comeback arcs: for team T, if T faces a deficit of 2 or more and later ties or leads, the arc spans T's goals from the first goal after the maximum deficit through the tying or go-ahead goal. Outcome flag: won if T won the game, led if T led after the arc but lost, fell-short if T never led and lost, tied reserved for synthetic data. Arc group score = `6 + max member scoreGoal`.
 4. OT winner group score = `scoreGoal(winner) + 5`.
-5. Goalie performance: only when a goalie line shows saves >= 35; group score = `10 + (saves - 35) * 0.5`. Never fabricated from a shutout without save counts. Neither committed fixture fires it (A max is Hart 29, B verified under 35 in Task 4).
+5. Goalie performance: only when a goalie line shows saves >= 35; group score = `10 + (saves - 35) * 0.5`. Never fabricated from a shutout without save counts. Fixture A never fires it (max is Hart 29). Fixture B fires it once: Dobes, 36 saves on 39 shots (Task 4 verification), group score 10.5.
 6. Membership and nesting: a play belongs to at most one displayed moment. Assignment order: OT winner first, then arcs (a run whose members all fall inside an arc's span and team attaches as the arc's childRuns instead of standing alone), then remaining runs greedily by group score (a candidate run losing a member to an earlier moment is dropped; remnants below 2 goals are dropped), then remaining standalone goals. Ranking of the final moment list: group score descending, then win-probability swing proxy of the representative play, then later elapsedGameSeconds, then moment id lexicographic. The swing proxy is `3 - min(2, abs(homeScore - awayScore))` on the representative play's post-goal score (representative play = highest-scoring member, ties to the latest). Moment id = `${type}:${firstMemberEventId}`.
 7. Package: top 3 moments, ranks 1 to 3, `scoreLine` built as `"${winnerAbbrev} ${winnerScore}, ${loserAbbrev} ${loserScore}${ot ? ` (${otLabel})` : ""}"` (Fixture A: `"VGK 5, CAR 4 (2OT)"`), headlines deterministic templates: ot-winner `"${scorerName} wins it at ${clock} of ${periodLabel}"`, comeback-arc `"${placeName} erase a ${deficit}-goal deficit${outcome === "fell-short" ? " but fall short" : outcome === "won" ? " and win" : ""}"`, scoring-run `"${placeName} score ${n} in ${m}:${ss}"`, goal `"${scorerName} scores (${strength})"`, goalie-performance `"${name} stops ${saves} of ${shotsAgainst}"`.
 8. Trim: if `JSON.stringify(pkg).length > 11000`, drop `assistNames` from every moment first, then `scorerName` from non-representative member plays. Never trim scoreLine, headlines, outcome flags, or clocks.
@@ -1445,7 +1447,7 @@ Scoring and grouping rules (pin these exactly; record as ADR-004):
 **Pinned expected outputs (exact-output tests; changing them later is a conscious fixture edit):**
 - Fixture A top 3: rank 1 type ot-winner (member eventId 1785, Theodore, score 22), rank 2 type comeback-arc outcome fell-short (4 CAR P3 goals, contains eventId 221, childRuns[0] has 3 member eventIds spanning 39s, score 18: base 6 + Svechnikov member score 12 where 12 = tie-in-final-ten 6 + comeback 6), rank 3 type scoring-run VGK 3 goals 10:26 to 14:32 span 246s (score 4*3 + (300-246)/30 = 13.8). Marner's 16:52 goal belongs to no moment (its 2-goal candidate run with the 14:32 goal loses that member to the higher-scoring 3-goal run and is dropped).
 - Fixture A negatives: the tying goal (eventId 221) is never tagged game-winning; no A goal is garbage-tagged; the 39s run never appears as a standalone top-3 moment.
-- Fixture B top 3: rank 1 ot-winner (Svechnikov 14:06 OT, score 22), rank 2 the Hutson PP goal (P2 04:43, elapsed 1483, standalone goal, score 0, swing proxy 3), rank 3 the Matheson goal (P1 15:28, elapsed 928, score 0, swing proxy 3). Hall (P1 16:22) and Gostisbehere (P1 08:24) have proxy 2 and rank below. The Matheson/Hall pair 54 seconds apart is by OPPOSITE teams and must never group as a run.
+- Fixture B top 3 (re-pinned after the Task 4 boxscore fetch): rank 1 ot-winner (Svechnikov 14:06 OT, score 22), rank 2 goalie-performance (Dobes, 36 saves on 39 shots, score 10.5), rank 3 the Hutson PP goal (P2 04:43, elapsed 1483, standalone goal, score 0, swing proxy 3). Matheson (P1 15:28, proxy 3), then Hall (P1 16:22, proxy 2) and Gostisbehere (P1 08:24, proxy 2) rank below. The Matheson/Hall pair 54 seconds apart is by OPPOSITE teams and must never group as a run.
 
 - [ ] **Step 1: Write lib/games/moments.test.ts** against synthetic fixtures first. Include a `makeGoal` helper:
 
@@ -1524,10 +1526,11 @@ describe("pinned Fixture A top-3 (exact output)", () => {
 
 describe("pinned Fixture B top-3 (exact output)", () => {
   const pkg = buildMomentPackage(ShowcaseGameSchema.parse(gameB));
-  it("OT winner, then Hutson, then Matheson by swing proxy and later time", () => {
-    expect(pkg.moments[0]!.type).toBe("ot-winner");
-    expect(pkg.moments[1]!.memberPlays[0]!.scorerName).toContain("Hutson");
-    expect(pkg.moments[2]!.memberPlays[0]!.scorerName).toContain("Matheson");
+  it("OT winner, then the Dobes goalie performance, then Hutson", () => {
+    expect(pkg.moments.map(m => m.type)).toEqual(["ot-winner", "goalie-performance", "goal"]);
+    expect(pkg.moments[1]!.headline).toContain("36");
+    expect(pkg.moments[1]!.score).toBeCloseTo(10.5, 5);
+    expect(pkg.moments[2]!.memberPlays[0]!.scorerName).toContain("Hutson");
     expect(pkg.scoreLine).toBe("CAR 3, MTL 2 (OT)");
   });
 });
