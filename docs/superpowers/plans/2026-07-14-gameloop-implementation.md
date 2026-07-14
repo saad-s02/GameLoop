@@ -1102,7 +1102,7 @@ console.log('A winner', goals(a).find(p=>p.eventId===1785)?.elapsedGameSeconds);
 "
 ```
 
-Expected pins: A 9 goals, final home 5 away 4, otPeriods 2; B 5 goals, final home 2 away 3, otPeriods 1; tying 3498; winner 5138. Also grep both committed files: `grep -c "nhle.com\|T-Mobile\|Centre Bell" lib/data/showcase-game-*.json` must print 0 for each. If any pin fails, STOP and escalate (do not adjust the reducer to force it silently).
+Expected pins: A 9 goals, final home 5 away 4, otPeriods 2; B 5 goals, final home 2 away 3, otPeriods 1; tying 3498; winner 5138. Scrub check on both committed files: `assets.nhle`, `highlightClip`, `T-Mobile`, and `Centre Bell` each occur zero times, and `nhle.com` occurs exactly once per file (the PRD-required sourceMeta.endpoint provenance field; RESOLVED 2026-07-14: the original blanket nhle.com grep contradicted the sourceMeta template). If any pin fails, STOP and escalate (do not adjust the reducer to force it silently).
 
 - [ ] **Step 8: Commit**
 
@@ -1136,7 +1136,7 @@ The venue is AUTHORED to pinned tension numbers. Do not tune any number without 
       "waitProfile": [
         { "fromClock": "17:30", "toClock": "18:00", "waitMinutes": 4 },
         { "fromClock": "18:00", "toClock": "18:30", "waitMinutes": 6 },
-        { "fromClock": "18:30", "toClock": "19:00", "waitMinutes": 10 },
+        { "fromClock": "18:30", "toClock": "19:00", "waitMinutes": 6 },
         { "fromClock": "19:00", "toClock": "19:30", "waitMinutes": 12 } ], "source": "simulated" },
     { "id": "gate-3",  "name": "Gate 3 (North)", "accessible": true,  "crowdLevel": "medium",
       "waitProfile": [

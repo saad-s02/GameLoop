@@ -25,3 +25,13 @@ How it was caught: Task 2 deploy attempt returned 403 forbidden on project creat
 Correction: proceeding with Tasks 4 and 5 (fixture fetch, schema lock) and Wave 1, which have no cloud dependencies. Partial spike finding banked from the 401 error dump: the AI SDK v7 providerOptions path anthropic.thinking {type: disabled} maps to a top-level thinking field in the outgoing request body, and maxOutputTokens maps to max_tokens.
 
 Lesson: prove credentials before the wave that needs them; the error dump of a failed call still carries request-shape evidence worth recording.
+
+## 2026-07-14 Venue authoring arithmetic missed a wait-band crossing
+
+What happened: the plan authored gate-1's wait profile with 10 minutes in the 18:30 to 19:00 band, but the spec's +18 disruption story (18:33 arrival seated about 18:48) assumed the same 6-minute wait as the baseline path. The delayed family reaches gate-1 at 18:41, inside the later band, so the authored numbers produced 18:52.
+
+How it was caught: the venue consistency test pinned both outcomes exactly; the Task 7 implementation agent ran it, got -38 instead of -42, verified its transcription byte-for-byte against the brief, and reported BLOCKED instead of tuning the data.
+
+Correction: main thread set gate-1's 18:30 to 19:00 band to 6 minutes, which lands the disrupted path at exactly 18:48 while touching no other pinned path (the 18:15 baseline uses the earlier band, and the gate-wait disruption overrides every band to 22). Plan document updated to match.
+
+Lesson: authored fixture arithmetic must be traced through every band boundary it crosses, and the block-instead-of-tune rule did its job: the agent surfaced the contradiction instead of silently bending the data.
