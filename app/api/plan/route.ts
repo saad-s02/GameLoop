@@ -42,7 +42,14 @@ export async function POST(req: NextRequest) {
   (async () => {
     try {
       // 1. constraint contract: demo fixtures, or live extraction with a precomputed-chip fallback.
+      // Demo mode is a zero-LLM guarantee: without a chip it refuses rather than calling the model.
       let request: PlanRequest;
+      if (input.demo && !input.chipId) {
+        emit({ type: "decision", summary: "Demo mode runs without model calls and uses the three preset prompts. Pick a chip to continue." });
+        emit({ type: "done" });
+        close();
+        return;
+      }
       if (input.demo && input.chipId) {
         request = demoRequest(input.chipId);
       } else {

@@ -107,6 +107,20 @@ describe("POST /api/plan", () => {
     expect(res.status).toBe(401);
   });
 
+  it("demo mode without a chip refuses with a scoped decision and never reaches extraction (zero-LLM guarantee)", async () => {
+    const req = jsonRequest(
+      "http://localhost/api/plan",
+      { mode: "plan", text: "free text in demo mode", demo: true },
+      { cookie: accessCookieHeader() },
+    );
+    const res = await planPOST(req);
+    expect(res.status).toBe(200);
+    const envelopes = await drainEnvelopes(res);
+    expect(envelopes.map((e) => e.event.type)).toEqual(["decision", "done"]);
+    const decision = envelopes[0]!.event;
+    if (decision.type === "decision") expect(decision.summary).toContain("Demo mode");
+  });
+
   it("returns 400 for an unrecognized mode", async () => {
     const req = jsonRequest("http://localhost/api/plan", { mode: "chat", text: "hi" }, { cookie: accessCookieHeader() });
     const res = await planPOST(req);

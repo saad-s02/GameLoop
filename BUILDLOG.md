@@ -55,3 +55,11 @@ How it was caught: the user pushed back that the key was definitely correct, whi
 Correction: local scripts run with env -u ANTHROPIC_API_KEY until the Windows variable is removed; ADR-002 completed immediately afterward. During diagnosis the dead key's value was echoed into the session log; it is invalid, and the recommendation to revoke it in the console was passed to the user.
 
 Lesson: when a fix that obviously should work repeatedly does not, stop debugging the fix and re-verify the assumption underneath it, and listen when the human says the fix is correct. Precedence between environment variables and env files is exactly the kind of invisible layer that produces this failure.
+
+## 2026-07-14 Wave 3A integration measurements (local production server)
+
+Not an incident, a record. First full live journey against the built app, one venue machine, intro-tier API:
+
+Demo chip (zero model calls): full event sequence correct, contract card event strictly first, snap and flood control present. Live family prompt, cold: 14.8 s including the one-time extraction-schema grammar compile. Live family prompt, warm: 7.7 s against the 12 s budget. Extraction reproduced all five pinned constraints and the 6:18 to 18:15 snap verbatim. Replan with train-plus-18: 8.7 s against the 8 s budget, seated 18:48 exactly, warmups traded, dietary preserved, diff 6 kept 1 dropped 1 replaced. Tuning item for the eval pass: replans re-stream a full explanation; a shorter replan-specific explanation or smaller max tokens should close the 0.7 s. Live recap with session bridge, cold: 13.0 s against the 15 s budget including the recap schema grammar compile; scoreLine echoed exactly, fell-short framing honest, centre-ice bridge factual, no banned market strings.
+
+One spec gap found by review and closed during integration: demo mode without a chip could fall through to a live extraction call; it now refuses with a scoped decision event, keeping the zero-LLM guarantee unconditional (covered by a route test).
