@@ -52,7 +52,17 @@ export function buildDeterministicRecap(pkg: MomentPackage, session: SessionCont
 
   const memory: GameMemory = { headline, scoreLine: pkg.scoreLine, momentBlurbs, reflection, copyText };
   if (session) {
-    memory.yourNight = `Your saved plan had you seated in ${session.seatSection ?? "your section"}, with a group of ${
+    const zoneText: Record<string, string> = {
+      "centre-ice": "near centre ice",
+      "attack-end": "at the attack end",
+      "defend-end": "at the defending end",
+      "upper-bowl-centre": "in the upper bowl, centre",
+      "upper-bowl-corner": "in the upper bowl corner",
+    };
+    const where = session.viewZone
+      ? `${zoneText[session.viewZone] ?? session.viewZone} (section ${session.seatSection ?? "unknown"})`
+      : (session.seatSection ?? "your section");
+    memory.yourNight = `Your saved plan had you seated ${where}, with a group of ${
       session.party.adults + session.party.children
     }. (Deterministic summary; the narrative model was unavailable.)`.slice(0, 400);
   }

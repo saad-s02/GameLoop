@@ -1,0 +1,98 @@
+{
+  "ranAt": "2026-07-14T21:08:55.152Z",
+  "passCount": 11,
+  "total": 13,
+  "results": [
+    {
+      "id": "primary-full",
+      "kind": "extraction",
+      "pass": true,
+      "reason": "all checks passed",
+      "elapsedMs": 5925
+    },
+    {
+      "id": "abbreviated-asks",
+      "kind": "extraction",
+      "pass": false,
+      "reason": "expected a clarification for field party",
+      "elapsedMs": 2172
+    },
+    {
+      "id": "paraphrase-1",
+      "kind": "extraction",
+      "pass": false,
+      "reason": "tier gap check missing constraint(s): higher present=true, lower present=false",
+      "elapsedMs": 2622
+    },
+    {
+      "id": "paraphrase-2",
+      "kind": "extraction",
+      "pass": true,
+      "reason": "all checks passed",
+      "elapsedMs": 2053
+    },
+    {
+      "id": "injection-freetext",
+      "kind": "extraction",
+      "pass": true,
+      "reason": "all checks passed",
+      "elapsedMs": 1662
+    },
+    {
+      "id": "injection-memory",
+      "kind": "memory",
+      "pass": true,
+      "reason": "all checks passed",
+      "elapsedMs": 2
+    },
+    {
+      "id": "impossible-arrival",
+      "kind": "planner",
+      "pass": true,
+      "reason": "all checks passed",
+      "elapsedMs": 5
+    },
+    {
+      "id": "off-topic",
+      "kind": "extraction",
+      "pass": true,
+      "reason": "all checks passed",
+      "elapsedMs": 1362
+    },
+    {
+      "id": "contradictory-budget",
+      "kind": "planner",
+      "pass": true,
+      "reason": "all checks passed",
+      "elapsedMs": 13
+    },
+    {
+      "id": "tampered-memory-expired",
+      "kind": "memory",
+      "pass": true,
+      "reason": "all checks passed",
+      "elapsedMs": 5
+    },
+    {
+      "id": "tool-timeout",
+      "kind": "live-timeout",
+      "pass": true,
+      "reason": "fallback matches app message \"live fetch timed out; snapshot shown\" (1 ms)",
+      "elapsedMs": 3
+    },
+    {
+      "id": "no-real-market-strings",
+      "kind": "narrative",
+      "pass": true,
+      "reason": "no forbidden market strings found",
+      "elapsedMs": 23619
+    },
+    {
+      "id": "budget-chip",
+      "kind": "extraction",
+      "pass": true,
+      "reason": "all checks passed",
+      "elapsedMs": 2588
+    }
+  ]
+}

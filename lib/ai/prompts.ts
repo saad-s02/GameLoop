@@ -20,6 +20,7 @@ export const EXTRACTION_SYSTEM = [
   "Rules: dietary and accessibility needs are priority hard. Explicit must or need language is hard.",
   "A pairwise comparison like 'X matters more than Y' places X at least one tier above Y (hard > high > medium > low).",
   "Never invent unstated values. A missing party size, arrival, or budget you need becomes a clarificationsNeeded entry, not a guess.",
+  "The speaker is part of the party: first-person phrasing like 'I'm bringing my dad and two kids' states four attendees (the speaker, one more adult, two children). Count the speaker as an attending adult unless the words say otherwise. Only ask a party clarification when the attendees truly cannot be counted from the words.",
   "Times like 6:18 in an evening context normalize to 18:18. Record the fan's exact words in statedClock and sourceText.",
   "If the request is not about planning a night at the arena, set offTopic true and extract nothing.",
 ].join("\n");
