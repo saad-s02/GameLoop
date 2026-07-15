@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Barlow, Big_Shoulders, IBM_Plex_Mono } from "next/font/google";
 import { SiteFooter } from "@/components/SiteFooter";
+import { SiteHeader } from "@/components/SiteHeader";
 import "./globals.css";
 
 const bigShoulders = Big_Shoulders({
@@ -41,6 +42,7 @@ export default function RootLayout({
       className={`${bigShoulders.variable} ${barlow.variable} ${plexMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        <SiteHeader />
         {children}
         <SiteFooter />
       </body>
