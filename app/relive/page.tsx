@@ -1,7 +1,7 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { FormEvent, Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { GameMemory, GameMemorySchema, MomentPackage, ReliveApiInput } from "@/lib/planning/schemas";
 import { listShowcaseGames } from "@/lib/data/load";
 import { COPY } from "@/lib/copy";
@@ -16,7 +16,17 @@ import { readStoredSession } from "@/components/MemoryPanel";
 const ENABLE_LIVE_GAME = process.env.NEXT_PUBLIC_ENABLE_LIVE_RELIVE === "1";
 
 export default function RelivePage() {
+  return (
+    <Suspense fallback={null}>
+      <RelivePageInner />
+    </Suspense>
+  );
+}
+
+function RelivePageInner() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const demo = searchParams.get("demo") === "1";
   const games = useMemo(() => listShowcaseGames(), []);
   const resultsRef = useRef<HTMLDivElement | null>(null);
 
@@ -43,7 +53,7 @@ export default function RelivePage() {
 
   const submitGame = (gameId: string, live: boolean) => {
     setHadSessionAtSubmit(!!readStoredSession());
-    setSubmittedBody({ mode: "relive", gameId, live, demo: false, sessionContext: readStoredSession() ?? undefined });
+    setSubmittedBody({ mode: "relive", gameId, live, demo, sessionContext: readStoredSession() ?? undefined });
   };
 
   const onLiveSubmit = (e: FormEvent) => {

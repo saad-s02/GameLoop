@@ -16,6 +16,7 @@ import {
 import { loadVenue } from "@/lib/data/load";
 import { useTraceStream } from "@/components/useTraceStream";
 import { ConstraintContract } from "@/components/ConstraintContract";
+import { ConstraintsStrip } from "@/components/ConstraintsStrip";
 import { ActivityPanel } from "@/components/ActivityPanel";
 import { ItineraryTimeline } from "@/components/ItineraryTimeline";
 import { ConsideredRejected } from "@/components/ConsideredRejected";
@@ -181,7 +182,9 @@ function PlanPageInner() {
   };
 
   const onDisruption = (id: DisruptionId) => {
-    const next = [...disruptions, id].slice(-5);
+    // Dedupe by id: train-plus-18 is non-idempotent (it adds 18 minutes each
+    // application), so a stray re-click must not send the same id twice.
+    const next = [...new Set([...disruptions, id])].slice(-5);
     setDisruptions(next);
     setPriorPlanSteps(lastPlanResult?.plan?.steps ?? []);
     setSubmittedBody(buildBody({ disruptions: next, priorPlanId: lastPlanResult?.plan?.planId }));
@@ -282,6 +285,7 @@ function PlanPageInner() {
             aria-busy={isReplanning}
             className={isReplanning ? "opacity-50 motion-safe:transition-opacity motion-safe:duration-300" : ""}
           >
+            <ConstraintsStrip outcomes={lastPlanResult.plan.constraintOutcomes} />
             <ItineraryTimeline
               plan={lastPlanResult.plan}
               venue={venue}
@@ -294,6 +298,7 @@ function PlanPageInner() {
 
         {lastPlanResult && !lastPlanResult.feasible && lastPlanResult.bestAlternative && (
           <div ref={resultsRef} tabIndex={-1}>
+            <ConstraintsStrip outcomes={lastPlanResult.bestAlternative.constraintOutcomes} />
             <ItineraryTimeline plan={lastPlanResult.bestAlternative} venue={venue} adjustments={lastPlanResult.adjustments} />
           </div>
         )}

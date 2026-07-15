@@ -26,6 +26,7 @@ export function DisruptionControls({
             key={d.id}
             type="button"
             disabled={disabled}
+            aria-disabled={disabled}
             onClick={() => onTrigger(d.id)}
             className="rounded border border-black/20 px-3 py-1.5 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-50"
           >

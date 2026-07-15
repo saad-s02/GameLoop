@@ -79,25 +79,12 @@ test("scripted demo sequence: access, plan, disruption, relive, reset", async ({
   await expect(momentRows).toHaveCount(3);
   await expect(momentRows.first()).toContainText(/overtime|OT/i);
 
-  // Known gap (see task-15-report.md): the deterministic recap fallback
-  // (lib/server/recap.ts buildDeterministicRecap) only ever surfaces the raw
-  // session.seatSection id ("section-101") in the "Your night" paragraph, it
-  // never surfaces session.viewZone ("centre-ice"). A "centre ice" style
-  // reference is only ever produced by a live model call (RECAP_SYSTEM's
-  // prompt example), which this hermetic run deliberately never makes. Using
-  // a soft assertion so the rest of the scripted sequence (Reset, below)
-  // still runs and gets verified in this same pass.
-  const memoryCardText = await memoryCard.innerText();
-  if (!/centre/i.test(memoryCardText)) {
-    await page.screenshot({ path: "test-results/relive-missing-centre-reference.png", fullPage: true });
-  }
-  expect
-    .soft(
-      memoryCardText,
-      "Personal Game Memory should reference the seat's view zone (e.g. centre-ice); " +
-        "see task-15-report.md BLOCKED finding",
-    )
-    .toMatch(/centre/i);
+  // The deterministic recap fallback (lib/server/recap.ts buildDeterministicRecap)
+  // renders session.viewZone into the "Your night" paragraph (e.g. "near centre
+  // ice") whenever a saved plan's plannedGameId matches the relived game -- true
+  // here since the family-chip plan above and Fixture A both use gameId
+  // 2025030413. Hard assertion: a regression in that sentence should fail the suite.
+  await expect(memoryCard).toContainText(/centre/i);
 
   // ---- 5. Reset ----
   // ResetControl only renders on /plan; navigate back there to reach it.

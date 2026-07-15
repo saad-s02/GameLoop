@@ -41,6 +41,10 @@ export async function POST(req: NextRequest) {
 
   (async () => {
     try {
+      // First-frame latency: emit before any model round-trip so the Decision Log
+      // never sits empty waiting on extraction (PRD 12 / spec section 7, sub-750ms).
+      emit({ type: "decision", summary: "Reading your request." });
+
       // 1. constraint contract: demo fixtures, or live extraction with a precomputed-chip fallback.
       // Demo mode is a zero-LLM guarantee: without a chip it refuses rather than calling the model.
       let request: PlanRequest;

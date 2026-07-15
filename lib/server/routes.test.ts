@@ -51,7 +51,7 @@ async function drainEnvelopes(res: Response): Promise<TraceEnvelope[]> {
 }
 
 describe("POST /api/plan", () => {
-  it("demo family chip: request_parsed strictly before plan_result, 4x data_received, constraint_adjusted present, then candidates_summary, decision, plan_result, response_chunk, done", async () => {
+  it("demo family chip: first-frame decision then request_parsed strictly before plan_result, 4x data_received, constraint_adjusted present, then candidates_summary, decision, plan_result, response_chunk, done", async () => {
     const req = jsonRequest(
       "http://localhost/api/plan",
       { mode: "plan", text: "chip", chipId: "family", demo: true },
@@ -63,17 +63,21 @@ describe("POST /api/plan", () => {
     const envelopes = await drainEnvelopes(res);
     const types: string[] = envelopes.map((e) => e.event.type);
 
-    expect(types[0]).toBe("request_parsed");
+    // The very first frame is the pre-extraction "Reading your request." decision
+    // (first-frame latency fix), immediately followed by request_parsed.
+    expect(types[0]).toBe("decision");
+    expect(types[1]).toBe("request_parsed");
+    expect(types.filter((t) => t === "decision")).toHaveLength(2);
     expect(types.filter((t) => t === "data_received")).toHaveLength(4);
     expect(types.filter((t) => t === "data_requested")).toHaveLength(4);
     expect(types).toContain("constraint_adjusted");
     expect(types).toContain("candidates_summary");
-    expect(types).toContain("decision");
     expect(types).toContain("plan_result");
     expect(types).toContain("response_chunk");
     expect(types[types.length - 1]).toBe("done");
 
     const idx = (t: string) => types.indexOf(t);
+    const lastIdx = (t: string) => types.lastIndexOf(t);
     const dataReceivedIdxs = types.map((t, i) => (t === "data_received" ? i : -1)).filter((i) => i >= 0);
 
     // Constraint contract strictly before the plan.
@@ -85,8 +89,11 @@ describe("POST /api/plan", () => {
     }
     expect(idx("constraint_adjusted")).toBeGreaterThan(idx("request_parsed"));
     expect(idx("constraint_adjusted")).toBeLessThan(idx("candidates_summary"));
-    expect(idx("candidates_summary")).toBeLessThan(idx("decision"));
-    expect(idx("decision")).toBeLessThan(idx("plan_result"));
+    // The second (final) decision frame -- the decisionSummary card -- comes after
+    // candidates_summary and before plan_result; the first decision frame (index 0)
+    // is the pre-extraction one and is intentionally excluded from this ordering.
+    expect(idx("candidates_summary")).toBeLessThan(lastIdx("decision"));
+    expect(lastIdx("decision")).toBeLessThan(idx("plan_result"));
     expect(idx("response_chunk")).toBeGreaterThan(idx("plan_result"));
     expect(idx("response_chunk")).toBeLessThan(types.length - 1); // done is last
 
@@ -116,9 +123,13 @@ describe("POST /api/plan", () => {
     const res = await planPOST(req);
     expect(res.status).toBe(200);
     const envelopes = await drainEnvelopes(res);
-    expect(envelopes.map((e) => e.event.type)).toEqual(["decision", "done"]);
-    const decision = envelopes[0]!.event;
-    if (decision.type === "decision") expect(decision.summary).toContain("Demo mode");
+    // First frame is the pre-extraction "Reading your request." decision (first-frame
+    // latency fix); the second is the scoped "Demo mode..." refusal decision.
+    expect(envelopes.map((e) => e.event.type)).toEqual(["decision", "decision", "done"]);
+    const firstDecision = envelopes[0]!.event;
+    if (firstDecision.type === "decision") expect(firstDecision.summary).toBe("Reading your request.");
+    const scopedDecision = envelopes[1]!.event;
+    if (scopedDecision.type === "decision") expect(scopedDecision.summary).toContain("Demo mode");
   });
 
   it("returns 400 for an unrecognized mode", async () => {
