@@ -6,7 +6,7 @@ describe("redirectSummary", () => {
   it("names the requested event and what Harbourview actually hosts tonight", () => {
     const s = redirectSummary("a basketball game", loadShowcaseGame("2025030413"));
     expect(s).toBe(
-      "You asked about a basketball game. Tonight Harbourview Arena hosts hockey: Vegas Golden Knights at Carolina Hurricanes, puck drop 19:30. Planning your night around it.",
+      "You asked about a basketball game. Tonight Harbourview Arena hosts hockey: Vegas Golden Knights versus Carolina Hurricanes, puck drop 19:30. Planning your night around it.",
     );
   });
 });

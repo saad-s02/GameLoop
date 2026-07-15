@@ -13,10 +13,13 @@ export function decisionSummary(result: PlanResult): string {
   );
 }
 
+// "versus" not "at": inside the fiction Harbourview hosts, so naming either real
+// team as the home side would misstate the host. Home team first to mirror the
+// code-built scoreLine order ("VGK 5, CAR 4").
 export function redirectSummary(requested: string, game: ShowcaseGame): string {
-  const away = `${game.awayTeam.placeName} ${game.awayTeam.commonName}`;
   const home = `${game.homeTeam.placeName} ${game.homeTeam.commonName}`;
-  return `You asked about ${requested}. Tonight Harbourview Arena hosts hockey: ${home} at ${away}, puck drop ${game.puckDropAt}. Planning your night around it.`;
+  const away = `${game.awayTeam.placeName} ${game.awayTeam.commonName}`;
+  return `You asked about ${requested}. Tonight Harbourview Arena hosts hockey: ${home} versus ${away}, puck drop ${game.puckDropAt}. Planning your night around it.`;
 }
 
 export function fallbackNarrative(result: PlanResult): string {
