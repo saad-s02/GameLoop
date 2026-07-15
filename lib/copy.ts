@@ -12,4 +12,10 @@ export const COPY = {
   answerUseThis: "Use this",
   answerAdultsLabel: "Adults",
   answerChildrenLabel: "Children",
+  followUpHeading: "Change something or add a detail",
+  followUpPlaceholder: "e.g. actually we arrive at 6, add wheelchair access, cheaper food",
+  followUpDemoNote: "Free-text changes use the live model. In demo mode, use the quick chips.",
+  followUpSend: "Update plan",
+  historyHeading: "What you have told us",
+  assumedHeading: "Assumed for this plan",
 } as const;

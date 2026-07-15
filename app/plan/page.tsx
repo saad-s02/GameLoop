@@ -24,6 +24,8 @@ import { ConsideredRejected } from "@/components/ConsideredRejected";
 import { DisruptionControls } from "@/components/DisruptionControls";
 import { MemoryPanel, readStoredSession, SESSION_STORAGE_KEY, SESSION_UPDATED_EVENT } from "@/components/MemoryPanel";
 import { ResetControl } from "@/components/ResetControl";
+import { FollowUpComposer, QuickChip } from "@/components/FollowUpComposer";
+import { COPY } from "@/lib/copy";
 
 // Matches the "tonight" showcase game hardcoded in Task 9's loadPlannerInput.
 const DEMO_GAME_ID = "2025030413";
@@ -90,6 +92,8 @@ function PlanPageInner() {
     constraints: Constraint[];
     disruptions: DisruptionId[];
   } | null>(null);
+  const [refined, setRefined] = useState(false);
+  const [assumptions, setAssumptions] = useState<{ field: string; assumed: string; reason: string }[]>([]);
 
   const { events, streamText, status, retry, httpStatus } = useTraceStream(
     submittedBody ? "/api/plan" : null,
@@ -183,6 +187,19 @@ function PlanPageInner() {
     }
   }, [events]);
 
+  // Assumptions persist like the contract does: `events` resets to [] on
+  // every new submit, but the previously shown assumption row must not
+  // disappear until a fresh request actually resolves.
+  useEffect(() => {
+    const fresh = events
+      .filter((e) => e.event.type === "assumption_made")
+      .map((e) => (e.event.type === "assumption_made" ? { field: e.event.field, assumed: e.event.assumed, reason: e.event.reason } : null))
+      .filter((a): a is { field: string; assumed: string; reason: string } => a !== null);
+    if (fresh.length > 0) setAssumptions(fresh);
+    // A request that emitted a plan but no assumption events clears stale assumptions:
+    if (events.some((e) => e.event.type === "plan_result") && fresh.length === 0) setAssumptions([]);
+  }, [events]);
+
   const constraintContractStale = status === "streaming" && !events.some((e) => e.event.type === "request_parsed");
 
   const buildBody = (overrides: Partial<PlanApiInput> = {}): PlanApiInput => ({
@@ -199,6 +216,7 @@ function PlanPageInner() {
   const submitRefinement = (refinement: NonNullable<PlanApiInput["refinement"]>, historyText: string) => {
     setPriorPlanSteps(lastPlanResult?.plan?.steps ?? []);
     setHistory((h) => [...h, historyText]);
+    setRefined(true);
     setSubmittedBody(buildBody({ refinement, disruptions, priorPlanId: undefined }));
   };
 
@@ -214,12 +232,22 @@ function PlanPageInner() {
     );
   };
 
+  const refinementBase = () => ({
+    baseConstraints: persistedRequestParsed?.constraints ?? [],
+    pendingClarifications: (persistedRequestParsed?.clarificationsNeeded ?? []) as Clarification[],
+    prior: lastPlanContext ?? undefined,
+  });
+  const onQuickChip = (chip: QuickChip) => submitRefinement({ ...refinementBase(), answerConstraints: [chip.delta] }, chip.label);
+  const onFollowUpText = (t: string) => submitRefinement({ ...refinementBase(), followUpText: t }, t);
+
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!text.trim()) return;
     setDisruptions([]);
     setHistory([text.trim()]);
     setLastPlanContext(null);
+    setRefined(false);
+    setAssumptions([]);
     setSubmittedBody(buildBody());
   };
 
@@ -229,7 +257,15 @@ function PlanPageInner() {
     const next = [...new Set([...disruptions, id])].slice(-5);
     setDisruptions(next);
     setPriorPlanSteps(lastPlanResult?.plan?.steps ?? []);
-    setSubmittedBody(buildBody({ disruptions: next, priorPlanId: lastPlanResult?.plan?.planId }));
+    if (refined) {
+      setSubmittedBody(buildBody({
+        disruptions: next,
+        refinement: { ...refinementBase(), answerConstraints: [] },
+        priorPlanId: undefined,
+      }));
+    } else {
+      setSubmittedBody(buildBody({ disruptions: next, priorPlanId: lastPlanResult?.plan?.planId }));
+    }
   };
 
   const isReplanning = status === "streaming" && lastPlanResult !== null;
@@ -302,6 +338,23 @@ function PlanPageInner() {
           </div>
         )}
 
+        {assumptions.length > 0 && (
+          <section aria-label="Assumed for this plan" className="flex flex-col gap-2">
+            <h2 className="font-mono text-xs font-medium uppercase tracking-[0.12em] text-frost">{COPY.assumedHeading}</h2>
+            <ul className="flex flex-col gap-1.5">
+              {assumptions.map((a) => (
+                <li key={a.field} className="flex items-start gap-2 rounded-card border border-sodium/40 bg-sodium/10 p-3 text-sm text-ice">
+                  <span aria-hidden="true" className="font-mono text-sodium">~</span>
+                  <span>
+                    <span className="mr-1.5 font-mono text-[10.5px] font-medium uppercase tracking-[0.08em] text-sodium">assumed</span>
+                    {a.assumed}. <span className="text-frost">{a.reason}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
         {submittedBody && (
           <ActivityPanel events={events} status={status} streamText={streamText} onRetry={retry} />
         )}
@@ -358,6 +411,22 @@ function PlanPageInner() {
 
         {lastPlanResult?.feasible && (
           <DisruptionControls onTrigger={onDisruption} disabled={status === "streaming"} />
+        )}
+
+        {history.length > 0 && persistedRequestParsed && (
+          <section aria-label="What you have told us" className="flex flex-col gap-2">
+            <h2 className="font-mono text-xs font-medium uppercase tracking-[0.12em] text-frost">{COPY.historyHeading}</h2>
+            <ol className="flex flex-col gap-1.5">
+              {history.map((h, i) => (
+                <li key={i} className="rounded-card border border-steel bg-well/60 px-3 py-2 text-[13px] italic leading-5 text-frost">
+                  &ldquo;{h}&rdquo;
+                </li>
+              ))}
+            </ol>
+          </section>
+        )}
+        {persistedRequestParsed && (
+          <FollowUpComposer demo={demo} disabled={status === "streaming"} onQuickChip={onQuickChip} onFollowUpText={onFollowUpText} />
         )}
       </div>
 
