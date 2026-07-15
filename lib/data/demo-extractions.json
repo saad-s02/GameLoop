@@ -28,5 +28,14 @@
     ],
     "clarificationsNeeded": [],
     "offTopic": false
+  },
+  "vague": {
+    "constraints": [
+      { "type": "dietary", "value": { "need": "gluten-free", "severity": "intolerance" }, "priority": "hard", "sourceText": "one gluten-free" },
+      { "type": "arrival", "value": { "statedClock": "6:18", "normalizedClock": "18:18", "mode": "train" }, "priority": "hard", "sourceText": "train at 6:18" },
+      { "type": "seated_by", "value": { "milestone": "warmups" }, "priority": "high", "sourceText": "seated for warmups" }
+    ],
+    "clarificationsNeeded": [{ "field": "party", "question": "How many adults and how many children are going?" }],
+    "offTopic": false
   }
 }

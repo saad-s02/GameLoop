@@ -51,4 +51,14 @@ describe("demo-extractions.json", () => {
     expect(seatedBy).toMatchObject({ priority: "hard", value: { milestone: "puck_drop" } });
     expect(party).toMatchObject({ priority: "hard", value: { adults: 2, children: 0 } });
   });
+
+  it("vague entry pins the clarification demo: three constraints plus a party question", () => {
+    const parsed = PlanRequestSchema.parse((demoExtractions as Record<string, unknown>).vague);
+    expect(parsed.clarificationsNeeded).toEqual([{ field: "party", question: "How many adults and how many children are going?" }]);
+    expect(parsed.offTopic).toBe(false);
+    expect(parsed.constraints).toHaveLength(3);
+    expect(parsed.constraints.map((c) => c.type).sort()).toEqual(["arrival", "dietary", "seated_by"]);
+    const arrival = parsed.constraints.find((c) => c.type === "arrival");
+    expect(arrival).toMatchObject({ priority: "hard", value: { statedClock: "6:18", normalizedClock: "18:18", mode: "train" } });
+  });
 });
