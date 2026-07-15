@@ -120,4 +120,98 @@ body {
     border-radius: 1px;
     background: rgb(179 58 49 / 0.4);
   }
+
+  /*
+    Replan dim: the previous result stays on the page but visibly steps
+    back behind the glass while the new plan streams in. The dim is a
+    state change (it applies under reduced motion too); only the
+    transition between states is motion.
+  */
+  .replan-dim {
+    opacity: 0.5;
+    filter: saturate(0.7);
+  }
+}
+
+/*
+  Motion: every animation in the app lives inside this block, so
+  prefers-reduced-motion gets instant, static state changes everywhere.
+  Durations and easing come from the tokens in :root.
+*/
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes rise-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes badge-pop {
+    from {
+      opacity: 0;
+      transform: scale(0.85);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  @keyframes rank-rise {
+    from {
+      opacity: 0;
+      transform: translateY(0.4em);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes dot-pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  /* SSE entrances: new rows rise as frames land; the stream is the stagger. */
+  .log-row,
+  .plan-step,
+  .memory-row {
+    animation: rise-in var(--t-move) var(--ease-glide) both;
+  }
+
+  /* Diff verdicts pop after their row has landed. */
+  .diff-badge {
+    animation: badge-pop var(--t-micro) var(--ease-glide) both;
+    animation-delay: var(--t-move);
+  }
+
+  /* Memory card: rank numerals reveal top rank first. */
+  .memory-rank {
+    animation: rank-rise var(--t-settle) var(--ease-glide) both;
+  }
+  .memory-row:nth-child(2) .memory-rank {
+    animation-delay: 120ms;
+  }
+  .memory-row:nth-child(3) .memory-rank {
+    animation-delay: 240ms;
+  }
+
+  /* The only things that pulse: the streaming node and the LIVE badge dot. */
+  .streaming-dot,
+  .live-dot {
+    animation: dot-pulse 2s ease-in-out infinite;
+  }
+
+  .replan-wrap {
+    transition:
+      opacity var(--t-move) var(--ease-glide),
+      filter var(--t-move) var(--ease-glide);
+  }
 }

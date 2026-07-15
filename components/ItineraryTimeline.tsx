@@ -42,7 +42,7 @@ function DiffBadge({ stepId, diff }: { stepId: string; diff?: PlanDiff }) {
   if (!diff) return null;
   if (diff.preservedStepIds.includes(stepId)) {
     return (
-      <span className="inline-flex items-center gap-1 rounded border border-ice-green/40 bg-ice-green/10 px-1.5 py-0.5 font-mono text-[10.5px] font-medium uppercase tracking-[0.08em] text-ice-green">
+      <span className="diff-badge inline-flex items-center gap-1 rounded border border-ice-green/40 bg-ice-green/10 px-1.5 py-0.5 font-mono text-[10.5px] font-medium uppercase tracking-[0.08em] text-ice-green">
         <span aria-hidden="true">&#10003;</span> kept
       </span>
     );
@@ -50,7 +50,7 @@ function DiffBadge({ stepId, diff }: { stepId: string; diff?: PlanDiff }) {
   const replaced = diff.replacedSteps.find((r) => r.newStepId === stepId);
   if (replaced) {
     return (
-      <span className="inline-flex items-center gap-1 rounded border border-sodium/40 bg-sodium/10 px-1.5 py-0.5 font-mono text-[10.5px] font-medium uppercase tracking-[0.08em] text-sodium">
+      <span className="diff-badge inline-flex items-center gap-1 rounded border border-sodium/40 bg-sodium/10 px-1.5 py-0.5 font-mono text-[10.5px] font-medium uppercase tracking-[0.08em] text-sodium">
         <span aria-hidden="true">&#8594;</span> replaced
       </span>
     );
@@ -77,7 +77,7 @@ export function ItineraryTimeline({
   return (
     <ol className="flex flex-col gap-2.5">
       {plan.steps.map((step) => (
-        <li key={step.stepId} className="rounded-card border border-steel bg-boards p-3.5">
+        <li key={step.stepId} className="plan-step rounded-card border border-steel bg-boards p-3.5">
           <div className="flex flex-wrap items-center gap-2">
             <span className="inline-block rounded border border-steel bg-well px-2 py-0.5 font-mono text-sm font-semibold tabular-nums text-ice">
               {step.clock}
@@ -107,7 +107,7 @@ export function ItineraryTimeline({
         return (
           <li
             key={`dropped-${stepId}`}
-            className="rounded-card border border-red-lamp/40 bg-red-lamp/10 p-3.5 text-sm text-red-lamp"
+            className="plan-step rounded-card border border-red-lamp/40 bg-red-lamp/10 p-3.5 text-sm text-red-lamp"
           >
             <span aria-hidden="true">&#10007;</span>{" "}
             <span className="line-through">{priorTitle ?? stepId}</span> dropped

@@ -55,7 +55,7 @@ export function GameMemoryCard({ memory, pkg }: { memory: GameMemory; pkg: Momen
 
       <ol className="flex flex-col gap-2.5">
         {rows.map((row) => (
-          <li key={row.momentId} className="grid grid-cols-[3rem_1fr] gap-x-3 rounded-card border border-steel bg-glass/50 p-3.5">
+          <li key={row.momentId} className="memory-row grid grid-cols-[3rem_1fr] gap-x-3 rounded-card border border-steel bg-glass/50 p-3.5">
             <span
               aria-hidden="true"
               className={`memory-rank row-span-2 self-start text-right font-display text-4xl font-bold leading-none ${

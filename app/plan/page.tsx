@@ -250,7 +250,7 @@ function PlanPageInner() {
         {persistedRequestParsed && (
           <div
             aria-busy={constraintContractStale}
-            className={constraintContractStale ? "opacity-50 motion-safe:transition-opacity motion-safe:duration-300" : ""}
+            className={`replan-wrap${constraintContractStale ? " replan-dim" : ""}`}
           >
             <ConstraintContract
               constraints={persistedRequestParsed.constraints}
@@ -285,7 +285,7 @@ function PlanPageInner() {
             ref={resultsRef}
             tabIndex={-1}
             aria-busy={isReplanning}
-            className={isReplanning ? "opacity-50 motion-safe:transition-opacity motion-safe:duration-300" : ""}
+            className={`replan-wrap${isReplanning ? " replan-dim" : ""}`}
           >
             <h2 className="mb-3 font-display text-lg font-semibold uppercase tracking-[0.06em] text-ice">
               Tonight&apos;s plan
