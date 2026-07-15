@@ -73,3 +73,17 @@ Deployed URL (present from this one): https://gameloop-gilt.vercel.app. Deployme
 The published rule (api-rate-limit, path starts with /api, fixed window 30 per 60 seconds per IP, 429) was verified two ways from one machine: the full scripted demo sequence ran clean with zero 429s (13.0 s), and an immediate 40-request burst drew 429s from request 27 onward, consistent with the smoke sharing the window. The rule both admits the demo and cuts off abuse.
 
 DEPLOY FREEZE as of this entry. The frozen production build is gameloop-gilt.vercel.app. Remaining Thursday runbook: warmup from the venue network 15 minutes before, one full script run, Reset click, NHL endpoint curl to decide the live-game closer, access-code entry rehearsed. Backup capture is recorded by Saad from the frozen URL.
+
+## 2026-07-15 Overnight styling session (branch style/overnight-pass, prod stays frozen)
+
+Full visual overhaul on the branch per the overnight mission: dark-only arena-at-night design language (The Lit Sheet, see DESIGN.md), applied in passes with all three gates green at every commit. Production untouched; the freeze from 2026-07-14 stands.
+
+Notable findings logged as they happened:
+
+TraceEnvelope carries no timestamp, so the planned per-row elapsed clock in the decision log gutter would read 00:00.0 for every row in demo mode (frames arrive in one burst). The gutter stamps the scorer event number instead; total elapsed shows in the header only when it measures at least 100 ms, so live runs show real latency and rehearsals never show a dead clock.
+
+An empirical contrast probe (canvas-resolved computed styles, all pages walked) plus a five-agent audit panel caught a cluster of AA failures in reduced-opacity frost text (ledger gutter, raw-event summaries, provenance strings, parentheticals, placeholders, char counter), all fixed by promoting to full-strength frost; the rule is now written into DESIGN.md. The probe initially missed these because Tailwind 4 emits color-mix() for opacity modifiers, which the first regex parser skipped silently.
+
+Restyle-introduced regression caught and fixed: the new sticky header could cover programmatic focus targets (plan results, infeasible section, memory card); scroll-mt-20 added to all four. Also fixed: an unguarded hover transform on the home cards (reduced-motion guardrail), and the experimental relive form reusing the dashed border DESIGN.md reserves exclusively for SIMULATED provenance.
+
+Pre-existing issues found by the keyboard audit, NOT fixed overnight (interaction behavior, not styling; for Saad to decide): (1) buttons that disable themselves on the interaction that activates them (plan submit, disruption buttons, relive buttons, enter submit) drop keyboard focus to body during streaming; predates the restyle. (2) SourceBadge supplementary context on the memory card is tooltip-only (title attribute), also pre-existing.

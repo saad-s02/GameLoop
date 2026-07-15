@@ -141,7 +141,7 @@ function EventCard({
   const promoted = VERDICT_TYPES.includes(envelope.event.type);
   return (
     <li className="log-row grid grid-cols-[4rem_1.375rem_1fr] gap-x-3">
-      <span className="pt-0.5 text-right font-mono text-xs tabular-nums text-frost/70">
+      <span className="pt-0.5 text-right font-mono text-xs tabular-nums text-frost">
         #{String(envelope.seq).padStart(2, "0")}
       </span>
       <span className="relative z-10 flex items-start justify-center pt-1">
@@ -157,7 +157,7 @@ function EventCard({
         </span>
         <EventBody event={envelope.event} />
         <details className="mt-1.5">
-          <summary className="cursor-pointer font-mono text-[11px] uppercase tracking-[0.08em] text-frost/70 hover:text-frost">
+          <summary className="cursor-pointer font-mono text-[11px] uppercase tracking-[0.08em] text-frost hover:text-ice">
             Raw event
           </summary>
           <p className="mt-1.5 text-xs leading-5 text-frost">{COPY.fiction}</p>
@@ -212,24 +212,26 @@ export function ActivityPanel({
         <h2 className="font-display text-xl font-semibold uppercase tracking-[0.06em] text-ice">
           Decision log
         </h2>
-        <p aria-live="polite" className="flex items-center gap-2 text-sm text-frost">
-          {status === "streaming" && (
-            <span aria-hidden="true" className="streaming-dot h-2 w-2 rounded-full bg-sodium" />
-          )}
-          {STATUS_MESSAGE[status]}
-          {status === "done" && totalMs !== undefined && totalMs >= 100 && (
-            <span className="font-mono text-xs tabular-nums text-sodium">{formatElapsed(totalMs)}</span>
-          )}
+        <div className="flex items-center gap-2">
+          <p aria-live="polite" className="flex items-center gap-2 text-sm text-frost">
+            {status === "streaming" && (
+              <span aria-hidden="true" className="streaming-dot h-2 w-2 rounded-full bg-sodium" />
+            )}
+            {STATUS_MESSAGE[status]}
+            {status === "done" && totalMs !== undefined && totalMs >= 100 && (
+              <span className="font-mono text-xs tabular-nums text-sodium">{formatElapsed(totalMs)}</span>
+            )}
+          </p>
           {status === "stalled" && onRetry && (
             <button
               type="button"
               onClick={onRetry}
-              className="ml-1 rounded-well border border-steel-bright px-2 py-0.5 text-xs font-semibold text-ice motion-safe:transition-colors hover:bg-glass"
+              className="rounded-well border border-steel-bright px-2 py-0.5 text-xs font-semibold text-ice motion-safe:transition-colors hover:bg-glass"
             >
               Retry
             </button>
           )}
-        </p>
+        </div>
       </div>
       {streamText && (
         <p className="rounded-card border border-steel bg-well/60 p-3 text-sm leading-6 text-ice/90">{streamText}</p>

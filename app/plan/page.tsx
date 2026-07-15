@@ -233,11 +233,11 @@ function PlanPageInner() {
               maxLength={INPUT_CHAR_CAP}
               rows={4}
               required
-              className="rounded-card border border-steel bg-well/70 px-3 py-2.5 text-[15px] leading-6 text-ice placeholder:text-frost/50 motion-safe:transition-colors focus:border-steel-bright"
+              className="rounded-card border border-steel bg-well/70 px-3 py-2.5 text-[15px] leading-6 text-ice placeholder:text-frost motion-safe:transition-colors focus:border-steel-bright"
               placeholder="e.g. We're a family of four, need gluten-free food, and want to be seated before warmups."
             />
           </label>
-          <p className="font-mono text-xs tabular-nums text-frost/70">{text.length} / {INPUT_CHAR_CAP}</p>
+          <p className="font-mono text-xs tabular-nums text-frost">{text.length} / {INPUT_CHAR_CAP}</p>
           <button
             type="submit"
             disabled={status === "streaming" || !text.trim()}
@@ -268,7 +268,7 @@ function PlanPageInner() {
             ref={infeasibleRef}
             tabIndex={-1}
             aria-label="Infeasible"
-            className="rounded-card border border-red-lamp/40 bg-red-lamp/10 p-4 text-sm text-ice"
+            className="scroll-mt-20 rounded-card border border-red-lamp/40 bg-red-lamp/10 p-4 text-sm text-ice"
           >
             <p className="font-semibold text-red-lamp">This request cannot be satisfied as stated:</p>
             <ul className="mt-1 list-disc pl-5 leading-6">
@@ -284,8 +284,9 @@ function PlanPageInner() {
           <div
             ref={resultsRef}
             tabIndex={-1}
+            aria-label="Tonight's plan"
             aria-busy={isReplanning}
-            className={`replan-wrap${isReplanning ? " replan-dim" : ""}`}
+            className={`replan-wrap scroll-mt-20${isReplanning ? " replan-dim" : ""}`}
           >
             <h2 className="mb-3 font-display text-lg font-semibold uppercase tracking-[0.06em] text-ice">
               Tonight&apos;s plan
@@ -302,7 +303,7 @@ function PlanPageInner() {
         )}
 
         {lastPlanResult && !lastPlanResult.feasible && lastPlanResult.bestAlternative && (
-          <div ref={resultsRef} tabIndex={-1}>
+          <div ref={resultsRef} tabIndex={-1} aria-label="Closest feasible alternative" className="scroll-mt-20">
             <ConstraintsStrip outcomes={lastPlanResult.bestAlternative.constraintOutcomes} />
             <ItineraryTimeline plan={lastPlanResult.bestAlternative} venue={venue} adjustments={lastPlanResult.adjustments} />
           </div>

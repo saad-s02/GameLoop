@@ -17,7 +17,7 @@ Three independent design directions were drafted (broadcast package, rink materi
 | `glass` | `#1c2735` | Raised surface: hover, active, sticky header. Gets an inset top light catch. |
 | `well` | `#0a0f16` | Inset wells: raw JSON, quoted input, clock housings. |
 | `ice` | `#e9f0f6` | Primary text. About 13:1 on boards. |
-| `frost` | `#93a3b5` | Muted text. About 6.3:1 on boards; never below 12px. |
+| `frost` | `#93a3b5` | Muted text. About 6.3:1 on boards. Reduced-opacity frost variants are banned for text below 24px (they fall under AA); small labels use full-strength frost, which holds AA down to badge sizes. |
 | `line-red` | `#b33a31` | Rink paint. Decorative only, never text: the log spine, face-off dots. |
 | `line-blue` | `#3d6fb0` | Rink paint. Structural blue: selection tint, connectors. |
 | `red-lamp` | `#f28b82` | Legible red: violated text, LIVE badge. About 5.4:1 on boards. |

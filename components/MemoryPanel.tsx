@@ -24,8 +24,8 @@ function Row({ label, value, provenance }: { label: string; value: string; prove
   return (
     <div className="flex flex-col gap-0.5 border-b border-steel py-2 last:border-b-0">
       <div className="flex items-center justify-between gap-2">
-        <span className="font-mono text-[10.5px] uppercase tracking-[0.08em] text-frost/80">{label}</span>
-        <span className="text-[10.5px] text-frost/60">{provenance}</span>
+        <span className="font-mono text-[10.5px] uppercase tracking-[0.08em] text-frost">{label}</span>
+        <span className="text-[10.5px] text-frost">{provenance}</span>
       </div>
       <span className="text-sm text-ice">{value}</span>
     </div>
@@ -65,7 +65,7 @@ export function MemoryPanel() {
           type="button"
           onClick={clear}
           disabled={!session}
-          className="shrink-0 rounded-well border border-steel-bright px-2 py-1 text-xs font-semibold text-frost motion-safe:transition-colors hover:bg-glass hover:text-ice disabled:cursor-not-allowed disabled:opacity-40"
+          className="shrink-0 rounded-well border border-steel-bright px-2 py-1 text-xs font-semibold text-frost motion-safe:transition-colors hover:bg-glass hover:text-ice disabled:cursor-not-allowed disabled:opacity-50"
         >
           Clear Memory
         </button>

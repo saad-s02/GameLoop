@@ -51,21 +51,21 @@ export function ConsideredRejected({ selected, runnerUp }: { selected: Itinerary
       </p>
       <dl className="mt-3 grid grid-cols-3 gap-2 text-sm">
         <div>
-          <dt className="font-mono text-[10.5px] uppercase tracking-[0.08em] text-frost/80">Score</dt>
+          <dt className="font-mono text-[10.5px] uppercase tracking-[0.08em] text-frost">Score</dt>
           <dd className="mt-0.5 font-mono text-[13px] tabular-nums text-ice">
-            {runnerUp.score.toFixed(1)} <span className="text-frost/60">(selected {selected.score.toFixed(1)})</span>
+            {runnerUp.score.toFixed(1)} <span className="text-frost">(selected {selected.score.toFixed(1)})</span>
           </dd>
         </div>
         <div>
-          <dt className="font-mono text-[10.5px] uppercase tracking-[0.08em] text-frost/80">Walking</dt>
+          <dt className="font-mono text-[10.5px] uppercase tracking-[0.08em] text-frost">Walking</dt>
           <dd className="mt-0.5 font-mono text-[13px] tabular-nums text-ice">
-            {runnerUp.walkingMinutes} min <span className="text-frost/60">(selected {selected.walkingMinutes} min)</span>
+            {runnerUp.walkingMinutes} min <span className="text-frost">(selected {selected.walkingMinutes} min)</span>
           </dd>
         </div>
         <div>
-          <dt className="font-mono text-[10.5px] uppercase tracking-[0.08em] text-frost/80">Waiting</dt>
+          <dt className="font-mono text-[10.5px] uppercase tracking-[0.08em] text-frost">Waiting</dt>
           <dd className="mt-0.5 font-mono text-[13px] tabular-nums text-ice">
-            {runnerUp.waitMinutes} min <span className="text-frost/60">(selected {selected.waitMinutes} min)</span>
+            {runnerUp.waitMinutes} min <span className="text-frost">(selected {selected.waitMinutes} min)</span>
           </dd>
         </div>
       </dl>

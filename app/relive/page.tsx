@@ -89,7 +89,7 @@ function RelivePageInner() {
       </section>
 
       {ENABLE_LIVE_GAME && (
-        <form onSubmit={onLiveSubmit} className="flex flex-col gap-2 rounded-card border border-dashed border-frost/40 p-4">
+        <form onSubmit={onLiveSubmit} className="flex flex-col gap-2 rounded-card border border-steel-bright p-4">
           <span className="font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-frost">
             Experimental: live game lookup
           </span>
@@ -99,7 +99,7 @@ function RelivePageInner() {
               value={liveGameId}
               onChange={(e) => setLiveGameId(e.target.value)}
               placeholder="NHL game id"
-              className="flex-1 rounded-well border border-steel bg-well/70 px-3 py-2 text-sm text-ice placeholder:text-frost/50"
+              className="flex-1 rounded-well border border-steel bg-well/70 px-3 py-2 text-sm text-ice placeholder:text-frost"
             />
             <button
               type="submit"
@@ -115,7 +115,7 @@ function RelivePageInner() {
       {submittedBody && <ActivityPanel events={events} status={status} streamText="" onRetry={retry} />}
 
       {memory && pkg && (
-        <div ref={resultsRef} tabIndex={-1} className="flex flex-col gap-2">
+        <div ref={resultsRef} tabIndex={-1} aria-label="Personal Game Memory" className="flex scroll-mt-20 flex-col gap-2">
           <p className="font-mono text-[11px] font-medium uppercase tracking-[0.12em] text-frost">
             {memory.yourNight
               ? hadSessionAtSubmit

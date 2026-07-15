@@ -24,7 +24,7 @@ export default function Home() {
       <div className="grid w-full max-w-2xl grid-cols-1 gap-4 sm:grid-cols-2">
         <Link
           href="/plan"
-          className="group flex flex-col gap-3 rounded-card border border-steel bg-boards p-6 shadow-rink motion-safe:transition-all motion-safe:duration-[var(--t-micro)] hover:-translate-y-0.5 hover:border-steel-bright hover:bg-glass"
+          className="group flex flex-col gap-3 rounded-card border border-steel bg-boards p-6 shadow-rink motion-safe:transition-all motion-safe:duration-[var(--t-micro)] motion-safe:hover:-translate-y-0.5 hover:border-steel-bright hover:bg-glass"
         >
           <span className="font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-blue-glow">
             Before puck drop
@@ -38,7 +38,7 @@ export default function Home() {
         </Link>
         <Link
           href="/relive"
-          className="group flex flex-col gap-3 rounded-card border border-steel bg-boards p-6 shadow-rink motion-safe:transition-all motion-safe:duration-[var(--t-micro)] hover:-translate-y-0.5 hover:border-steel-bright hover:bg-glass"
+          className="group flex flex-col gap-3 rounded-card border border-steel bg-boards p-6 shadow-rink motion-safe:transition-all motion-safe:duration-[var(--t-micro)] motion-safe:hover:-translate-y-0.5 hover:border-steel-bright hover:bg-glass"
         >
           <span className="font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-sodium">
             After the horn
