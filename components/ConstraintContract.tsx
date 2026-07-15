@@ -1,4 +1,8 @@
+"use client";
+
+import { useState } from "react";
 import { Constraint, PriorityTier } from "@/lib/planning/schemas";
+import { COPY } from "@/lib/copy";
 
 const PRIORITY_LABEL: Record<PriorityTier, string> = {
   hard: "HARD",
@@ -51,12 +55,68 @@ function summarizeConstraint(c: Constraint): string {
   }
 }
 
+function PartyAnswerForm({ onAnswer }: { onAnswer: (a: { constraints: Constraint[]; historyText: string }) => void }) {
+  const [adults, setAdults] = useState(1);
+  const [children, setChildren] = useState(0);
+  const summary = `${adults} adult${adults === 1 ? "" : "s"}, ${children} child${children === 1 ? "" : "ren"}`;
+  return (
+    <form
+      className="mt-2 flex flex-wrap items-end gap-3"
+      onSubmit={(e) => {
+        e.preventDefault();
+        onAnswer({
+          constraints: [
+            {
+              type: "party",
+              value: { adults, children },
+              priority: "hard",
+              sourceText: `Answered inline: ${summary}`,
+            },
+          ],
+          historyText: summary,
+        });
+      }}
+    >
+      <label className="flex flex-col gap-1 text-xs font-medium text-ice">
+        {COPY.answerAdultsLabel}
+        <input
+          type="number"
+          min={0}
+          max={20}
+          value={adults}
+          onChange={(e) => setAdults(Math.max(0, Math.min(20, Number(e.target.value) || 0)))}
+          className="w-20 rounded-well border border-steel bg-well/70 px-2 py-1.5 font-mono text-sm tabular-nums text-ice focus:border-steel-bright"
+        />
+      </label>
+      <label className="flex flex-col gap-1 text-xs font-medium text-ice">
+        {COPY.answerChildrenLabel}
+        <input
+          type="number"
+          min={0}
+          max={20}
+          value={children}
+          onChange={(e) => setChildren(Math.max(0, Math.min(20, Number(e.target.value) || 0)))}
+          className="w-20 rounded-well border border-steel bg-well/70 px-2 py-1.5 font-mono text-sm tabular-nums text-ice focus:border-steel-bright"
+        />
+      </label>
+      <button
+        type="submit"
+        className="rounded-well bg-ice px-3 py-1.5 text-sm font-semibold text-bowl motion-safe:transition-colors hover:bg-ice/90"
+      >
+        {COPY.answerUseThis}
+      </button>
+    </form>
+  );
+}
+
 export function ConstraintContract({
   constraints,
   clarificationsNeeded = [],
+  onAnswer,
 }: {
   constraints: Constraint[];
   clarificationsNeeded?: { field: string; question: string }[];
+  onAnswer?: (answer: { constraints: Constraint[]; historyText: string }) => void;
 }) {
   return (
     <section aria-label="Constraint contract" className="flex flex-col gap-3">
@@ -82,9 +142,12 @@ export function ConstraintContract({
               className="flex items-start gap-2 rounded-card border border-sodium/40 bg-sodium/10 p-3.5 text-sm text-sodium"
             >
               <span aria-hidden="true">?</span>
-              <span>
-                <strong>Needs more info ({q.field}):</strong> {q.question}
-              </span>
+              <div className="flex min-w-0 flex-1 flex-col">
+                <span>
+                  <strong>Needs more info ({q.field}):</strong> {q.question}
+                </span>
+                {onAnswer && q.field === "party" && <PartyAnswerForm onAnswer={onAnswer} />}
+              </div>
             </li>
           ))}
         </ul>

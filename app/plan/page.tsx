@@ -3,6 +3,7 @@
 import { FormEvent, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
+  Clarification,
   Constraint,
   DisruptionId,
   INPUT_CHAR_CAP,
@@ -43,6 +44,11 @@ const CHIPS: { id: NonNullable<PlanApiInput["chipId"]>; label: string; text: str
     label: "Wheelchair access",
     text: "My mom uses a wheelchair, so we need step-free access the whole way. She's vegetarian. We just need to be in our seats before puck drop.",
   },
+  {
+    id: "vague",
+    label: "Short on details",
+    text: "Two kids, one gluten-free, train at 6:18, seated for warmups",
+  },
 ];
 
 export default function PlanPage() {
@@ -78,6 +84,12 @@ function PlanPageInner() {
     Extract<TraceEvent, { type: "request_parsed" }>,
     "constraints" | "clarificationsNeeded"
   > | null>(null);
+  const [history, setHistory] = useState<string[]>([]);
+  const [lastPlanContext, setLastPlanContext] = useState<{
+    planId: string;
+    constraints: Constraint[];
+    disruptions: DisruptionId[];
+  } | null>(null);
 
   const { events, streamText, status, retry, httpStatus } = useTraceStream(
     submittedBody ? "/api/plan" : null,
@@ -97,6 +109,16 @@ function PlanPageInner() {
     if (!planResultEnvelope || planResultEnvelope.event.type !== "plan_result") return;
     const result = planResultEnvelope.event.result;
     setLastPlanResult(result);
+
+    if (result.feasible && result.plan) {
+      const parsedConstraints =
+        [...events].reverse().find((e) => e.event.type === "request_parsed")?.event;
+      setLastPlanContext({
+        planId: result.plan.planId,
+        constraints: parsedConstraints?.type === "request_parsed" ? parsedConstraints.constraints : [],
+        disruptions: submittedBody?.disruptions ?? [],
+      });
+    }
 
     if (!result.feasible || !result.plan) return;
     const requestParsedEnvelope = events.find((e) => e.event.type === "request_parsed");
@@ -134,7 +156,7 @@ function PlanPageInner() {
       window.localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(parsed.data));
       window.dispatchEvent(new Event(SESSION_UPDATED_EVENT));
     }
-  }, [events]);
+  }, [events, submittedBody]);
 
   useEffect(() => {
     if (status === "done" && lastPlanResult) {
@@ -174,10 +196,30 @@ function PlanPageInner() {
     ...overrides,
   });
 
+  const submitRefinement = (refinement: NonNullable<PlanApiInput["refinement"]>, historyText: string) => {
+    setPriorPlanSteps(lastPlanResult?.plan?.steps ?? []);
+    setHistory((h) => [...h, historyText]);
+    setSubmittedBody(buildBody({ refinement, disruptions, priorPlanId: undefined }));
+  };
+
+  const onAnswer = ({ constraints, historyText }: { constraints: Constraint[]; historyText: string }) => {
+    submitRefinement(
+      {
+        baseConstraints: persistedRequestParsed?.constraints ?? [],
+        answerConstraints: constraints,
+        pendingClarifications: (persistedRequestParsed?.clarificationsNeeded ?? []) as Clarification[],
+        prior: lastPlanContext ?? undefined,
+      },
+      historyText,
+    );
+  };
+
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!text.trim()) return;
     setDisruptions([]);
+    setHistory([text.trim()]);
+    setLastPlanContext(null);
     setSubmittedBody(buildBody());
   };
 
@@ -255,6 +297,7 @@ function PlanPageInner() {
             <ConstraintContract
               constraints={persistedRequestParsed.constraints}
               clarificationsNeeded={persistedRequestParsed.clarificationsNeeded}
+              onAnswer={onAnswer}
             />
           </div>
         )}

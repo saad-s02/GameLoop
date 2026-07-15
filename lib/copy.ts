@@ -9,4 +9,7 @@ export const COPY = {
   gtfsSnapshotDate: "2026-07-07",
   dietaryDisclaimer: (need: string) =>
     `Listed as offering a ${need} item. Cross-contact information is unavailable; confirm with venue staff.`,
+  answerUseThis: "Use this",
+  answerAdultsLabel: "Adults",
+  answerChildrenLabel: "Children",
 } as const;
