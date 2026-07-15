@@ -81,6 +81,65 @@ describe("mergeConstraints", () => {
     expect(dropped).toEqual([]);
     expect(changes[0]!.op).toBe("added");
   });
+
+  it("preserves the prior arrival mode when a delta says 'other' (bare time change keeps travel mode)", () => {
+    const bareTimeDelta: Constraint = {
+      type: "arrival",
+      value: { statedClock: "6:00", normalizedClock: "18:00", mode: "other" },
+      priority: "hard",
+      sourceText: "actually we arrive at 6",
+    };
+    const { merged, changes } = mergeConstraints([arrival618, gf], [bareTimeDelta]);
+    expect(merged[0]).toEqual({
+      type: "arrival",
+      value: { statedClock: "6:00", normalizedClock: "18:00", mode: "train" },
+      priority: "hard",
+      sourceText: "actually we arrive at 6",
+    });
+    expect(changes).toEqual([
+      {
+        op: "replaced",
+        type: "arrival",
+        before: arrival618,
+        after: {
+          type: "arrival",
+          value: { statedClock: "6:00", normalizedClock: "18:00", mode: "train" },
+          priority: "hard",
+          sourceText: "actually we arrive at 6",
+        },
+      },
+    ]);
+  });
+
+  it("a stated mode change replaces the prior mode (drive wins over train)", () => {
+    const drivingDelta: Constraint = {
+      type: "arrival",
+      value: { statedClock: "6:00", normalizedClock: "18:00", mode: "drive" },
+      priority: "hard",
+      sourceText: "actually we're driving, arriving at 6",
+    };
+    const { merged, changes } = mergeConstraints([arrival618, gf], [drivingDelta]);
+    expect(merged[0]).toEqual(drivingDelta);
+    expect(changes[0]!.after).toEqual(drivingDelta);
+  });
+
+  it("replacing an 'other'-mode arrival with another 'other'-mode delta stays 'other'", () => {
+    const arrivalOther: Constraint = {
+      type: "arrival",
+      value: { statedClock: "6:18", normalizedClock: "18:18", mode: "other" },
+      priority: "hard",
+      sourceText: "we'll get there somehow around 6:18",
+    };
+    const otherDelta: Constraint = {
+      type: "arrival",
+      value: { statedClock: "6:30", normalizedClock: "18:30", mode: "other" },
+      priority: "hard",
+      sourceText: "actually more like 6:30",
+    };
+    const { merged, changes } = mergeConstraints([arrivalOther, gf], [otherDelta]);
+    expect(merged[0]).toEqual(otherDelta);
+    expect(changes[0]!.after).toEqual(otherDelta);
+  });
 });
 
 describe("summarizeConstraintValue", () => {

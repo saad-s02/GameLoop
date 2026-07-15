@@ -196,25 +196,30 @@ function standCombinations(stands: Venue["stands"]): string[][] {
 export function generateCandidates(input: GenerateCandidatesInput): RawCandidate[] {
   const { venue, request } = input;
   const required = requiredDietaryNeeds(request);
-  const hasHardDietary = required.length > 0;
+  // Gate candidate generation on the subset of hard dietary needs some stand can actually
+  // cover. An uncoverable need (e.g. nut-free: no stand in the venue fixture carries it)
+  // must not zero out every candidate; tryBuildPlan in evaluate.ts re-derives the FULL
+  // required list and will honestly mark those candidates dietary-violated instead.
+  const coverable = required.filter((n) => venue.stands.some((s) => s.menu.some((m) => m.dietaryFlags.includes(n))));
+  const hasHardDietary = coverable.length > 0;
   const { branches } = resolveTransitBranches(input);
 
   const candidates: RawCandidate[] = [];
 
   for (const gate of venue.gates) {
-    const prunedStands = reachablePrunedStands(venue, gate.id, required);
+    const prunedStands = reachablePrunedStands(venue, gate.id, coverable);
     const standMap = new Map(prunedStands.map((s) => [s.id, s]));
     const combos = standCombinations(prunedStands);
 
     for (const standIds of combos) {
       if (standIds.length === 0 && hasHardDietary) continue;
-      if (standIds.length > 0 && required.length > 0) {
+      if (standIds.length > 0 && coverable.length > 0) {
         const covered = new Set<DietaryNeed>();
         for (const id of standIds) {
           const stand = standMap.get(id)!;
-          for (const n of standCoverage(stand, required)) covered.add(n);
+          for (const n of standCoverage(stand, coverable)) covered.add(n);
         }
-        const coversAll = required.every((n) => covered.has(n));
+        const coversAll = coverable.every((n) => covered.has(n));
         if (!coversAll) continue;
       }
 

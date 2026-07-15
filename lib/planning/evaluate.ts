@@ -391,7 +391,10 @@ function tryBuildPlan(
   const violations: string[] = [];
 
   const dietaryOk = requiredNeeds.every((n) => coveredNeeds.has(n));
-  if (!dietaryOk) violations.push(`dietary: required need(s) not covered by ${raw.candidateId}`);
+  if (!dietaryOk) {
+    const missingNeeds = requiredNeeds.filter((n) => !coveredNeeds.has(n));
+    violations.push(`dietary: no stand tonight offers ${missingNeeds.join(", ")}`);
+  }
 
   const accessibilityConstraint = input.request.constraints.find(
     (c) => c.type === "accessibility" && c.priority === "hard",

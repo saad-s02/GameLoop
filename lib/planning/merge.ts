@@ -30,8 +30,20 @@ export function mergeConstraints(base: Constraint[], deltas: Constraint[]): Merg
     const idx = merged.findIndex((c) => keyOf(c) === keyOf(delta));
     if (idx >= 0) {
       const before = merged[idx]!;
-      merged[idx] = delta;
-      changes.push({ op: "replaced", type: delta.type, before, after: delta });
+      // Product rule: a bare time change ("actually we arrive at 6") keeps the prior travel
+      // mode when the delta's extraction can't infer a mode (mode "other"). A stated mode
+      // change ("actually we're driving") replaces it, since the delta's mode is not "other".
+      let stored = delta;
+      if (
+        delta.type === "arrival" &&
+        before.type === "arrival" &&
+        delta.value.mode === "other" &&
+        before.value.mode !== "other"
+      ) {
+        stored = { ...delta, value: { ...delta.value, mode: before.value.mode } };
+      }
+      merged[idx] = stored;
+      changes.push({ op: "replaced", type: delta.type, before, after: stored });
     } else {
       merged.push(delta);
       changes.push({ op: "added", type: delta.type, after: delta });

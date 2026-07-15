@@ -354,6 +354,45 @@ describe("evaluate: non-hard dietary coverage (rule 5, 'dietary satisfied when c
   });
 });
 
+describe("evaluate: uncoverable hard dietary need (rule: honest alternatives, never silent-ignore)", () => {
+  // nut-free has no covering menu item anywhere in the venue fixture (lib/data/venue.json):
+  // this is the one hard dietary need no stand combo can ever satisfy.
+  const nutFreeRequest: PlanRequest = {
+    constraints: [
+      { type: "party", value: { adults: 2, children: 0 }, priority: "hard", sourceText: "2 adults" },
+      { type: "dietary", value: { need: "nut-free", severity: "intolerance" }, priority: "hard", sourceText: "nut allergy" },
+    ],
+    clarificationsNeeded: [],
+    offTopic: false,
+  };
+
+  it("returns infeasible with a violation naming nut-free and a bestAlternative", () => {
+    const result = evaluate({ ...baselineInput(), request: nutFreeRequest });
+    expect(result.feasible).toBe(false);
+    expect(result.violations.some((v) => v.includes("nut-free"))).toBe(true);
+    expect(result.bestAlternative).toBeDefined();
+  });
+
+  it("bestAlternative marks the nut-free dietary constraint violated", () => {
+    const result = evaluate({ ...baselineInput(), request: nutFreeRequest });
+    const dietary = result.bestAlternative!.constraintOutcomes.find((o) => o.constraint.type === "dietary")!;
+    expect(dietary.status).toBe("violated");
+  });
+
+  it("regression: a hard gluten-free-only request (coverable) still returns feasible: true", () => {
+    const glutenFreeRequest: PlanRequest = {
+      constraints: [
+        { type: "party", value: { adults: 2, children: 0 }, priority: "hard", sourceText: "2 adults" },
+        { type: "dietary", value: { need: "gluten-free", severity: "intolerance" }, priority: "hard", sourceText: "gluten allergy" },
+      ],
+      clarificationsNeeded: [],
+      offTopic: false,
+    };
+    const result = evaluate({ ...baselineInput(), request: glutenFreeRequest });
+    expect(result.feasible).toBe(true);
+  });
+});
+
 describe("evaluate: Wave 1 demo-prompt trade-off gate (step 6)", () => {
   it("winner satisfies warmups and food_preference traded-or-satisfied; runner-up differs in gate or stand-set", () => {
     const result = evaluate(baselineInput());
