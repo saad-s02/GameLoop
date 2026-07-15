@@ -67,3 +67,9 @@ One spec gap found by review and closed during integration: demo mode without a 
 ## 2026-07-14 Production verification record
 
 Deployed URL (present from this one): https://gameloop-gilt.vercel.app. Deployment Protection stays on Standard (previews and raw deployment URLs behind SSO, production alias public behind the app's own access code plus noindex); the earlier SSO 302s were probes against the team-scoped deployment URL, which is protected by design. Deployed Playwright smoke (full scripted demo sequence with the real access code): passed in 16.1 s. Production warmup after the final deploy: extraction grammar 1,667 ms, recap grammar 5,973 ms; compiled grammars cache roughly 24 hours, so this repeats from the venue network 15 minutes before the Thursday demo. Environment variables live in Vercel Production: ANTHROPIC_API_KEY and ACCESS_COOKIE_SECRET Sensitive, ACCESS_CODE harbourview2026. Remaining dashboard item: the single WAF rate rule (path starts with /api, 30 requests per 60 seconds per IP, action 429), to be published and then verified with one scripted demo sequence confirming zero 429s. After that verification: deploy freeze.
+
+## 2026-07-14 WAF verification and deploy freeze
+
+The published rule (api-rate-limit, path starts with /api, fixed window 30 per 60 seconds per IP, 429) was verified two ways from one machine: the full scripted demo sequence ran clean with zero 429s (13.0 s), and an immediate 40-request burst drew 429s from request 27 onward, consistent with the smoke sharing the window. The rule both admits the demo and cuts off abuse.
+
+DEPLOY FREEZE as of this entry. The frozen production build is gameloop-gilt.vercel.app. Remaining Thursday runbook: warmup from the venue network 15 minutes before, one full script run, Reset click, NHL endpoint curl to decide the live-game closer, access-code entry rehearsed. Backup capture is recorded by Saad from the frozen URL.
