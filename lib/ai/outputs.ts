@@ -1,7 +1,7 @@
 import { generateText, streamText, Output } from "ai";
 import { GameMemory, GameMemorySchema, ExplainInput, ExplainInputSchema, MomentPackage, PlanRequest, PlanRequestSchema, SessionContext } from "../planning/schemas";
 import { anthropic, CALL_LIMITS, MODELS, THINKING_DISABLED } from "./models";
-import { EXPLANATION_SYSTEM, EXTRACTION_SYSTEM, RECAP_SYSTEM, extractionPrompt, wrapUserData } from "./prompts";
+import { EXPLANATION_SYSTEM, EXTRACTION_SYSTEM, RECAP_SYSTEM, REFINEMENT_SYSTEM, extractionPrompt, refinementPrompt, wrapUserData } from "./prompts";
 
 export async function extractPlanRequest(text: string, opts: { signal?: AbortSignal } = {}): Promise<PlanRequest> {
   const r = await generateText({
@@ -14,6 +14,20 @@ export async function extractPlanRequest(text: string, opts: { signal?: AbortSig
     // Haiku 4.5: no thinking parameter at all (omitting is the fast path)
   });
   return PlanRequestSchema.parse(r.output); // belt and braces: re-validate
+}
+
+/** Delta extraction for a follow-up message. Same schema as extraction, so the compiled grammar is a cache hit. */
+export async function extractRefinement(text: string, opts: { signal?: AbortSignal } = {}): Promise<PlanRequest> {
+  const r = await generateText({
+    model: anthropic(MODELS.extraction),
+    system: REFINEMENT_SYSTEM,
+    prompt: refinementPrompt(text),
+    output: Output.object({ schema: PlanRequestSchema }),
+    abortSignal: opts.signal,
+    ...CALL_LIMITS.extraction,
+    // Haiku 4.5: no thinking parameter at all (omitting is the fast path)
+  });
+  return PlanRequestSchema.parse(r.output);
 }
 
 export async function explainPlanStream(input: ExplainInput, opts: { signal?: AbortSignal } = {}) {

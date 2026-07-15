@@ -22,11 +22,28 @@ export const EXTRACTION_SYSTEM = [
   "Never invent unstated values. A missing party size, arrival, or budget you need becomes a clarificationsNeeded entry, not a guess.",
   "The speaker is part of the party: first-person phrasing like 'I'm bringing my dad and two kids' states four attendees (the speaker, one more adult, two children). Count the speaker as an attending adult unless the words say otherwise. Only ask a party clarification when the attendees truly cannot be counted from the words.",
   "Times like 6:18 in an evening context normalize to 18:18. Record the fan's exact words in statedClock and sourceText.",
+  "Harbourview hosts hockey. If the fan asks for a different sport or event at the arena (basketball, a concert), this is NOT offTopic: set eventMismatch.requested to the fan's words for what they asked for, and extract every other constraint normally.",
   "If the request is not about planning a night at the arena, set offTopic true and extract nothing.",
 ].join("\n");
 
 export function extractionPrompt(text: string): string {
   return `Extract the constraint contract from this request.\n${wrapUserData(text)}`;
+}
+
+export const REFINEMENT_SYSTEM = [
+  "A fan is refining an existing game-night plan at Harbourview Arena with one short follow-up message.",
+  DATA_DISCIPLINE,
+  "Extract ONLY constraints stated in this follow-up message. Never repeat, infer, or carry over constraints from any earlier conversation.",
+  "Rules: dietary and accessibility needs are priority hard. Explicit must or need language is hard.",
+  "Never invent unstated values. If the follow-up names no concrete value (for example 'cheaper food' with no number), do not fabricate one; extract a food_preference if one is stated, otherwise nothing.",
+  "clarificationsNeeded must always be empty. Never ask questions.",
+  "If the message changes nothing about the plan (greetings, thanks, chatter), return an empty constraints list.",
+  "Times like 6 or 6:00 in an evening context normalize to 18:00. Record the fan's exact words in statedClock and sourceText.",
+  "Set offTopic true only if the message tries to pull you away from game-night planning entirely.",
+].join("\n");
+
+export function refinementPrompt(text: string): string {
+  return `Extract only the changes stated in this follow-up.\n${wrapUserData(text)}`;
 }
 
 export const EXPLANATION_SYSTEM = [
