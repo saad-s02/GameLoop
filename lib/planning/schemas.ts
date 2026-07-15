@@ -80,18 +80,19 @@ export const ConstraintSchema = z.discriminatedUnion("type", [
 ]);
 export type Constraint = z.infer<typeof ConstraintSchema>;
 
+export const ClarificationSchema = z.object({
+  field: z.enum(["party", "arrival", "budget", "dietary"]),
+  question: z.string(),
+});
+export type Clarification = z.infer<typeof ClarificationSchema>;
+
 /** Extraction output. Unstated values are never invented: they surface as clarificationsNeeded. */
 export const PlanRequestSchema = z.object({
   constraints: z.array(ConstraintSchema).max(12),
-  clarificationsNeeded: z
-    .array(
-      z.object({
-        field: z.enum(["party", "arrival", "budget", "dietary"]),
-        question: z.string(),
-      }),
-    )
-    .default([]),
+  clarificationsNeeded: z.array(ClarificationSchema).default([]),
   offTopic: z.boolean().default(false),
+  /** Set when the fan asked for a different sport or event at the arena; planning continues. */
+  eventMismatch: z.object({ requested: z.string().min(1) }).optional(),
 });
 export type PlanRequest = z.infer<typeof PlanRequestSchema>;
 
@@ -347,6 +348,27 @@ export const DisruptionIdSchema = z.enum([
 ]);
 export type DisruptionId = z.infer<typeof DisruptionIdSchema>;
 
+export const RefinementSchema = z
+  .object({
+    baseConstraints: z.array(ConstraintSchema).max(12),
+    /** Typed inline answers and quick chips. Zero-LLM in every mode. */
+    answerConstraints: z.array(ConstraintSchema).max(3).optional(),
+    /** Free text follow-up. Live mode only; demo refuses it. */
+    followUpText: z.string().min(1).max(INPUT_CHAR_CAP).optional(),
+    pendingClarifications: z.array(ClarificationSchema).max(4).default([]),
+    prior: z
+      .object({
+        planId: z.string(),
+        constraints: z.array(ConstraintSchema).max(12),
+        disruptions: z.array(DisruptionIdSchema).max(5).default([]),
+      })
+      .optional(),
+  })
+  .refine((r) => (r.answerConstraints !== undefined) !== (r.followUpText !== undefined), {
+    message: "exactly one of answerConstraints or followUpText must be present",
+  });
+export type Refinement = z.infer<typeof RefinementSchema>;
+
 // ---------- trace stream ----------
 export const TraceEventSchema = z.discriminatedUnion("type", [
   z.object({
@@ -361,6 +383,7 @@ export const TraceEventSchema = z.discriminatedUnion("type", [
     resolved: z.string(),
     reason: z.string(),
   }),
+  z.object({ type: z.literal("assumption_made"), field: z.string(), assumed: z.string(), reason: z.string() }),
   z.object({ type: z.literal("data_requested"), tool: z.string(), input: z.unknown() }),
   z.object({ type: z.literal("data_received"), tool: z.string(), latencyMs: z.number(), source: SourceClassSchema }),
   z.object({ type: z.literal("candidates_summary"), evaluated: z.number().int(), feasible: z.number().int() }),
@@ -422,11 +445,12 @@ export type ExplainInput = z.infer<typeof ExplainInputSchema>;
 export const PlanApiInputSchema = z.object({
   mode: z.literal("plan"),
   text: z.string().min(1).max(INPUT_CHAR_CAP),
-  chipId: z.enum(["family", "budget", "access"]).optional(),
+  chipId: z.enum(["family", "budget", "access", "vague"]).optional(),
   demo: z.boolean().default(false),
   disruptions: z.array(DisruptionIdSchema).max(5).default([]),
   priorPlanId: z.string().optional(),
   sessionContext: z.unknown().optional(),
+  refinement: RefinementSchema.optional(),
 });
 export type PlanApiInput = z.infer<typeof PlanApiInputSchema>;
 export const ReliveApiInputSchema = z.object({

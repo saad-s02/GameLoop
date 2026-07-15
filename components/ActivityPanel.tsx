@@ -17,6 +17,7 @@ const STATUS_MESSAGE: Record<TraceStreamStatus, string> = {
 const EVENT_TITLE: Record<TraceEvent["type"], string> = {
   request_parsed: "Request parsed",
   constraint_adjusted: "Constraint adjusted",
+  assumption_made: "Assumed",
   data_requested: "Data requested",
   data_received: "Data received",
   candidates_summary: "Candidates summarized",
@@ -54,6 +55,15 @@ function EventBody({ event }: { event: TraceEvent }) {
       return (
         <p className="text-sm leading-6">
           You said {event.requested}; {event.reason} Resolved to {event.resolved}.
+        </p>
+      );
+    case "assumption_made":
+      return (
+        <p className="text-sm leading-6">
+          <span className="mr-1.5 inline-flex items-center gap-1 rounded border border-sodium/40 bg-sodium/10 px-1.5 py-0.5 font-mono text-[10.5px] font-medium uppercase tracking-[0.08em] text-sodium">
+            <span aria-hidden="true">~</span> assumed
+          </span>
+          {event.assumed}. {event.reason}
         </p>
       );
     case "data_requested":

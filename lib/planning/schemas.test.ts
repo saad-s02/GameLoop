@@ -4,6 +4,7 @@ import {
   ExplainInputSchema,
   PlanApiInputSchema,
   PlanRequestSchema,
+  RefinementSchema,
   SessionContextSchema,
   TraceEnvelopeSchema,
 } from "./schemas";
@@ -57,5 +58,56 @@ describe("locked schemas", () => {
     expect(PlanApiInputSchema.safeParse({ mode: "plan", text: "x".repeat(1001) }).success).toBe(false);
     expect(PlanApiInputSchema.safeParse({ mode: "chat", text: "hi" }).success).toBe(false);
     expect(PlanApiInputSchema.safeParse({ mode: "plan", text: "hi" }).success).toBe(true);
+  });
+});
+
+describe("conversational schema additions", () => {
+  const party = {
+    type: "party", value: { adults: 1, children: 2 }, priority: "hard",
+    sourceText: "Answered inline: 1 adult, 2 children",
+  };
+
+  it("accepts an assumption_made trace envelope", () => {
+    const env = {
+      v: 1, requestId: "r", seq: 0,
+      event: { type: "assumption_made", field: "arrival", assumed: "picked Lakeshore West arriving 18:15", reason: "No arrival time was given." },
+    };
+    expect(TraceEnvelopeSchema.parse(env).event.type).toBe("assumption_made");
+  });
+
+  it("accepts eventMismatch on PlanRequest and defaults it to absent", () => {
+    const withMismatch = PlanRequestSchema.parse({
+      constraints: [], clarificationsNeeded: [], offTopic: false,
+      eventMismatch: { requested: "a basketball game" },
+    });
+    expect(withMismatch.eventMismatch?.requested).toBe("a basketball game");
+    const without = PlanRequestSchema.parse({ constraints: [], clarificationsNeeded: [], offTopic: false });
+    expect(without.eventMismatch).toBeUndefined();
+  });
+
+  it("refinement requires exactly one of answerConstraints or followUpText", () => {
+    const base = { baseConstraints: [party] };
+    expect(RefinementSchema.safeParse({ ...base, answerConstraints: [party] }).success).toBe(true);
+    expect(RefinementSchema.safeParse({ ...base, followUpText: "arrive at 6" }).success).toBe(true);
+    expect(RefinementSchema.safeParse(base).success).toBe(false);
+    expect(RefinementSchema.safeParse({ ...base, answerConstraints: [party], followUpText: "x" }).success).toBe(false);
+  });
+
+  it("refinement pendingClarifications defaults to [] and prior validates", () => {
+    const r = RefinementSchema.parse({
+      baseConstraints: [party], answerConstraints: [],
+      prior: { planId: "plan-abc", constraints: [party], disruptions: ["train-plus-18"] },
+    });
+    expect(r.pendingClarifications).toEqual([]);
+    expect(r.prior?.disruptions).toEqual(["train-plus-18"]);
+  });
+
+  it("plan api input accepts the vague chip and a refinement", () => {
+    const parsed = PlanApiInputSchema.parse({
+      mode: "plan", text: "chip", chipId: "vague", demo: true,
+      refinement: { baseConstraints: [party], answerConstraints: [party] },
+    });
+    expect(parsed.chipId).toBe("vague");
+    expect(parsed.refinement?.answerConstraints).toHaveLength(1);
   });
 });
