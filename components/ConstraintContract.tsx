@@ -13,16 +13,16 @@ const PRIORITY_MARK: Record<PriorityTier, string> = {
   low: "-",
 };
 const PRIORITY_STYLE: Record<PriorityTier, string> = {
-  hard: "bg-rose-100 text-rose-900 border-rose-300",
-  high: "bg-orange-100 text-orange-900 border-orange-300",
-  medium: "bg-slate-100 text-slate-900 border-slate-300",
-  low: "bg-slate-50 text-slate-700 border-slate-200",
+  hard: "border-red-lamp/40 bg-red-lamp/10 text-red-lamp",
+  high: "border-sodium/40 bg-sodium/10 text-sodium",
+  medium: "border-steel-bright bg-glass text-ice/90",
+  low: "border-steel bg-glass/60 text-frost",
 };
 
 function PriorityChip({ priority }: { priority: PriorityTier }) {
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-xs font-semibold uppercase tracking-wide ${PRIORITY_STYLE[priority]}`}
+      className={`inline-flex items-center gap-1 rounded border px-1.5 py-0.5 font-mono text-[10.5px] font-medium uppercase tracking-[0.08em] ${PRIORITY_STYLE[priority]}`}
     >
       <span aria-hidden="true">{PRIORITY_MARK[priority]}</span>
       {PRIORITY_LABEL[priority]}
@@ -60,15 +60,17 @@ export function ConstraintContract({
 }) {
   return (
     <section aria-label="Constraint contract" className="flex flex-col gap-3">
-      <h2 className="text-sm font-semibold uppercase tracking-wide text-black/60">What we heard</h2>
+      <h2 className="font-display text-lg font-semibold uppercase tracking-[0.06em] text-ice">
+        What we heard
+      </h2>
       <ul className="flex flex-col gap-2">
         {constraints.map((c, i) => (
-          <li key={`${c.type}-${i}`} className="rounded-lg border border-black/10 p-3">
+          <li key={`${c.type}-${i}`} className="rounded-card border border-steel bg-boards p-3.5">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <span className="text-sm font-medium">{summarizeConstraint(c)}</span>
+              <span className="text-sm font-medium text-ice">{summarizeConstraint(c)}</span>
               <PriorityChip priority={c.priority} />
             </div>
-            <p className="mt-1 text-sm italic text-black/60">&ldquo;{c.sourceText}&rdquo;</p>
+            <p className="mt-1 text-[13px] italic leading-5 text-frost">&ldquo;{c.sourceText}&rdquo;</p>
           </li>
         ))}
       </ul>
@@ -77,7 +79,7 @@ export function ConstraintContract({
           {clarificationsNeeded.map((q, i) => (
             <li
               key={`${q.field}-${i}`}
-              className="flex items-start gap-2 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900"
+              className="flex items-start gap-2 rounded-card border border-sodium/40 bg-sodium/10 p-3.5 text-sm text-sodium"
             >
               <span aria-hidden="true">?</span>
               <span>

@@ -18,8 +18,10 @@ export function DisruptionControls({
   disabled?: boolean;
 }) {
   return (
-    <section aria-label="Disruptions" className="flex flex-col gap-2">
-      <h2 className="text-sm font-semibold uppercase tracking-wide text-black/60">Try a disruption</h2>
+    <section aria-label="Disruptions" className="flex flex-col gap-3">
+      <h2 className="font-display text-lg font-semibold uppercase tracking-[0.06em] text-ice">
+        Try a disruption
+      </h2>
       <div className="flex flex-wrap gap-2">
         {DISRUPTIONS.map((d) => (
           <button
@@ -28,7 +30,7 @@ export function DisruptionControls({
             disabled={disabled}
             aria-disabled={disabled}
             onClick={() => onTrigger(d.id)}
-            className="rounded border border-black/20 px-3 py-1.5 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-well border border-steel-bright px-3 py-1.5 text-sm font-medium text-ice motion-safe:transition-colors hover:bg-glass disabled:cursor-not-allowed disabled:opacity-40"
           >
             {d.label}
           </button>

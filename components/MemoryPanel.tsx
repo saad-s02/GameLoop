@@ -22,12 +22,12 @@ export function readStoredSession(): SessionContext | null {
 
 function Row({ label, value, provenance }: { label: string; value: string; provenance: string }) {
   return (
-    <div className="flex flex-col gap-0.5 border-b border-black/5 py-2 last:border-b-0">
+    <div className="flex flex-col gap-0.5 border-b border-steel py-2 last:border-b-0">
       <div className="flex items-center justify-between gap-2">
-        <span className="text-xs uppercase tracking-wide text-black/50">{label}</span>
-        <span className="text-xs text-black/40">{provenance}</span>
+        <span className="font-mono text-[10.5px] uppercase tracking-[0.08em] text-frost/80">{label}</span>
+        <span className="text-[10.5px] text-frost/60">{provenance}</span>
       </div>
-      <span className="text-sm">{value}</span>
+      <span className="text-sm text-ice">{value}</span>
     </div>
   );
 }
@@ -53,20 +53,25 @@ export function MemoryPanel() {
   };
 
   return (
-    <aside aria-label="What GameLoop remembers" className="flex flex-col gap-3 rounded-lg border border-black/10 p-3">
+    <aside
+      aria-label="What GameLoop remembers"
+      className="flex flex-col gap-2 rounded-card border border-steel bg-boards p-4"
+    >
       <div className="flex items-center justify-between gap-2">
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-black/60">What GameLoop remembers</h2>
+        <h2 className="font-display text-base font-semibold uppercase tracking-[0.06em] text-ice">
+          What GameLoop remembers
+        </h2>
         <button
           type="button"
           onClick={clear}
           disabled={!session}
-          className="rounded border border-black/20 px-2 py-1 text-xs font-semibold disabled:cursor-not-allowed disabled:opacity-50"
+          className="shrink-0 rounded-well border border-steel-bright px-2 py-1 text-xs font-semibold text-frost motion-safe:transition-colors hover:bg-glass hover:text-ice disabled:cursor-not-allowed disabled:opacity-40"
         >
           Clear Memory
         </button>
       </div>
       {!session ? (
-        <p className="text-sm text-black/50">Nothing saved yet.</p>
+        <p className="text-sm text-frost">Nothing saved yet.</p>
       ) : (
         <div>
           <Row

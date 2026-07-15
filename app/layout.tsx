@@ -7,6 +7,9 @@ import "./globals.css";
 const bigShoulders = Big_Shoulders({
   variable: "--font-big-shoulders",
   subsets: ["latin"],
+  // Next has no metric-override table for Big Shoulders, so give it an
+  // explicit narrow fallback to keep layout shift small before swap.
+  fallback: ["Arial Narrow", "Arial", "sans-serif"],
 });
 
 const barlow = Barlow({

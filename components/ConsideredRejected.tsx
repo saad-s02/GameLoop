@@ -30,7 +30,10 @@ function buildDifferentiators(selected: ItineraryPlan, runnerUp: ItineraryPlan):
 export function ConsideredRejected({ selected, runnerUp }: { selected: ItineraryPlan; runnerUp?: ItineraryPlan }) {
   if (!runnerUp) {
     return (
-      <section aria-label="Considered and rejected" className="rounded-lg border border-black/10 p-3 text-sm text-black/60">
+      <section
+        aria-label="Considered and rejected"
+        className="rounded-card border border-steel bg-boards p-4 text-sm text-frost"
+      >
         No distinct runner-up plan was evaluated for this request.
       </section>
     );
@@ -39,26 +42,34 @@ export function ConsideredRejected({ selected, runnerUp }: { selected: Itinerary
   const deltas = buildDifferentiators(selected, runnerUp);
 
   return (
-    <section aria-label="Considered and rejected" className="rounded-lg border border-black/10 p-3">
-      <h2 className="text-sm font-semibold uppercase tracking-wide text-black/60">Considered and rejected</h2>
-      <p className="mt-1 text-sm">
-        Runner-up: <span className="font-mono">{runnerUp.candidateId}</span>
+    <section aria-label="Considered and rejected" className="rounded-card border border-steel bg-boards p-4">
+      <h2 className="font-display text-base font-semibold uppercase tracking-[0.06em] text-frost">
+        Considered and rejected
+      </h2>
+      <p className="mt-1.5 text-sm text-ice">
+        Runner-up: <span className="font-mono text-[13px] text-blue-glow">{runnerUp.candidateId}</span>
       </p>
-      <dl className="mt-2 grid grid-cols-3 gap-2 text-sm">
+      <dl className="mt-3 grid grid-cols-3 gap-2 text-sm">
         <div>
-          <dt className="text-xs uppercase tracking-wide text-black/50">Score</dt>
-          <dd>{runnerUp.score.toFixed(1)} <span className="text-black/40">(selected {selected.score.toFixed(1)})</span></dd>
+          <dt className="font-mono text-[10.5px] uppercase tracking-[0.08em] text-frost/80">Score</dt>
+          <dd className="mt-0.5 font-mono text-[13px] tabular-nums text-ice">
+            {runnerUp.score.toFixed(1)} <span className="text-frost/60">(selected {selected.score.toFixed(1)})</span>
+          </dd>
         </div>
         <div>
-          <dt className="text-xs uppercase tracking-wide text-black/50">Walking</dt>
-          <dd>{runnerUp.walkingMinutes} min <span className="text-black/40">(selected {selected.walkingMinutes} min)</span></dd>
+          <dt className="font-mono text-[10.5px] uppercase tracking-[0.08em] text-frost/80">Walking</dt>
+          <dd className="mt-0.5 font-mono text-[13px] tabular-nums text-ice">
+            {runnerUp.walkingMinutes} min <span className="text-frost/60">(selected {selected.walkingMinutes} min)</span>
+          </dd>
         </div>
         <div>
-          <dt className="text-xs uppercase tracking-wide text-black/50">Waiting</dt>
-          <dd>{runnerUp.waitMinutes} min <span className="text-black/40">(selected {selected.waitMinutes} min)</span></dd>
+          <dt className="font-mono text-[10.5px] uppercase tracking-[0.08em] text-frost/80">Waiting</dt>
+          <dd className="mt-0.5 font-mono text-[13px] tabular-nums text-ice">
+            {runnerUp.waitMinutes} min <span className="text-frost/60">(selected {selected.waitMinutes} min)</span>
+          </dd>
         </div>
       </dl>
-      <ul className="mt-2 flex flex-col gap-1 text-sm text-black/70">
+      <ul className="mt-3 flex flex-col gap-1 text-sm leading-5 text-frost">
         {deltas.map((d, i) => (
           <li key={i}>{d}</li>
         ))}

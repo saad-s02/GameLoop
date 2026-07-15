@@ -1,9 +1,9 @@
 import { Constraint, ConstraintOutcome } from "@/lib/planning/schemas";
 
 const STATUS_STYLE: Record<ConstraintOutcome["status"], string> = {
-  satisfied: "bg-emerald-50 text-emerald-900 border-emerald-300",
-  traded: "bg-amber-50 text-amber-900 border-amber-300",
-  violated: "bg-rose-50 text-rose-900 border-rose-300",
+  satisfied: "border-ice-green/40 bg-ice-green/10 text-ice-green",
+  traded: "border-sodium/40 bg-sodium/10 text-sodium",
+  violated: "border-red-lamp/40 bg-red-lamp/10 text-red-lamp",
 };
 const STATUS_ICON: Record<ConstraintOutcome["status"], string> = {
   satisfied: "✓", // check mark

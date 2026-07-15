@@ -193,11 +193,11 @@ function PlanPageInner() {
   const isReplanning = status === "streaming" && lastPlanResult !== null;
 
   return (
-    <main className="mx-auto flex max-w-5xl flex-col gap-8 p-6 md:flex-row md:items-start">
-      <div className="flex flex-1 flex-col gap-6">
-        <div>
-          <h1 className="text-2xl font-bold">Plan My Night</h1>
-          <p className="text-sm opacity-70">Tell us about your group in your own words, or start from an example.</p>
+    <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-8 px-6 py-10 md:flex-row md:items-start">
+      <div className="flex min-w-0 flex-1 flex-col gap-7">
+        <div className="flex flex-col gap-1">
+          <h1 className="font-display text-3xl font-bold uppercase tracking-wide text-ice">Plan My Night</h1>
+          <p className="text-sm text-frost">Tell us about your group in your own words, or start from an example.</p>
         </div>
 
         <form onSubmit={onSubmit} className="flex flex-col gap-3">
@@ -211,8 +211,10 @@ function PlanPageInner() {
                   setText(chip.text);
                   setChipId(chip.id);
                 }}
-                className={`rounded-full border px-3 py-1.5 text-sm font-medium ${
-                  chipId === chip.id ? "border-black bg-black text-white" : "border-black/20"
+                className={`rounded-full border px-3 py-1.5 text-sm font-medium motion-safe:transition-colors ${
+                  chipId === chip.id
+                    ? "border-blue-glow/60 bg-glass text-ice"
+                    : "border-steel text-frost hover:border-steel-bright hover:text-ice"
                 }`}
               >
                 {chipId === chip.id ? "✓ " : ""}
@@ -220,7 +222,7 @@ function PlanPageInner() {
               </button>
             ))}
           </div>
-          <label className="flex flex-col gap-1 text-sm font-medium">
+          <label className="flex flex-col gap-1.5 text-sm font-medium text-ice">
             Your request
             <textarea
               value={text}
@@ -231,15 +233,15 @@ function PlanPageInner() {
               maxLength={INPUT_CHAR_CAP}
               rows={4}
               required
-              className="rounded border border-black/20 px-3 py-2 text-base"
+              className="rounded-card border border-steel bg-well/70 px-3 py-2.5 text-[15px] leading-6 text-ice placeholder:text-frost/50 motion-safe:transition-colors focus:border-steel-bright"
               placeholder="e.g. We're a family of four, need gluten-free food, and want to be seated before warmups."
             />
           </label>
-          <p className="text-xs text-black/50">{text.length} / {INPUT_CHAR_CAP}</p>
+          <p className="font-mono text-xs tabular-nums text-frost/70">{text.length} / {INPUT_CHAR_CAP}</p>
           <button
             type="submit"
             disabled={status === "streaming" || !text.trim()}
-            className="self-start rounded bg-black px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
+            className="self-start rounded-well bg-ice px-4 py-2 text-sm font-semibold text-bowl motion-safe:transition-colors hover:bg-ice/90 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {status === "streaming" && !lastPlanResult ? "Planning…" : "Plan my night"}
           </button>
@@ -266,15 +268,15 @@ function PlanPageInner() {
             ref={infeasibleRef}
             tabIndex={-1}
             aria-label="Infeasible"
-            className="rounded-lg border border-rose-300 bg-rose-50 p-3 text-sm text-rose-900"
+            className="rounded-card border border-red-lamp/40 bg-red-lamp/10 p-4 text-sm text-ice"
           >
-            <p className="font-semibold">This request cannot be satisfied as stated:</p>
-            <ul className="list-disc pl-5">
+            <p className="font-semibold text-red-lamp">This request cannot be satisfied as stated:</p>
+            <ul className="mt-1 list-disc pl-5 leading-6">
               {lastPlanResult.violations.map((v, i) => (
                 <li key={i}>{v}</li>
               ))}
             </ul>
-            {lastPlanResult.bestAlternative && <p className="mt-2">Closest feasible alternative shown below.</p>}
+            {lastPlanResult.bestAlternative && <p className="mt-2 text-frost">Closest feasible alternative shown below.</p>}
           </section>
         )}
 
@@ -285,6 +287,9 @@ function PlanPageInner() {
             aria-busy={isReplanning}
             className={isReplanning ? "opacity-50 motion-safe:transition-opacity motion-safe:duration-300" : ""}
           >
+            <h2 className="mb-3 font-display text-lg font-semibold uppercase tracking-[0.06em] text-ice">
+              Tonight&apos;s plan
+            </h2>
             <ConstraintsStrip outcomes={lastPlanResult.plan.constraintOutcomes} />
             <ItineraryTimeline
               plan={lastPlanResult.plan}
@@ -312,7 +317,7 @@ function PlanPageInner() {
         )}
       </div>
 
-      <aside className="flex w-full flex-col gap-4 md:w-72">
+      <aside className="flex w-full flex-col gap-4 md:sticky md:top-20 md:w-80">
         <MemoryPanel />
         <ResetControl />
       </aside>
