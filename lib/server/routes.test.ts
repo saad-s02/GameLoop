@@ -181,6 +181,74 @@ describe("POST /api/plan", () => {
     const res = await planPOST(req);
     expect(res.status).toBe(413);
   });
+
+  const VAGUE_BASE = [
+    { type: "dietary", value: { need: "gluten-free", severity: "intolerance" }, priority: "hard", sourceText: "one gluten-free" },
+    { type: "arrival", value: { statedClock: "6:18", normalizedClock: "18:18", mode: "train" }, priority: "hard", sourceText: "train at 6:18" },
+    { type: "seated_by", value: { milestone: "warmups" }, priority: "high", sourceText: "seated for warmups" },
+  ];
+  const PARTY_ANSWER = { type: "party", value: { adults: 1, children: 2 }, priority: "hard", sourceText: "Answered inline: 1 adult, 2 children" };
+
+  it("demo answerConstraints merge plans without a chip and without any model call", async () => {
+    const req = jsonRequest("http://localhost/api/plan", {
+      mode: "plan", text: "refinement", demo: true,
+      refinement: {
+        baseConstraints: VAGUE_BASE, answerConstraints: [PARTY_ANSWER],
+        pendingClarifications: [{ field: "party", question: "How many adults and how many children are going?" }],
+      },
+    }, { cookie: accessCookieHeader() });
+    const envelopes = await drainEnvelopes(await planPOST(req));
+    const types = envelopes.map((e) => e.event.type);
+    expect(types).toContain("plan_result");
+    expect(types[types.length - 1]).toBe("done");
+    const parsed = envelopes.find((e) => e.event.type === "request_parsed")!.event;
+    if (parsed.type === "request_parsed") {
+      expect(parsed.constraints).toHaveLength(4);
+      expect(parsed.clarificationsNeeded).toEqual([]);
+    }
+    const adjusted = envelopes.filter((e) => e.event.type === "constraint_adjusted").map((e) => e.event);
+    expect(adjusted.some((a) => a.type === "constraint_adjusted" && a.field === "party" && a.resolved.includes("1 adult"))).toBe(true);
+    // food_timing assumption fires: gluten-free forces a stand and no food_preference was stated
+    expect(types).toContain("assumption_made");
+  });
+
+  it("demo followUpText is refused with scoped copy and no model call", async () => {
+    const req = jsonRequest("http://localhost/api/plan", {
+      mode: "plan", text: "refinement", demo: true,
+      refinement: { baseConstraints: VAGUE_BASE, followUpText: "cheaper food please" },
+    }, { cookie: accessCookieHeader() });
+    const envelopes = await drainEnvelopes(await planPOST(req));
+    const types = envelopes.map((e) => e.event.type);
+    expect(types).toEqual(["decision", "decision", "done"]);
+    const scoped = envelopes[1]!.event;
+    if (scoped.type === "decision") expect(scoped.summary).toContain("quick chips");
+  });
+
+  it("refinement with prior produces a diff against the true prior plan", async () => {
+    // First: the family demo plan (its request has arrival 18:18 which snaps to 18:15).
+    const first = await drainEnvelopes(await planPOST(jsonRequest("http://localhost/api/plan",
+      { mode: "plan", text: "chip", chipId: "family", demo: true }, { cookie: accessCookieHeader() })));
+    const firstResult = first.find((e) => e.event.type === "plan_result")!.event;
+    if (firstResult.type !== "plan_result" || !firstResult.result.plan) throw new Error("no first plan");
+    const familyConstraints = (first.find((e) => e.event.type === "request_parsed")!.event as { constraints: unknown[] }).constraints;
+
+    const arrival1842 = { type: "arrival", value: { statedClock: "6:42", normalizedClock: "18:42", mode: "train" }, priority: "hard", sourceText: "actually 6:42" };
+    const req = jsonRequest("http://localhost/api/plan", {
+      mode: "plan", text: "refinement", demo: true,
+      refinement: {
+        baseConstraints: familyConstraints, answerConstraints: [arrival1842],
+        prior: { planId: firstResult.result.plan.planId, constraints: familyConstraints, disruptions: [] },
+      },
+    }, { cookie: accessCookieHeader() });
+    const envelopes = await drainEnvelopes(await planPOST(req));
+    const resultEvent = envelopes.find((e) => e.event.type === "plan_result")!.event;
+    if (resultEvent.type === "plan_result") {
+      expect(resultEvent.result.priorPlanId).toBe(firstResult.result.plan.planId);
+      expect(resultEvent.result.diff).toBeDefined();
+      const gone = [...resultEvent.result.diff!.invalidatedStepIds, ...resultEvent.result.diff!.replacedSteps.map((r) => r.oldStepId)];
+      expect(gone.some((id) => id.startsWith("transit:"))).toBe(true);
+    }
+  });
 });
 
 describe("POST /api/relive", () => {
