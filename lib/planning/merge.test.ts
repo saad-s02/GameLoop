@@ -61,6 +61,26 @@ describe("mergeConstraints", () => {
     expect(dropped[0]!.priority).toBe("low");
     expect(merged.some((c) => c.type === "dietary" && c.value.need === "halal")).toBe(true);
   });
+
+  it("all-hard overflow is left alone for Zod to reject downstream", () => {
+    const needs = ["gluten-free", "vegetarian", "vegan", "nut-free", "dairy-free", "halal"] as const;
+    const base: Constraint[] = [
+      ...needs.map((n): Constraint => ({ type: "dietary", value: { need: n, severity: "preference" }, priority: "hard", sourceText: n })),
+      { type: "party", value: { adults: 1, children: 2 }, priority: "hard", sourceText: "1 adult, 2 children" },
+      { type: "arrival", value: { statedClock: "6:18", normalizedClock: "18:18", mode: "train" }, priority: "hard", sourceText: "arrives at 6:18" },
+      { type: "seated_by", value: { milestone: "warmups" }, priority: "hard", sourceText: "warmups" },
+      { type: "budget", value: { maxTotalCad: 80 }, priority: "hard", sourceText: "under 80" },
+      { type: "accessibility", value: { need: "step-free" }, priority: "hard", sourceText: "step free please" },
+      { type: "accessibility", value: { need: "elevator" }, priority: "hard", sourceText: "elevator please" },
+    ];
+    expect(base).toHaveLength(12);
+    const { merged, changes, dropped } = mergeConstraints(base, [
+      { type: "accessibility", value: { need: "accessible-seating" }, priority: "hard", sourceText: "accessible seating" },
+    ]);
+    expect(merged).toHaveLength(13);
+    expect(dropped).toEqual([]);
+    expect(changes[0]!.op).toBe("added");
+  });
 });
 
 describe("summarizeConstraintValue", () => {
@@ -69,5 +89,11 @@ describe("summarizeConstraintValue", () => {
     expect(summarizeConstraintValue(party)).toBe("1 adult, 2 children");
     expect(summarizeConstraintValue(halal)).toBe("halal");
     expect(summarizeConstraintValue(access)).toBe("step free");
+    expect(summarizeConstraintValue({ type: "seated_by", value: { milestone: "warmups" }, priority: "high", sourceText: "warmups" })).toBe("warmups");
+    expect(summarizeConstraintValue({ type: "seated_by", value: { milestone: "puck_drop" }, priority: "high", sourceText: "puck drop" })).toBe("puck drop");
+    expect(summarizeConstraintValue({ type: "budget", value: { maxTotalCad: 80 }, priority: "high", sourceText: "under 80" })).toBe("$80 max");
+    expect(summarizeConstraintValue({ type: "noise", value: { preference: "quieter-preferred" }, priority: "low", sourceText: "quiet" })).toBe("quieter");
+    expect(summarizeConstraintValue({ type: "noise", value: { preference: "no-preference" }, priority: "low", sourceText: "no preference" })).toBe("no preference");
+    expect(summarizeConstraintValue({ type: "food_preference", value: { preference: "many-choices" }, priority: "low", sourceText: "many choices" })).toBe("many choices");
   });
 });
