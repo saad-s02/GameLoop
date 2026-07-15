@@ -1,4 +1,4 @@
-import { PlanResult } from "./schemas";
+import { PlanResult, ShowcaseGame } from "./schemas";
 
 // Deterministic text, used as the Decision Log decision event AND the narrative fallback.
 export function decisionSummary(result: PlanResult): string {
@@ -11,6 +11,12 @@ export function decisionSummary(result: PlanResult): string {
     (traded.length ? `; traded: ${traded.join(", ")}` : "") +
     "."
   );
+}
+
+export function redirectSummary(requested: string, game: ShowcaseGame): string {
+  const away = `${game.awayTeam.placeName} ${game.awayTeam.commonName}`;
+  const home = `${game.homeTeam.placeName} ${game.homeTeam.commonName}`;
+  return `You asked about ${requested}. Tonight Harbourview Arena hosts hockey: ${home} at ${away}, puck drop ${game.puckDropAt}. Planning your night around it.`;
 }
 
 export function fallbackNarrative(result: PlanResult): string {

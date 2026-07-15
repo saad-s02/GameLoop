@@ -5,11 +5,12 @@ import { createTraceStream, SSE_HEADERS } from "@/lib/trace/sse";
 import { verifyAccess } from "@/lib/server/access";
 import { evaluate } from "@/lib/planning/evaluate";
 import { loadPlannerInput } from "@/lib/planning/adapters";
-import { decisionSummary, fallbackNarrative } from "@/lib/planning/summarize";
+import { decisionSummary, fallbackNarrative, redirectSummary } from "@/lib/planning/summarize";
 import { routeLabel } from "@/lib/planning/candidates";
 import { extractPlanRequest, extractRefinement, explainPlanStream } from "@/lib/ai/outputs";
 import { buildExplainInput } from "@/lib/server/explainInput";
 import { mergeConstraints, summarizeConstraintValue } from "@/lib/planning/merge";
+import { loadShowcaseGame } from "@/lib/data/load";
 import demoExtractions from "@/lib/data/demo-extractions.json";
 
 const BODY_CHAR_CAP = 10_000;
@@ -145,6 +146,10 @@ export async function POST(req: NextRequest) {
         emit({ type: "done" });
         close();
         return;
+      }
+
+      if (request.eventMismatch) {
+        emit({ type: "decision", summary: redirectSummary(request.eventMismatch.requested, loadShowcaseGame("2025030413")) });
       }
 
       for (const c of nonBlocking) {
