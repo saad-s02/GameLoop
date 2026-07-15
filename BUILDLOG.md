@@ -87,3 +87,9 @@ An empirical contrast probe (canvas-resolved computed styles, all pages walked) 
 Restyle-introduced regression caught and fixed: the new sticky header could cover programmatic focus targets (plan results, infeasible section, memory card); scroll-mt-20 added to all four. Also fixed: an unguarded hover transform on the home cards (reduced-motion guardrail), and the experimental relive form reusing the dashed border DESIGN.md reserves exclusively for SIMULATED provenance.
 
 Pre-existing issues found by the keyboard audit, NOT fixed overnight (interaction behavior, not styling; for Saad to decide): (1) buttons that disable themselves on the interaction that activates them (plan submit, disruption buttons, relive buttons, enter submit) drop keyboard focus to body during streaming; predates the restyle. (2) SourceBadge supplementary context on the memory card is tooltip-only (title attribute), also pre-existing.
+
+## 2026-07-15 Styled build deployed, freeze replaced
+
+Saad approved lifting the freeze (merge and deploy instruction, 01:30). Protocol followed: style/overnight-pass fast-forwarded into master (6 commits, tip 35027df), conscious re-verify on master (155/155 vitest, clean build, local smoke 1/1), production deploy gameloop-ocv8skoss (dpl_54gtxThG6Uhc7yrBEKXDu3WeycYP) behind the frozen alias gameloop-gilt.vercel.app. Deployed smoke with the real access code passed in 14.6 s. Warmup re-triggered with an authenticated cookie: extraction grammar 1,852 ms, recap grammar 6,502 ms, consistent with the 2026-07-14 profile; grammar cache is roughly 24 h, so the Thursday venue-network warmup 15 minutes before the demo stays in the runbook.
+
+DEPLOY FREEZE re-declared as of this entry on the styled build. Any further overnight work happens on a new branch with no pushes to master and no deploys without Saad.
