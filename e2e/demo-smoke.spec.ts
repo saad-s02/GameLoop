@@ -14,7 +14,7 @@ test.setTimeout(60_000);
 test("scripted demo sequence: access, plan, disruption, relive, reset", async ({ page }) => {
   // ---- 1. Access flow ----
   await page.goto("/enter");
-  await page.getByLabel("Access code").fill("letmein");
+  await page.getByLabel("Access code").fill(process.env.SMOKE_ACCESS_CODE ?? "letmein");
   await page.getByRole("button", { name: "Enter" }).click();
   await page.waitForURL(/\/plan/);
 
