@@ -63,43 +63,49 @@ function RelivePageInner() {
   };
 
   return (
-    <main className="mx-auto flex max-w-3xl flex-col gap-8 p-6">
-      <div>
-        <h1 className="text-2xl font-bold">Relive the Game</h1>
-        <p className="text-sm opacity-70">Pick a showcase game and get a Personal Game Memory built from the real play-by-play.</p>
+    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 px-6 py-10">
+      <div className="flex flex-col gap-1">
+        <h1 className="font-display text-3xl font-bold uppercase tracking-wide text-ice">Relive the Game</h1>
+        <p className="text-sm text-frost">Pick a showcase game and get a Personal Game Memory built from the real play-by-play.</p>
       </div>
 
       <section aria-label="Showcase games" className="flex flex-col gap-3">
         {games.map((g) => (
-          <div key={g.gameId} className="flex flex-col gap-1 rounded-lg border border-black/10 p-4">
+          <div key={g.gameId} className="flex flex-col gap-2 rounded-card border border-steel bg-boards p-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <span className="text-sm font-semibold">{g.label}</span>
+              <span className="text-[15px] font-semibold text-ice">{g.label}</span>
               <button
                 type="button"
                 disabled={status === "streaming"}
                 onClick={() => submitGame(g.gameId, false)}
-                className="rounded bg-black px-3 py-1.5 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-well bg-ice px-3 py-1.5 text-sm font-semibold text-bowl motion-safe:transition-colors hover:bg-ice/90 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Relive this game
               </button>
             </div>
-            <p className="text-xs text-black/50">{COPY.fiction}</p>
+            <p className="text-xs leading-5 text-frost">{COPY.fiction}</p>
           </div>
         ))}
       </section>
 
       {ENABLE_LIVE_GAME && (
-        <form onSubmit={onLiveSubmit} className="flex flex-col gap-2 rounded-lg border border-dashed border-black/20 p-4">
-          <span className="text-xs font-semibold uppercase tracking-wide text-black/50">Experimental: live game lookup</span>
+        <form onSubmit={onLiveSubmit} className="flex flex-col gap-2 rounded-card border border-dashed border-frost/40 p-4">
+          <span className="font-mono text-[11px] font-medium uppercase tracking-[0.08em] text-frost">
+            Experimental: live game lookup
+          </span>
           <div className="flex gap-2">
             <input
               aria-label="NHL game id"
               value={liveGameId}
               onChange={(e) => setLiveGameId(e.target.value)}
               placeholder="NHL game id"
-              className="flex-1 rounded border border-black/20 px-3 py-2 text-sm"
+              className="flex-1 rounded-well border border-steel bg-well/70 px-3 py-2 text-sm text-ice placeholder:text-frost/50"
             />
-            <button type="submit" disabled={status === "streaming"} className="rounded border border-black/20 px-3 py-2 text-sm font-medium">
+            <button
+              type="submit"
+              disabled={status === "streaming"}
+              className="rounded-well border border-steel-bright px-3 py-2 text-sm font-medium text-ice motion-safe:transition-colors hover:bg-glass disabled:cursor-not-allowed disabled:opacity-50"
+            >
               Fetch
             </button>
           </div>
@@ -110,7 +116,7 @@ function RelivePageInner() {
 
       {memory && pkg && (
         <div ref={resultsRef} tabIndex={-1} className="flex flex-col gap-2">
-          <p className="text-xs font-medium uppercase tracking-wide text-black/50">
+          <p className="font-mono text-[11px] font-medium uppercase tracking-[0.12em] text-frost">
             {memory.yourNight
               ? hadSessionAtSubmit
                 ? "Personalized using your saved plan"

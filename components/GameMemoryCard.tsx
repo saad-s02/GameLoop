@@ -41,53 +41,74 @@ export function GameMemoryCard({ memory, pkg }: { memory: GameMemory; pkg: Momen
   };
 
   return (
-    <article className="flex flex-col gap-3 rounded-lg border border-black/10 p-4">
-      <header className="flex flex-col gap-1">
-        <h2 className="text-lg font-bold">{memory.headline}</h2>
-        <p className="flex items-center gap-2 text-sm text-black/60">
-          <span aria-hidden="true">&#10003;</span>
-          <span>Verified against the game record: {memory.scoreLine}</span>
+    <article className="flex flex-col gap-4 rounded-sheet border border-steel bg-boards p-5 shadow-sheet">
+      <header className="flex flex-col gap-1.5">
+        <h2 className="text-xl font-semibold leading-7 text-ice">{memory.headline}</h2>
+        <p className="flex items-center gap-2 text-sm text-frost">
+          <span aria-hidden="true" className="text-ice-green">&#10003;</span>
+          <span>
+            Verified against the game record:{" "}
+            <span className="font-mono text-[13px] tabular-nums text-ice">{memory.scoreLine}</span>
+          </span>
         </p>
       </header>
 
-      <ol className="flex flex-col gap-2">
+      <ol className="flex flex-col gap-2.5">
         {rows.map((row) => (
-          <li key={row.momentId} className="rounded-lg border border-black/10 p-3">
-            <div className="flex flex-wrap items-baseline gap-2">
-              <span className="text-xs font-semibold uppercase tracking-wide text-black/50">#{row.rank}</span>
-              <span className="text-sm font-semibold">{row.headline}</span>
+          <li key={row.momentId} className="grid grid-cols-[3rem_1fr] gap-x-3 rounded-card border border-steel bg-glass/50 p-3.5">
+            <span
+              aria-hidden="true"
+              className={`memory-rank row-span-2 self-start text-right font-display text-4xl font-bold leading-none ${
+                row.rank === 1 ? "text-sodium" : "text-frost/70"
+              }`}
+            >
+              {row.rank === Number.MAX_SAFE_INTEGER ? "" : row.rank}
+            </span>
+            <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+              <span className="sr-only">Rank {row.rank === Number.MAX_SAFE_INTEGER ? "unknown" : row.rank}.</span>
+              <span className="text-[15px] font-semibold leading-5 text-ice">{row.headline}</span>
               {row.clock && (
-                <span className="font-mono text-xs text-black/50">
+                <span className="font-mono text-xs tabular-nums text-frost">
                   {row.periodLabel} {row.clock}
                 </span>
               )}
             </div>
-            <p className="mt-1 text-sm">{row.text}</p>
+            <p className="mt-1 text-sm leading-6 text-ice/90">{row.text}</p>
           </li>
         ))}
       </ol>
 
       {memory.yourNight && (
-        <div className="rounded-lg border border-black/10 p-3">
-          <div className="mb-1 flex items-center gap-2">
-            <span className="text-xs font-semibold uppercase tracking-wide text-black/50">Your night</span>
+        <div className="rounded-card border border-steel bg-well/60 p-3.5">
+          <div className="mb-1.5 flex flex-wrap items-center gap-2">
+            <span className="font-display text-sm font-semibold uppercase tracking-[0.08em] text-frost">
+              Your night
+            </span>
             <SourceBadge source="snapshot" title="Built from the verified game record" />
             <SourceBadge source="simulated" title="Seat zone is fictional venue detail" />
           </div>
-          <p className="text-sm">{memory.yourNight}</p>
+          <p className="text-sm leading-6 text-ice/90">{memory.yourNight}</p>
         </div>
       )}
 
-      <p className="text-sm text-black/70">{memory.reflection}</p>
+      <p className="text-sm leading-6 text-frost">{memory.reflection}</p>
 
-      <div className="flex flex-col gap-2 rounded-lg border border-black/10 bg-black/[0.02] p-3">
-        <p className="text-sm">{memory.copyText}</p>
+      <div className="flex flex-col gap-2.5 rounded-card border border-steel bg-well/60 p-3.5">
+        <p className="text-sm leading-6 text-ice/90">{memory.copyText}</p>
         <div className="flex gap-2">
-          <button type="button" onClick={copy} className="rounded border border-black/20 px-3 py-1.5 text-sm font-medium">
+          <button
+            type="button"
+            onClick={copy}
+            className="rounded-well border border-steel-bright px-3 py-1.5 text-sm font-medium text-ice motion-safe:transition-colors hover:bg-glass"
+          >
             {copyState === "copied" ? "Copied" : "Copy"}
           </button>
           {canShare && (
-            <button type="button" onClick={share} className="rounded border border-black/20 px-3 py-1.5 text-sm font-medium">
+            <button
+              type="button"
+              onClick={share}
+              className="rounded-well border border-steel-bright px-3 py-1.5 text-sm font-medium text-ice motion-safe:transition-colors hover:bg-glass"
+            >
               Share
             </button>
           )}

@@ -28,14 +28,19 @@ export default function EnterPage() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-6 p-8">
-      <div className="flex w-full max-w-sm flex-col gap-4">
-        <div className="flex flex-col gap-1 text-center">
-          <h1 className="text-2xl font-bold">Enter access code</h1>
-          <p className="text-sm opacity-70">This demo is private. Enter the code you were given.</p>
+    <main className="flex flex-1 flex-col items-center justify-center gap-6 px-8 py-16">
+      <div className="flex w-full max-w-sm flex-col gap-5 rounded-sheet border border-steel bg-boards p-6 shadow-rink">
+        <div className="flex flex-col gap-1.5 text-center">
+          <p aria-hidden="true" className="font-mono text-[11px] font-medium uppercase tracking-[0.2em] text-frost">
+            Gate check
+          </p>
+          <h1 className="font-display text-2xl font-bold uppercase tracking-wide text-ice">
+            Enter access code
+          </h1>
+          <p className="text-sm text-frost">This demo is private. Enter the code you were given.</p>
         </div>
         <form onSubmit={submit} className="flex flex-col gap-3">
-          <label className="flex flex-col gap-1 text-sm font-medium">
+          <label className="flex flex-col gap-1.5 text-sm font-medium text-ice">
             Access code
             <input
               type="password"
@@ -44,17 +49,17 @@ export default function EnterPage() {
               maxLength={100}
               required
               autoFocus
-              className="rounded border border-black/20 px-3 py-2 text-base"
+              className="rounded-well border border-steel bg-well/70 px-3 py-2 text-base text-ice motion-safe:transition-colors focus:border-steel-bright"
             />
           </label>
           <button
             type="submit"
             disabled={status === "checking" || code.length === 0}
-            className="rounded bg-black px-4 py-2 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-well bg-ice px-4 py-2 text-sm font-semibold text-bowl motion-safe:transition-colors hover:bg-ice/90 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {status === "checking" ? "Checking…" : "Enter"}
           </button>
-          <p aria-live="polite" className="text-sm text-rose-700">
+          <p aria-live="polite" className="text-sm text-red-lamp">
             {status === "invalid" && "That code was not recognized. Please try again."}
             {status === "error" && "Something went wrong. Please try again."}
           </p>
