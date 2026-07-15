@@ -6,6 +6,7 @@ import { verifyAccess } from "@/lib/server/access";
 import { evaluate } from "@/lib/planning/evaluate";
 import { loadPlannerInput } from "@/lib/planning/adapters";
 import { decisionSummary, fallbackNarrative } from "@/lib/planning/summarize";
+import { routeLabel } from "@/lib/planning/candidates";
 import { extractPlanRequest, explainPlanStream } from "@/lib/ai/outputs";
 import { buildExplainInput } from "@/lib/server/explainInput";
 import demoExtractions from "@/lib/data/demo-extractions.json";
@@ -72,7 +73,9 @@ export async function POST(req: NextRequest) {
         }
       }
 
-      emit({ type: "request_parsed", constraints: request.constraints, clarificationsNeeded: request.clarificationsNeeded });
+      const blocking = request.clarificationsNeeded.filter((c) => c.field === "party");
+      const nonBlocking = request.clarificationsNeeded.filter((c) => c.field !== "party");
+      emit({ type: "request_parsed", constraints: request.constraints, clarificationsNeeded: blocking });
 
       if (request.offTopic) {
         emit({ type: "decision", summary: "This request is outside game-night planning, so GameLoop stops here." });
@@ -80,10 +83,17 @@ export async function POST(req: NextRequest) {
         close();
         return;
       }
-      if (request.clarificationsNeeded.length > 0) {
+
+      for (const c of nonBlocking) {
+        if (c.field === "budget") emit({ type: "decision", summary: "Planning without a budget cap. Add one any time in a follow-up." });
+        if (c.field === "dietary") emit({ type: "decision", summary: "No dietary needs stated. Tell us any time." });
+        // arrival: handled as an explicit assumption after evaluation
+      }
+
+      if (blocking.length > 0) {
         emit({
           type: "decision",
-          summary: `Need clarification before planning: ${request.clarificationsNeeded.map((c) => c.question).join(" ")}`,
+          summary: `Need one answer before planning: ${blocking.map((c) => c.question).join(" ")}`,
         });
         emit({ type: "done" });
         close();
@@ -113,6 +123,28 @@ export async function POST(req: NextRequest) {
           planId: result.bestAlternative.planId,
           score: result.bestAlternative.score,
           violations: result.violations,
+        });
+      }
+
+      const hasArrival = request.constraints.some((c) => c.type === "arrival");
+      const hasFoodPref = request.constraints.some((c) => c.type === "food_preference");
+      if (!hasArrival && result.feasible && result.plan?.transitRouteId && result.plan.transitArrival) {
+        emit({
+          type: "assumption_made",
+          field: "arrival",
+          assumed: `you can take any scheduled train, so GameLoop picked ${routeLabel(result.plan.transitRouteId)} arriving ${result.plan.transitArrival}`,
+          reason: "No arrival time was given. Tell us in a follow-up if you are arriving differently.",
+        });
+      }
+      if (!hasFoodPref && result.feasible && result.plan && result.plan.standIds.length > 0) {
+        emit({
+          type: "assumption_made",
+          field: "food_timing",
+          assumed:
+            result.plan.arrivalStrategy === "pickup-en-route"
+              ? "food gets picked up on the way to your seats"
+              : "food gets picked up after you are seated",
+          reason: "No food timing preference was given. Tell us if you want it the other way.",
         });
       }
 

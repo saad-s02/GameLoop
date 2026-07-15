@@ -114,6 +114,42 @@ describe("POST /api/plan", () => {
     expect(res.status).toBe(401);
   });
 
+  it("vague chip in demo blocks on the party clarification only and does not plan", async () => {
+    const req = jsonRequest("http://localhost/api/plan", { mode: "plan", text: "chip", chipId: "vague", demo: true }, { cookie: accessCookieHeader() });
+    const res = await planPOST(req);
+    const envelopes = await drainEnvelopes(res);
+    const types = envelopes.map((e) => e.event.type);
+    expect(types).toEqual(["decision", "request_parsed", "decision", "done"]);
+    const parsed = envelopes[1]!.event;
+    if (parsed.type === "request_parsed") {
+      expect(parsed.clarificationsNeeded).toHaveLength(1);
+      expect(parsed.clarificationsNeeded[0]!.field).toBe("party");
+    }
+  });
+
+  it("budget chip (no arrival stated) plans with an explicit arrival assumption", async () => {
+    const req = jsonRequest("http://localhost/api/plan", { mode: "plan", text: "chip", chipId: "budget", demo: true }, { cookie: accessCookieHeader() });
+    const envelopes = await drainEnvelopes(await planPOST(req));
+    const types = envelopes.map((e) => e.event.type);
+    expect(types).toContain("assumption_made");
+    expect(types).toContain("plan_result");
+    const assumption = envelopes.find((e) => e.event.type === "assumption_made")!.event;
+    if (assumption.type === "assumption_made") {
+      expect(assumption.field).toBe("arrival");
+      expect(assumption.assumed).toMatch(/Lakeshore (East|West)/);
+      expect(assumption.reason).toContain("No arrival time");
+    }
+    // assumption_made lands after candidates_summary and before plan_result
+    expect(types.indexOf("assumption_made")).toBeGreaterThan(types.indexOf("candidates_summary"));
+    expect(types.indexOf("assumption_made")).toBeLessThan(types.indexOf("plan_result"));
+  });
+
+  it("family chip emits no assumption events (arrival and food preference are stated)", async () => {
+    const req = jsonRequest("http://localhost/api/plan", { mode: "plan", text: "chip", chipId: "family", demo: true }, { cookie: accessCookieHeader() });
+    const envelopes = await drainEnvelopes(await planPOST(req));
+    expect(envelopes.map((e) => e.event.type)).not.toContain("assumption_made");
+  });
+
   it("demo mode without a chip refuses with a scoped decision and never reaches extraction (zero-LLM guarantee)", async () => {
     const req = jsonRequest(
       "http://localhost/api/plan",
