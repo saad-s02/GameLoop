@@ -261,6 +261,47 @@ describe("evaluate: diff", () => {
     expect(result.diff!.preservedStepIds.length).toBeGreaterThan(0);
     expect(result.diff!.invalidatedStepIds.length + result.diff!.replacedSteps.length).toBeGreaterThan(0);
   });
+
+  it("priorSteps diff path matches the legacy priorPlanId recompute for an unchanged request", () => {
+    const base = evaluate(baselineInput());
+    const legacy = evaluate(baselineInput(), {
+      disruptions: ["train-plus-18"],
+      priorPlanId: base.plan!.planId,
+    });
+    const viaSteps = evaluate(baselineInput(), {
+      disruptions: ["train-plus-18"],
+      priorPlanId: base.plan!.planId,
+      priorSteps: base.plan!.steps,
+    });
+    expect(viaSteps.diff).toEqual(legacy.diff);
+    expect(viaSteps.priorPlanId).toBe(base.plan!.planId);
+  });
+
+  it("priorSteps diff against a changed request marks the old transit step invalidated or replaced", () => {
+    function inputWithArrival(normalizedClock: string): PlannerInput {
+      const input = baselineInput();
+      return {
+        ...input,
+        request: {
+          ...input.request,
+          constraints: input.request.constraints.map((c) =>
+            c.type === "arrival" ? { ...c, value: { ...c.value, normalizedClock } } : c,
+          ),
+        },
+      };
+    }
+
+    const before = evaluate(inputWithArrival("18:18"));
+    const after = evaluate(inputWithArrival("18:42"), {
+      priorPlanId: before.plan!.planId,
+      priorSteps: before.plan!.steps,
+    });
+    expect(before.feasible).toBe(true);
+    expect(after.feasible).toBe(true);
+    const oldTransit = before.plan!.steps.find((s) => s.kind === "transit")!.stepId;
+    const gone = [...after.diff!.invalidatedStepIds, ...after.diff!.replacedSteps.map((r) => r.oldStepId)];
+    expect(gone).toContain(oldTransit);
+  });
 });
 
 describe("evaluate: non-hard dietary coverage (rule 5, 'dietary satisfied when covered')", () => {

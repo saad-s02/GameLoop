@@ -40,6 +40,7 @@ export type { PlannerGame, PlannerInput } from "./disruptions";
 export interface EvaluateOptions {
   disruptions?: DisruptionId[];
   priorPlanId?: string;
+  priorSteps?: ItineraryStep[];
 }
 
 function sha256_12(s: string): string {
@@ -513,7 +514,9 @@ export function evaluate(input: PlannerInput, options: EvaluateOptions = {}): Pl
     const runnerUp = sorted.find((c) => c.plan.candidateId !== winner.plan.candidateId);
 
     let diff: PlanDiff | undefined;
-    if (options.priorPlanId) {
+    if (options.priorSteps) {
+      diff = computeDiff(options.priorSteps, winner.plan.steps);
+    } else if (options.priorPlanId) {
       const priorResult = evaluate(input, {});
       diff = computeDiff(priorResult.plan?.steps ?? [], winner.plan.steps);
     }
