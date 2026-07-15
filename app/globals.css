@@ -1,28 +1,78 @@
 @import "tailwindcss";
 
+/*
+  GameLoop design tokens: "The Lit Sheet"
+  Arena at night, dark only. The page is the darkened bowl; the decision
+  log is the one surface lighter than its surroundings, the ice sheet the
+  lights are on. Rink paint is structure, never decoration. Full rationale
+  and contrast table in DESIGN.md.
+*/
+
+@theme {
+  /* Surfaces: the cold-air ladder, darkest to brightest */
+  --color-bowl: #0c121b;
+  --color-boards: #141d29;
+  --color-glass: #1c2735;
+  --color-well: #0a0f16;
+
+  /* Ink */
+  --color-ice: #e9f0f6;
+  --color-frost: #93a3b5;
+
+  /* Rink paint: structural color, never text */
+  --color-line-red: #b33a31;
+  --color-line-blue: #3d6fb0;
+
+  /* Legible accents, AA on boards at small sizes */
+  --color-red-lamp: #f28b82;
+  --color-blue-glow: #7fa9dc;
+  --color-sodium: #e8b34b;
+  --color-ice-green: #6fcf8e;
+
+  /* Lines and edges */
+  --color-steel: rgb(148 170 196 / 0.12);
+  --color-steel-bright: rgb(148 170 196 / 0.3);
+
+  /* Type roles */
+  --font-display: var(--font-big-shoulders);
+  --font-sans: var(--font-barlow);
+  --font-mono: var(--font-plex-mono);
+
+  /* Radius: wells and inputs, cards, the two hero sheets */
+  --radius-well: 6px;
+  --radius-card: 10px;
+  --radius-sheet: 16px;
+
+  /* Shadows: cold, soft, downward only */
+  --shadow-rink: 0 8px 24px rgb(3 8 16 / 0.5);
+  --shadow-sheet: 0 16px 48px rgb(3 8 16 / 0.55);
+
+  /* Motion */
+  --ease-glide: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  color-scheme: dark;
+  /* Motion durations: micro (hover), move (entrances, dims), settle (orchestrated moments) */
+  --t-micro: 120ms;
+  --t-move: 240ms;
+  --t-settle: 480ms;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-bowl);
+  /* The arena lamp field: one warm sodium pool over one cool wash, fixed
+     so it behaves like lighting, not like a card decoration. */
+  background-image:
+    radial-gradient(90rem 42rem at 50% -12rem, rgb(232 179 75 / 0.05), transparent 62%),
+    radial-gradient(64rem 30rem at 50% -8rem, rgb(127 169 220 / 0.04), transparent 55%);
+  background-attachment: fixed;
+  color: var(--color-ice);
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background: rgb(61 111 176 / 0.45);
 }
 
 @layer base {
@@ -31,6 +81,6 @@ body {
   input:focus-visible,
   textarea:focus-visible,
   summary:focus-visible {
-    @apply outline-none ring-2 ring-offset-2 ring-black;
+    @apply outline-none ring-2 ring-offset-2 ring-blue-glow ring-offset-bowl;
   }
 }
