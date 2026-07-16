@@ -10,7 +10,9 @@ export const MODELS = {
 export const THINKING_DISABLED = { anthropic: { thinking: { type: "disabled" as const } } };
 
 export const CALL_LIMITS = {
-  extraction: { maxOutputTokens: 1024, maxRetries: 1 },
+  // temperature 0: schema-constrained classification; reduces run-to-run variance at the
+  // extraction boundary (the eval report's recorded follow-up, applied 2026-07-16).
+  extraction: { maxOutputTokens: 1024, maxRetries: 1, temperature: 0 },
   explanation: { maxOutputTokens: 2048, maxRetries: 1 },
   recap: { maxOutputTokens: 2048, maxRetries: 1 },
 } as const;

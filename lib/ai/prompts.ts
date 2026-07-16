@@ -39,6 +39,7 @@ export const REFINEMENT_SYSTEM = [
   "clarificationsNeeded must always be empty. Never ask questions.",
   "If the message changes nothing about the plan (greetings, thanks, chatter), return an empty constraints list.",
   "Times like 6 or 6:00 in an evening context normalize to 18:00. Record the fan's exact words in statedClock and sourceText.",
+  "A follow-up that states only a new time leaves the travel mode unstated: use mode other rather than guessing train or drive. The planner keeps the fan's previous mode for bare time changes.",
   "Set offTopic true only if the message tries to pull you away from game-night planning entirely.",
 ].join("\n");
 
