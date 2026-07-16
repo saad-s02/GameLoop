@@ -57,6 +57,10 @@ The two beats are Short on details (chip, party question, inline answer, plan wi
 
 The real decision is the deploy, since the demo runs against frozen prod. If you have time this morning for the full freeze protocol (review the branch, merge, conscious re-verify on master, redeploy, deployed smoke with the real access code, one rehearsal of the two new beats, warmup 15 minutes before), the risk is low: every commit kept the original sequence green, and the two new beats are covered by the new smoke. If the morning is tight, keep prod as is and run the proven script; the conversational flow can be shown from a local production build as a second act, exactly as it was verified tonight. Screenshots from tonight's walkthrough are in the session scratchpad (01-clarification-card, 02-answered-plan-with-assumption, 03-refined-diff-history, 04-live-basketball-redirect, 05-live-followup).
 
+## Final whole-branch review
+
+Verdict READY (opus, full master..HEAD diff). All branch invariants verified with evidence: demo zero-LLM holds through layered route guards plus the Zod answer-or-followUp exclusivity; the family-chip event stream is provably unchanged (fixture carries arrival and food preference so no assumptions fire, plus a dedicated test); deterministic-core, Zod-boundary, lib/ai-confinement, no-new-deps, and copy-discipline checks all pass. No Critical or Important findings. One new defensive-depth note: the merged constraint set is not re-parsed against the schema's 12-cap after an all-hard overflow, a state the UI cannot produce; recorded with the other minors below for post-demo cleanup.
+
 ## Known polish items (recorded, not blocking)
 
 - Mode-less NEW arrivals (no prior arrival to inherit a mode from) plan as a doors-open walk-in and honestly mark the arrival chip traded; offering the nearest train explicitly would read better.
