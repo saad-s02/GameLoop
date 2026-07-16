@@ -54,7 +54,8 @@ function EventBody({ event }: { event: TraceEvent }) {
     case "constraint_adjusted":
       return (
         <p className="text-sm leading-6">
-          You said {event.requested}; {event.reason} Resolved to {event.resolved}.
+          {event.requested === "not set" ? "Not set before; " : `You said ${event.requested}; `}
+          {event.reason} Resolved to {event.resolved}.
         </p>
       );
     case "assumption_made":
