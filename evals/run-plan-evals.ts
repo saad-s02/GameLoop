@@ -18,7 +18,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { z } from "zod";
 
-import { extractPlanRequest, explainPlanStream, generateRecap } from "../lib/ai/outputs";
+import { extractPlanRequest, extractRefinement, explainPlanStream, generateRecap } from "../lib/ai/outputs";
+import { mergeConstraints } from "../lib/planning/merge";
 import { EXTRACTION_SYSTEM } from "../lib/ai/prompts";
 import { loadPlannerInput } from "../lib/planning/adapters";
 import { evaluate } from "../lib/planning/evaluate";
@@ -36,7 +37,7 @@ const CASES_PATH = path.join(EVALS_DIR, "plan-cases.json");
 
 const CaseSchema = z.object({
   id: z.string(),
-  kind: z.enum(["extraction", "planner", "memory", "live-timeout", "narrative"]),
+  kind: z.enum(["extraction", "planner", "memory", "live-timeout", "narrative", "refinement"]),
   input: z.unknown(),
   expect: z.record(z.string(), z.unknown()),
 });
@@ -154,6 +155,14 @@ const PLANNER_REQUESTS: Record<string, PlanRequest> = {
     clarificationsNeeded: [],
     offTopic: false,
   },
+  "nutfree-honest": {
+    constraints: [
+      { type: "party", value: { adults: 2, children: 0 }, priority: "hard", sourceText: "two of us" },
+      { type: "dietary", value: { need: "nut-free", severity: "allergy" }, priority: "hard", sourceText: "severe nut allergy" },
+    ],
+    clarificationsNeeded: [],
+    offTopic: false,
+  },
 };
 
 // ---------- extraction cases ----------
@@ -260,6 +269,12 @@ async function runExtractionCase(c: Case): Promise<CaseResult> {
           reasons.push(`expected a clarification for field ${field}`);
         }
       }
+    }
+  }
+
+  if (e.eventMismatchPresent !== undefined) {
+    if (!!request.eventMismatch !== e.eventMismatchPresent) {
+      reasons.push(`eventMismatch expected present=${e.eventMismatchPresent}, got ${JSON.stringify(request.eventMismatch)}`);
     }
   }
 
@@ -453,12 +468,55 @@ async function runNarrativeCase(c: Case): Promise<CaseResult> {
   return reasons.length === 0 ? pass(c, "no forbidden market strings found") : fail(c, reasons);
 }
 
+// ---------- refinement cases (live delta extraction plus deterministic merge) ----------
+
+async function runRefinementCase(c: Case): Promise<CaseResult> {
+  const e = c.expect as ExpectRecord;
+  const reasons: string[] = [];
+  const input = c.input as { followUpText: string };
+
+  let delta: PlanRequest;
+  try {
+    delta = await extractRefinement(input.followUpText);
+  } catch (err) {
+    return fail(c, [`extractRefinement threw: ${errMsg(err)}`]);
+  }
+
+  if (delta.clarificationsNeeded.length !== 0) {
+    reasons.push(`refinement asked ${delta.clarificationsNeeded.length} clarification(s)`);
+  }
+  if (e.constraintTypesOnly) {
+    const allowed = e.constraintTypesOnly as string[];
+    const bad = delta.constraints.filter((x) => !allowed.includes(x.type));
+    if (bad.length > 0) reasons.push(`unexpected constraint types: ${bad.map((x) => x.type).join(",")}`);
+  }
+  if (e.arrivalNormalizedClock) {
+    const arrival = findConstraint(delta.constraints, "arrival");
+    if (!arrival) reasons.push("missing arrival constraint");
+    else if (arrival.value.normalizedClock !== e.arrivalNormalizedClock) {
+      reasons.push(`arrival expected ${e.arrivalNormalizedClock}, got ${arrival.value.normalizedClock}`);
+    }
+  }
+  if (e.noBudgetInvented && findConstraint(delta.constraints, "budget")) {
+    reasons.push("a budget number was invented from a vague phrase");
+  }
+  if (e.mergedFeasible) {
+    const { merged } = mergeConstraints(PRIMARY_CASE_REQUEST.constraints, delta.constraints);
+    const { input: plannerInput } = loadPlannerInput({ constraints: merged, clarificationsNeeded: [], offTopic: false });
+    const result = evaluate(plannerInput);
+    if (!result.feasible) reasons.push("merged request should stay feasible");
+  }
+  return reasons.length === 0 ? pass(c) : fail(c, reasons);
+}
+
 // ---------- dispatch ----------
 
 async function runCase(c: Case): Promise<CaseResult> {
   switch (c.kind) {
     case "extraction":
       return runExtractionCase(c);
+    case "refinement":
+      return runRefinementCase(c);
     case "planner":
       return runPlannerCase(c);
     case "memory":

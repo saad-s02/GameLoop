@@ -186,5 +186,72 @@
       "noisePreference": "quieter-preferred",
       "feasiblePlan": true
     }
+  },
+  {
+    "id": "halal-family",
+    "kind": "extraction",
+    "input": "We're a family of 2 with 2 adults and we eat halal.",
+    "expect": {
+      "description": "party 2 adults 0 children, dietary halal hard, no clarifications about dietary, feasible plan via the halal stand",
+      "partySize": { "adults": 2, "children": 0 },
+      "dietaryIncludes": [{ "need": "halal", "priority": "hard" }],
+      "offTopic": false,
+      "feasiblePlan": true
+    }
+  },
+  {
+    "id": "basketball-redirect",
+    "kind": "extraction",
+    "input": "plan a basketball game for my family of 2 with 2 adults we eat halal",
+    "expect": {
+      "description": "eventMismatch present, NOT offTopic, halal and party still extracted, feasible plan",
+      "eventMismatchPresent": true,
+      "offTopic": false,
+      "partySize": { "adults": 2, "children": 0 },
+      "dietaryIncludes": [{ "need": "halal", "priority": "hard" }],
+      "feasiblePlan": true
+    }
+  },
+  {
+    "id": "nutfree-honest",
+    "kind": "planner",
+    "input": null,
+    "expect": {
+      "description": "hard nut-free is covered by no stand: honest infeasible with violations and a best alternative",
+      "feasible": false,
+      "violationsNonEmpty": true,
+      "bestAlternativePresent": true
+    }
+  },
+  {
+    "id": "refine-arrival",
+    "kind": "refinement",
+    "input": { "followUpText": "actually we arrive at 6" },
+    "expect": {
+      "description": "delta extraction returns only an arrival constraint at 18:00, no clarifications, merged plan stays feasible",
+      "constraintTypesOnly": ["arrival"],
+      "arrivalNormalizedClock": "18:00",
+      "mergedFeasible": true
+    }
+  },
+  {
+    "id": "refine-access",
+    "kind": "refinement",
+    "input": { "followUpText": "add wheelchair access" },
+    "expect": {
+      "description": "delta is accessibility only",
+      "constraintTypesOnly": ["accessibility"],
+      "mergedFeasible": true
+    }
+  },
+  {
+    "id": "refine-vague-cheaper",
+    "kind": "refinement",
+    "input": { "followUpText": "cheaper food please" },
+    "expect": {
+      "description": "no invented budget number; food_preference or nothing are both honest",
+      "constraintTypesOnly": ["food_preference"],
+      "noBudgetInvented": true
+    }
   }
 ]

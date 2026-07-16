@@ -1,0 +1,140 @@
+{
+  "ranAt": "2026-07-15T08:22:39.944Z",
+  "passCount": 14,
+  "total": 19,
+  "results": [
+    {
+      "id": "primary-full",
+      "kind": "extraction",
+      "pass": true,
+      "reason": "all checks passed",
+      "elapsedMs": 8483
+    },
+    {
+      "id": "abbreviated-asks",
+      "kind": "extraction",
+      "pass": false,
+      "reason": "expected a clarification for field party",
+      "elapsedMs": 2613
+    },
+    {
+      "id": "paraphrase-1",
+      "kind": "extraction",
+      "pass": false,
+      "reason": "extractPlanRequest threw: No object generated: could not parse the response.",
+      "elapsedMs": 2198
+    },
+    {
+      "id": "paraphrase-2",
+      "kind": "extraction",
+      "pass": false,
+      "reason": "tier gap check missing constraint(s): higher present=true, lower present=false",
+      "elapsedMs": 2754
+    },
+    {
+      "id": "injection-freetext",
+      "kind": "extraction",
+      "pass": true,
+      "reason": "all checks passed",
+      "elapsedMs": 1659
+    },
+    {
+      "id": "injection-memory",
+      "kind": "memory",
+      "pass": true,
+      "reason": "all checks passed",
+      "elapsedMs": 1
+    },
+    {
+      "id": "impossible-arrival",
+      "kind": "planner",
+      "pass": true,
+      "reason": "all checks passed",
+      "elapsedMs": 3
+    },
+    {
+      "id": "off-topic",
+      "kind": "extraction",
+      "pass": true,
+      "reason": "all checks passed",
+      "elapsedMs": 1392
+    },
+    {
+      "id": "contradictory-budget",
+      "kind": "planner",
+      "pass": true,
+      "reason": "all checks passed",
+      "elapsedMs": 7
+    },
+    {
+      "id": "tampered-memory-expired",
+      "kind": "memory",
+      "pass": true,
+      "reason": "all checks passed",
+      "elapsedMs": 4
+    },
+    {
+      "id": "tool-timeout",
+      "kind": "live-timeout",
+      "pass": true,
+      "reason": "fallback matches app message \"live fetch timed out; snapshot shown\" (1 ms)",
+      "elapsedMs": 2
+    },
+    {
+      "id": "no-real-market-strings",
+      "kind": "narrative",
+      "pass": true,
+      "reason": "no forbidden market strings found",
+      "elapsedMs": 16126
+    },
+    {
+      "id": "budget-chip",
+      "kind": "extraction",
+      "pass": true,
+      "reason": "all checks passed",
+      "elapsedMs": 1728
+    },
+    {
+      "id": "halal-family",
+      "kind": "extraction",
+      "pass": true,
+      "reason": "all checks passed",
+      "elapsedMs": 1773
+    },
+    {
+      "id": "basketball-redirect",
+      "kind": "extraction",
+      "pass": true,
+      "reason": "all checks passed",
+      "elapsedMs": 1459
+    },
+    {
+      "id": "nutfree-honest",
+      "kind": "planner",
+      "pass": false,
+      "reason": "expected bestAlternative to be present",
+      "elapsedMs": 1
+    },
+    {
+      "id": "refine-arrival",
+      "kind": "refinement",
+      "pass": false,
+      "reason": "merged request should stay feasible",
+      "elapsedMs": 1766
+    },
+    {
+      "id": "refine-access",
+      "kind": "refinement",
+      "pass": true,
+      "reason": "all checks passed",
+      "elapsedMs": 1185
+    },
+    {
+      "id": "refine-vague-cheaper",
+      "kind": "refinement",
+      "pass": true,
+      "reason": "all checks passed",
+      "elapsedMs": 1550
+    }
+  ]
+}
