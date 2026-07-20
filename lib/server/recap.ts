@@ -47,7 +47,7 @@ export function buildDeterministicRecap(pkg: MomentPackage, session: SessionCont
   const top = pkg.moments[0]!;
   const headline = `${pkg.scoreLine}: ${top.headline}`.slice(0, 160);
   const momentBlurbs = pkg.moments.map((m) => ({ momentId: m.id, text: m.headline.slice(0, 300) }));
-  const reflection = "A night worth remembering at Harbourview Arena, built from the real play-by-play. (Deterministic summary; the narrative model was unavailable.)".slice(0, 300);
+  const reflection = "A night worth remembering at Harbourview Arena, built from the real play-by-play. (Plain summary, written without the live narrator.)".slice(0, 300);
   const copyText = `${pkg.scoreLine} -- ${pkg.moments.map((m) => m.headline).join(" ")}`.slice(0, 600);
 
   const memory: GameMemory = { headline, scoreLine: pkg.scoreLine, momentBlurbs, reflection, copyText };
@@ -64,7 +64,7 @@ export function buildDeterministicRecap(pkg: MomentPackage, session: SessionCont
       : (session.seatSection ?? "your section");
     memory.yourNight = `Your saved plan had you seated ${where}, with a group of ${
       session.party.adults + session.party.children
-    }. (Deterministic summary; the narrative model was unavailable.)`.slice(0, 400);
+    }. (Plain summary, written without the live narrator.)`.slice(0, 400);
   }
   return GameMemorySchema.parse(memory);
 }

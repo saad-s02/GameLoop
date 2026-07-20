@@ -1,4 +1,21 @@
-import { PlanResult, ShowcaseGame } from "./schemas";
+import { ItineraryPlan, PlanResult, ShowcaseGame } from "./schemas";
+
+/**
+ * Human label for the selected plan: gate name, food stand name(s), arrival clock, and
+ * pickup timing, all read directly off the plan's own steps and fields (the same data
+ * ItineraryTimeline renders). Never the raw candidateId, which is an internal tie-break
+ * key ("gate-1|stand-harbour-fresh|18:15|pickup-after-seating") with no meaning to a
+ * user, and never the raw score. Mirrors runnerUpLabel in components/ConsideredRejected.tsx.
+ */
+function selectionLabel(plan: ItineraryPlan): string {
+  const gateTitle = plan.steps.find((s) => s.kind === "gate")?.title;
+  const foodTitles = plan.steps
+    .filter((s) => s.kind === "food")
+    .map((s) => s.title.replace(/^Pick up food at /, ""));
+  const pickupLabel = plan.arrivalStrategy === "pickup-en-route" ? "food pickup en route" : "food pickup after seating";
+  const parts = [gateTitle, foodTitles.join(" and ") || undefined, plan.transitArrival ? `arriving ${plan.transitArrival}` : undefined, pickupLabel];
+  return parts.filter((p): p is string => Boolean(p)).join(", ");
+}
 
 // Deterministic text, used as the Decision Log decision event AND the narrative fallback.
 export function decisionSummary(result: PlanResult): string {
@@ -6,7 +23,7 @@ export function decisionSummary(result: PlanResult): string {
   const p = result.plan!;
   const traded = p.constraintOutcomes.filter((o) => o.status === "traded").map((o) => o.constraint.type);
   return (
-    `Selected ${p.candidateId} (score ${p.score.toFixed(1)}): seated ${p.seatedAtMinutes <= -50 ? "before warmups" : "after warmups"}, ` +
+    `Selected ${selectionLabel(p)}: seated ${p.seatedAtMinutes <= -50 ? "before warmups" : "after warmups"}, ` +
     `${p.walkingMinutes} min walking, ${p.waitMinutes} min waiting` +
     (traded.length ? `; traded: ${traded.join(", ")}` : "") +
     "."

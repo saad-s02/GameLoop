@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { loadShowcaseGame } from "../data/load";
-import { fallbackNarrative, redirectSummary } from "./summarize";
+import { decisionSummary, fallbackNarrative, redirectSummary } from "./summarize";
 import { PlanResult } from "./schemas";
 
 describe("redirectSummary", () => {
@@ -44,6 +44,14 @@ describe("fallbackNarrative", () => {
           source: "simulated",
         },
         {
+          stepId: "food:stand-harbour-fresh",
+          kind: "food",
+          startMinutes: -65,
+          clock: "18:25",
+          title: "Pick up food at Harbour Fresh Market",
+          source: "simulated",
+        },
+        {
           stepId: "seat:section-101",
           kind: "seat",
           startMinutes: -60,
@@ -65,6 +73,21 @@ describe("fallbackNarrative", () => {
     adjustments: [],
     candidateStats: { evaluated: 3, feasible: 0 },
   };
+
+  describe("decisionSummary", () => {
+    it("names the gate, stand, arrival clock, and pickup timing in prose, never the raw candidateId or score", () => {
+      const s = decisionSummary(feasibleResult);
+      expect(s).toBe(
+        "Selected Gate 1 (Main), Harbour Fresh Market, arriving 18:15, food pickup after seating: seated before warmups, 9 min walking, 10 min waiting.",
+      );
+      expect(s).not.toContain(feasibleResult.plan!.candidateId);
+      expect(s).not.toContain("score");
+    });
+
+    it("still reports the infeasible violations verbatim, unaffected by the human-label change", () => {
+      expect(decisionSummary(infeasibleResult)).toBe("No feasible plan: budget exceeded.");
+    });
+  });
 
   it("does not imply a failed attempt on the feasible path", () => {
     const s = fallbackNarrative(feasibleResult);

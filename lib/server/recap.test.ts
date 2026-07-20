@@ -77,6 +77,18 @@ describe("buildDeterministicRecap", () => {
     const ids = new Set(pkg.moments.map((m) => m.id));
     for (const blurb of memory.momentBlurbs) expect(ids.has(blurb.momentId)).toBe(true);
   });
+
+  it("the reflection caveat matches lib/planning/summarize.ts's fallback caveat verbatim, never implying a failed attempt", () => {
+    const memory = buildDeterministicRecap(pkg, null);
+    expect(memory.reflection).toContain("(Plain summary, written without the live narrator.)");
+    expect(memory.reflection).not.toContain("unavailable");
+  });
+
+  it("the yourNight caveat matches the same wording when a session is supplied", () => {
+    const memory = buildDeterministicRecap(pkg, validSession());
+    expect(memory.yourNight).toContain("(Plain summary, written without the live narrator.)");
+    expect(memory.yourNight).not.toContain("unavailable");
+  });
 });
 
 describe("buildWarmupMomentPackage", () => {
