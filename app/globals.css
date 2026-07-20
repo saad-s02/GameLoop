@@ -248,4 +248,9 @@ body {
       color var(--t-micro) var(--ease-glide),
       background-color var(--t-micro) var(--ease-glide);
   }
+
+  /* Decision log summary strip: hover color glide. */
+  .log-summary {
+    transition: color var(--t-micro) var(--ease-glide);
+  }
 }

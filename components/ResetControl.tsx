@@ -13,7 +13,7 @@ export function ResetControl() {
     <button
       type="button"
       onClick={reset}
-      className="rounded-well border border-steel-bright px-3 py-1.5 text-sm font-medium text-frost motion-safe:transition-colors hover:bg-glass hover:text-ice"
+      className="inline-flex min-h-11 items-center justify-center rounded-well border border-steel-bright px-3 py-1.5 text-sm font-medium text-frost motion-safe:transition-colors hover:bg-glass hover:text-ice sm:min-h-0"
     >
       Reset
     </button>

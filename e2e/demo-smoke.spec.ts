@@ -60,6 +60,12 @@ test("scripted demo sequence: access, plan, disruption, relive, reset", async ({
   await expect(transitStep).toBeVisible();
   await expect(transitStep).toContainText("SNAPSHOT");
 
+  // The auto-collapse contract: once the stream completes, the log folds to
+  // its summary strip. Pin that state before the first manual expand (a
+  // manual toggle wins for the rest of the plan).
+  const logDetails = decisionLog.locator("details.log-details");
+  await expect(logDetails).toHaveJSProperty("open", false);
+
   // Decision Log: the constraint_adjusted card renders "You said 6:18; ..."
   // directly as visible text (not just inside a collapsed "Raw event" JSON
   // blob), echoing the family chip's stated train time. Expand the log first,
@@ -76,8 +82,10 @@ test("scripted demo sequence: access, plan, disruption, relive, reset", async ({
   // The "warmups" ask is the seated_by(warmups) constraint; once the delay
   // pushes seating past warmups it flips from satisfied to traded, and the
   // deterministic decision summary reports it verbatim as "traded: seated_by".
-  // The disruption re-plan is a fresh stream, so the log has auto-collapsed
-  // again by the time it completes; expand it again before asserting.
+  // The disruption re-plan is a fresh stream, so the manual-toggle override
+  // resets and the log must auto-collapse again once it completes, even
+  // though it was open when the replan started.
+  await expect(logDetails).toHaveJSProperty("open", false);
   await expandDecisionLog(decisionLog);
   await expect(decisionLog).toContainText(/traded:\s*seated_by/);
 

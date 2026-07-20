@@ -1,6 +1,6 @@
 "use client";
 
-import { SyntheticEvent, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { TraceEnvelope, TraceEvent } from "@/lib/planning/schemas";
 import { COPY } from "@/lib/copy";
 import { SourceBadge } from "./SourceBadge";
@@ -236,11 +236,6 @@ export function ActivityPanel({
     }
   }, [status]);
 
-  const handleToggle = (e: SyntheticEvent<HTMLDetailsElement>) => {
-    userToggledRef.current = true;
-    setOpen(e.currentTarget.open);
-  };
-
   return (
     <section aria-label="Decision log" className="flex flex-col gap-4 rounded-card border border-steel bg-boards p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -275,8 +270,18 @@ export function ActivityPanel({
           )}
         </div>
       </div>
-      <details className="log-details" open={open} onToggle={handleToggle}>
-        <summary className="flex cursor-pointer list-none items-center gap-1.5 font-mono text-xs font-medium uppercase tracking-[0.08em] text-frost motion-safe:transition-colors hover:text-ice [&::-webkit-details-marker]:hidden">
+      <details className="log-details" open={open}>
+        {/* preventDefault cancels the native toggle so React alone owns `open`;
+            a programmatic open change can then never masquerade as user intent
+            (the native toggle event fires for programmatic changes too). */}
+        <summary
+          onClick={(e) => {
+            e.preventDefault();
+            userToggledRef.current = true;
+            setOpen((o) => !o);
+          }}
+          className="log-summary flex cursor-pointer list-none items-center gap-1.5 font-mono text-xs font-medium uppercase tracking-[0.08em] text-frost hover:text-ice [&::-webkit-details-marker]:hidden"
+        >
           {COPY.decisionLogSummary(cardEvents.length)}
         </summary>
         <div className="log-details-body mt-4 flex flex-col gap-4">
