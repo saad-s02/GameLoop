@@ -1,4 +1,4 @@
-import { ItineraryPlan, PriorityTier } from "@/lib/planning/schemas";
+import { ItineraryPlan, PriorityTier, SourceClass } from "@/lib/planning/schemas";
 import { PUCK_DROP_CLOCK, toNormalizedMinutes } from "@/lib/planning/time";
 
 const MILESTONE_LABEL: Record<string, string> = {
@@ -12,6 +12,19 @@ const SEVERITY_LABEL: Record<PriorityTier, string> = {
   high: "HIGH",
   medium: "MEDIUM",
   low: "LOW",
+};
+
+// A Relive showcase label always carries its drama as a trailing
+// parenthetical (lib/data/load.ts listShowcaseGames, e.g. "Stanley Cup
+// Final Game 3 (2OT thriller)"). Both the card's mono-caps tag and its
+// accent read from this same parenthetical so neither can drift into
+// stating a fact the label doesn't already carry.
+const SHOWCASE_LABEL_PAREN = /\(([^)]+)\)/;
+
+const PROVENANCE_PLAIN: Record<SourceClass, string> = {
+  live: "Checked right now.",
+  snapshot: "From a saved copy of the real schedule.",
+  simulated: "Invented for this demo.",
 };
 
 export const COPY = {
@@ -90,4 +103,37 @@ export const COPY = {
    * on it); the preview names the three field groups the panel will fill in. */
   memoryEmptyLead: "Nothing saved yet. Plan a night and this remembers it for next time.",
   memoryEmptyPreviewItems: ["Party", "Dietary needs", "Seat section and arrival"],
+  /**
+   * Relive showcase card (app/relive/page.tsx) mono-caps tag: the card's
+   * own label parenthetical, upper-cased verbatim (e.g. "2OT thriller" ->
+   * "2OT THRILLER"). Restates what the label already says instead of
+   * inventing new drama; undefined when a label carries no parenthetical
+   * to derive from.
+   */
+  showcaseGameTag: (label: string): string | undefined => {
+    const match = label.match(SHOWCASE_LABEL_PAREN);
+    return match ? match[1]!.toUpperCase() : undefined;
+  },
+  /**
+   * Relive showcase card accent: "loud" (red-lamp stripe) for a
+   * multi-overtime finish, "quiet" (blue-glow stripe) otherwise. Read from
+   * the same parenthetical as showcaseGameTag (a leading digit before "OT",
+   * e.g. "2OT thriller"), so the accent always matches what the tag says.
+   */
+  showcaseGameAccent: (label: string): "loud" | "quiet" => {
+    const match = label.match(SHOWCASE_LABEL_PAREN);
+    return match && /^\dOT\b/i.test(match[1]!) ? "loud" : "quiet";
+  },
+  /**
+   * How It Works (app/how-it-works/page.tsx) plain-language lead: sits
+   * above the page's existing technical detail and speaks to a parent who
+   * just got a plan, not the portfolio audience the rest of the page
+   * serves. Two sentences, no jargon.
+   */
+  provenanceLead:
+    "Your plan mixes real information with a few practical stand-ins made just for this demo. These three tags, used throughout the app, tell you which is which.",
+  /** One plain sentence per provenance badge, paired inline with the actual
+   * SourceBadge on the How It Works plain-language lead so the visual
+   * vocabulary is taught, not just described. */
+  provenancePlainExplain: (source: SourceClass): string => PROVENANCE_PLAIN[source],
 } as const;

@@ -63,29 +63,55 @@ function RelivePageInner() {
   };
 
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 px-6 py-10">
+    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center gap-8 px-6 py-10">
       <div className="flex flex-col gap-1">
         <h1 className="font-display text-3xl font-bold uppercase tracking-wide text-ice">Relive the Game</h1>
         <p className="text-sm text-frost">Pick a showcase game and get a Personal Game Memory built from the real play-by-play.</p>
       </div>
 
       <section aria-label="Showcase games" className="flex flex-col gap-3">
-        {games.map((g) => (
-          <div key={g.gameId} className="flex flex-col gap-2 rounded-card border border-steel bg-boards p-4">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <span className="text-[15px] font-semibold text-ice">{g.label}</span>
-              <button
-                type="button"
-                disabled={status === "streaming"}
-                onClick={() => submitGame(g.gameId, false)}
-                className="rounded-well bg-ice px-3 py-1.5 text-sm font-semibold text-bowl motion-safe:transition-colors hover:bg-ice/90 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                Relive this game
-              </button>
+        {games.map((g) => {
+          // Accent reads straight off the card's own label parenthetical
+          // (lib/copy.ts showcaseGameTag/showcaseGameAccent), so the stripe
+          // and tag can only restate what the label already says, never
+          // invent a fact about the game. Loud (red-lamp) is the multi-OT
+          // finish, quiet (blue-glow) is the single-OT finish -- both
+          // solid borders; dashed stays exclusive to SIMULATED provenance.
+          const tag = COPY.showcaseGameTag(g.label);
+          const loud = COPY.showcaseGameAccent(g.label) === "loud";
+          return (
+            <div
+              key={g.gameId}
+              className={`flex flex-col gap-2 rounded-card border-y border-r border-l-2 bg-boards p-4 ${
+                loud ? "border-steel border-l-red-lamp" : "border-steel border-l-blue-glow"
+              }`}
+            >
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-[15px] font-semibold text-ice">{g.label}</span>
+                  {tag && (
+                    <span
+                      className={`inline-flex items-center rounded border px-1.5 py-0.5 font-mono text-[10.5px] font-medium uppercase tracking-[0.08em] ${
+                        loud ? "border-red-lamp/40 bg-red-lamp/10 text-red-lamp" : "border-blue-glow/40 bg-blue-glow/10 text-blue-glow"
+                      }`}
+                    >
+                      {tag}
+                    </span>
+                  )}
+                </div>
+                <button
+                  type="button"
+                  disabled={status === "streaming"}
+                  onClick={() => submitGame(g.gameId, false)}
+                  className="rounded-well bg-ice px-3 py-1.5 text-sm font-semibold text-bowl motion-safe:transition-colors hover:bg-ice/90 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  Relive this game
+                </button>
+              </div>
+              <p className="text-xs leading-5 text-frost">{COPY.fiction}</p>
             </div>
-            <p className="text-xs leading-5 text-frost">{COPY.fiction}</p>
-          </div>
-        ))}
+          );
+        })}
       </section>
 
       {ENABLE_LIVE_GAME && (

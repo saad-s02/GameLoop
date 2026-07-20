@@ -49,8 +49,32 @@ const PRODUCTION_PATHS: { label: string; detail: string }[] = [
 export default function HowItWorksPage() {
   return (
     <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 px-6 py-10">
+      <h1 className="font-display text-3xl font-bold uppercase tracking-wide text-ice">How GameLoop works</h1>
+
+      {/* Plain-language lead: written for a parent reading this right after
+          getting a plan, not the portfolio audience the technical detail
+          below serves. Renders the actual SourceBadge components inline so
+          the visual vocabulary (word, color, dashed border) is taught, not
+          just described in prose. */}
+      <section aria-label="What the tags on your plan mean" className="flex flex-col gap-3 rounded-card border border-steel bg-boards p-4">
+        <p className="text-sm leading-relaxed text-ice/85">{COPY.provenanceLead}</p>
+        <ul className="flex flex-col gap-2">
+          <li className="flex flex-wrap items-center gap-2">
+            <SourceBadge source="live" />
+            <span className="text-sm text-frost">{COPY.provenancePlainExplain("live")}</span>
+          </li>
+          <li className="flex flex-wrap items-center gap-2">
+            <SourceBadge source="snapshot" />
+            <span className="text-sm text-frost">{COPY.provenancePlainExplain("snapshot")}</span>
+          </li>
+          <li className="flex flex-wrap items-center gap-2">
+            <SourceBadge source="simulated" />
+            <span className="text-sm text-frost">{COPY.provenancePlainExplain("simulated")}</span>
+          </li>
+        </ul>
+      </section>
+
       <div className="flex flex-col gap-3">
-        <h1 className="font-display text-3xl font-bold uppercase tracking-wide text-ice">How GameLoop works</h1>
         <p className="text-sm leading-relaxed text-ice/85">
           GameLoop is a bounded orchestration. The model's job is narrow: it translates natural language into a
           validated constraint contract, and it translates verified results back into prose. Deterministic code
