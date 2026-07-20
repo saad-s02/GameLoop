@@ -266,6 +266,12 @@ function PlanWorkspaceInner({ eyebrow, realNearby }: { eyebrow: PlanEyebrow; rea
     }
   };
 
+  // A stalled stream is still in flight (the 6s stall timer flips status
+  // without tearing the request down), so the composer and disruptions stay
+  // locked through it: a submit during a stall would otherwise freeze the
+  // stalled turn as "done".
+  const busy = status === "streaming" || status === "stalled";
+
   return (
     <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-8 px-6 py-10 md:flex-row md:items-start">
       <div className="flex min-w-0 flex-1 flex-col gap-6">
@@ -286,7 +292,7 @@ function PlanWorkspaceInner({ eyebrow, realNearby }: { eyebrow: PlanEyebrow; rea
         <MessageThread turns={turns} onAnswer={onAnswer} onRetry={retry} />
         <ChatComposer
           demo={demo}
-          disabled={status === "streaming"}
+          disabled={busy}
           hasPlanContext={persistedRequestParsed !== null}
           onSuggestedPrompt={onSuggestedPrompt}
           onQuickChip={onQuickChip}
@@ -300,10 +306,10 @@ function PlanWorkspaceInner({ eyebrow, realNearby }: { eyebrow: PlanEyebrow; rea
         result={lastPlanResult}
         priorPlanSteps={priorPlanSteps}
         isReplanning={status === "streaming" && lastPlanResult !== null}
-        streamingOrStalled={status === "streaming" || status === "stalled"}
+        streamingOrStalled={busy}
         showDisruptions={lastPlanResult?.feasible === true}
         onDisruption={onDisruption}
-        disruptionsDisabled={status === "streaming"}
+        disruptionsDisabled={busy}
         resultsRef={resultsRef}
         infeasibleRef={infeasibleRef}
       />
