@@ -1,0 +1,138 @@
+{
+  "generatedFrom": "research/2026-07-25-real-data/candidates.json",
+  "accessedAt": "2026-07-20",
+  "entries": [
+    {
+      "id": "union-chicken",
+      "name": "Union Chicken",
+      "rating": { "value": 3.6, "source": "Tripadvisor", "reviewNote": "ranked about 1,229 of 5,810 Toronto-area listings; a separate Yelp listing shows 177 reviews" },
+      "walkMinutes": 5,
+      "priceLevel": "$$",
+      "openWeekendEvenings": true,
+      "iconic": false,
+      "evidence": [
+        { "need": "halal", "tier": "self-described", "line": "Serves halal fried and rotisserie chicken by its own description; no third-party certifier named in any source found." }
+      ],
+      "sourceUrl": "https://www.unionchicken.com/union-station",
+      "accessedAt": "2026-07-20",
+      "source": "research-notes"
+    },
+    {
+      "id": "paramount-fine-foods",
+      "name": "Paramount Fine Foods (Union Station)",
+      "rating": { "value": 3.6, "source": "Tripadvisor", "reviewNote": "ranked about 1,692 of 5,797 listings; reviews split on busy-day service" },
+      "walkMinutes": 5,
+      "priceLevel": "$$",
+      "openWeekendEvenings": true,
+      "iconic": false,
+      "evidence": [
+        { "need": "halal", "tier": "certified", "line": "The Halal Monitoring Authority (HMA) lists this exact outlet on its own certified directory; certificate text was not re-confirmed, so treat this as the certifier's listing, not a hard guarantee." }
+      ],
+      "sourceUrl": "https://hmacanada.org/paramount-fine-foods-union-station/",
+      "accessedAt": "2026-07-20",
+      "source": "research-notes"
+    },
+    {
+      "id": "wvrst",
+      "name": "WVRST (Union Station)",
+      "rating": { "value": 4.3, "source": "Restaurant Guru", "reviewNote": "1,606 reviews; a Google rating around 4.4 was cited separately" },
+      "walkMinutes": 5,
+      "priceLevel": "$$",
+      "openWeekendEvenings": true,
+      "iconic": false,
+      "evidence": [
+        { "need": "gluten-free", "tier": "friendly", "line": "All sausages reported gluten-free and the fries get a dedicated fryer, a documented good practice; not a dedicated gluten-free kitchen, and buns are not gluten-free." }
+      ],
+      "sourceUrl": "https://torontounion.ca/locations/wvrst/",
+      "accessedAt": "2026-07-20",
+      "source": "research-notes"
+    },
+    {
+      "id": "venezolano",
+      "name": "Venezolano (Union Station)",
+      "rating": { "value": 4.5, "source": "delivery-platform aggregator", "reviewNote": "delivery-app ratings tend to skew high; weigh lightly" },
+      "walkMinutes": 5,
+      "priceLevel": "$$",
+      "openWeekendEvenings": true,
+      "iconic": false,
+      "evidence": [
+        { "need": "gluten-free", "tier": "friendly", "line": "Corn arepas make most of the menu naturally gluten-free and staff are described as cross-contact aware; explicitly not a dedicated gluten-free facility." }
+      ],
+      "sourceUrl": "https://torontounion.ca/locations/venezolano/",
+      "accessedAt": "2026-07-20",
+      "source": "research-notes"
+    },
+    {
+      "id": "fresh-kitchen-front",
+      "name": "Fresh Kitchen + Juice Bar (Front)",
+      "walkMinutes": 13,
+      "priceLevel": "$$",
+      "openWeekendEvenings": true,
+      "iconic": false,
+      "evidence": [
+        { "need": "vegetarian", "tier": "self-described", "line": "Fully vegan by concept: nothing on the menu contains meat, dairy, or eggs, the cleanest claim in the research pass. Walk runs a few minutes past the usual radius." },
+        { "need": "vegan", "tier": "self-described", "line": "Fully vegan by concept: nothing on the menu contains meat, dairy, or eggs, the cleanest claim in the research pass. Walk runs a few minutes past the usual radius." }
+      ],
+      "sourceUrl": "https://www.freshkitchens.ca/en/locations/on/toronto/47-front-street-east",
+      "accessedAt": "2026-07-20",
+      "source": "research-notes"
+    },
+    {
+      "id": "bangkok-buri",
+      "name": "Bangkok Buri (Union Station food court)",
+      "rating": { "value": 3.4, "source": "Tripadvisor", "reviewNote": "ranked about 3,650 of 5,757 listings; closes 19:00 weekend evenings, pre-game only" },
+      "walkMinutes": 5,
+      "priceLevel": "$$",
+      "openWeekendEvenings": true,
+      "iconic": false,
+      "evidence": [
+        { "need": "vegetarian", "tier": "friendly", "line": "Sauces reported vegan with tofu and vegetable swaps available; a vegetarian-friendly menu in a shared kitchen, not a vegetarian restaurant." },
+        { "need": "vegan", "tier": "friendly", "line": "Sauces reported vegan with tofu and vegetable swaps available; a vegetarian-friendly menu in a shared kitchen, not a vegetarian restaurant." }
+      ],
+      "sourceUrl": "https://www.findmeglutenfree.com/biz/bangkok-buri/4734032275963904",
+      "accessedAt": "2026-07-20",
+      "source": "research-notes"
+    },
+    {
+      "id": "real-sports",
+      "name": "Real Sports Bar & Grill",
+      "rating": { "value": 4.9, "source": "Restaurant Guru", "reviewNote": "9,133 reviews, the highest volume in the research pass; a separate Yelp listing shows 575" },
+      "walkMinutes": 2,
+      "priceLevel": "$$$",
+      "openWeekendEvenings": true,
+      "iconic": true,
+      "evidence": [
+        { "need": "gluten-free", "tier": "friendly", "line": "Named gluten-free items exist, but an allergy-tracking source states it is not a dedicated gluten-free facility and warns of fryer cross-contact." }
+      ],
+      "sourceUrl": "https://www.realsports.ca/",
+      "accessedAt": "2026-07-20",
+      "source": "research-notes"
+    },
+    {
+      "id": "steam-whistle",
+      "name": "Steam Whistle Kitchen (at the Roundhouse)",
+      "rating": { "value": 4.6, "source": "Google (cited)", "reviewNote": "Restaurant Guru shows 4.8 with 4,070 reviews, two sources broadly agreeing" },
+      "walkMinutes": 8,
+      "priceLevel": "$$",
+      "openWeekendEvenings": true,
+      "iconic": true,
+      "evidence": [],
+      "sourceUrl": "https://steamwhistle.ca/pages/kitchen",
+      "accessedAt": "2026-07-20",
+      "source": "research-notes"
+    },
+    {
+      "id": "blondies-pizza",
+      "name": "Blondies Pizza (Union Station)",
+      "rating": { "value": 4.0, "source": "Tripadvisor", "reviewNote": "review count not separately captured" },
+      "walkMinutes": 6,
+      "priceLevel": "$",
+      "openWeekendEvenings": true,
+      "iconic": true,
+      "evidence": [],
+      "sourceUrl": "https://union.blondiespizza.ca/",
+      "accessedAt": "2026-07-20",
+      "source": "research-notes"
+    }
+  ]
+}
