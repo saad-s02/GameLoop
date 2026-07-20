@@ -2,8 +2,8 @@ import { COPY } from "@/lib/copy";
 
 export function SiteFooter() {
   return (
-    <footer className="mt-auto border-t border-steel px-6 py-3 text-xs leading-5 text-frost">
-      <div className="mx-auto flex max-w-5xl flex-col gap-1.5">
+    <footer className="mt-auto border-t border-steel px-6 py-2 text-xs leading-tight text-frost">
+      <div className="mx-auto flex max-w-5xl flex-col gap-1">
         <p>{COPY.nonAffiliation}</p>
         <p>{COPY.fiction}</p>
         <p>
