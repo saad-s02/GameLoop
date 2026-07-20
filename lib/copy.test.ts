@@ -178,34 +178,6 @@ describe("COPY memory empty-state preview", () => {
   });
 });
 
-describe("COPY.showcaseGameTag", () => {
-  it("restates the 2OT thriller fixture's own label parenthetical, upper-cased", () => {
-    expect(COPY.showcaseGameTag("Stanley Cup Final Game 3 (2OT thriller)")).toBe("2OT THRILLER");
-  });
-
-  it("restates the OT winner fixture's own label parenthetical, upper-cased", () => {
-    expect(COPY.showcaseGameTag("Eastern Conference Final Game 3 (OT winner)")).toBe("OT WINNER");
-  });
-
-  it("returns undefined rather than inventing a tag when the label carries no parenthetical", () => {
-    expect(COPY.showcaseGameTag("Game 7")).toBeUndefined();
-  });
-});
-
-describe("COPY.showcaseGameAccent", () => {
-  it("is loud for the multi-overtime fixture", () => {
-    expect(COPY.showcaseGameAccent("Stanley Cup Final Game 3 (2OT thriller)")).toBe("loud");
-  });
-
-  it("is quiet for the single-overtime fixture", () => {
-    expect(COPY.showcaseGameAccent("Eastern Conference Final Game 3 (OT winner)")).toBe("quiet");
-  });
-
-  it("defaults to quiet when there is no parenthetical to read a finish from", () => {
-    expect(COPY.showcaseGameAccent("Game 7")).toBe("quiet");
-  });
-});
-
 describe("COPY.provenancePlainExplain", () => {
   it("gives one plain sentence per provenance badge, matching the app's own definitions", () => {
     expect(COPY.provenancePlainExplain("live")).toBe("Checked right now.");

@@ -2,10 +2,10 @@ import { test, expect, Locator } from "@playwright/test";
 
 /**
  * Seeded demo smoke: walks the exact scripted demo sequence end to end
- * against the real built app (access -> plan -> disruption -> relive ->
- * reset), asserting on markup that actually exists in components/ and
- * app/ rather than guessed attribute names. Runs entirely in demo mode:
- * see playwright.config.ts for why ANTHROPIC_API_KEY is deliberately
+ * against the real built app (access -> plan -> disruption -> reset),
+ * asserting on markup that actually exists in components/ and app/
+ * rather than guessed attribute names. Runs entirely in demo mode: see
+ * playwright.config.ts for why ANTHROPIC_API_KEY is deliberately
  * poisoned for the webServer so no step ever depends on a live model call.
  */
 
@@ -25,7 +25,7 @@ async function expandDecisionLog(decisionLog: Locator) {
   }
 }
 
-test("scripted demo sequence: access, plan, disruption, relive, reset", async ({ page }) => {
+test("scripted demo sequence: access, plan, disruption, reset", async ({ page }) => {
   // ---- 1. Access flow ----
   await page.goto("/enter");
   await page.getByLabel("Access code").fill(process.env.SMOKE_ACCESS_CODE ?? "letmein");
@@ -89,29 +89,7 @@ test("scripted demo sequence: access, plan, disruption, relive, reset", async ({
   await expandDecisionLog(decisionLog);
   await expect(decisionLog).toContainText(/traded:\s*seated_by/);
 
-  // ---- 4. Relive: Fixture A ----
-  await page.goto("/relive");
-  const fixtureA = page
-    .locator('section[aria-label="Showcase games"] > div', { hasText: "Stanley Cup Final" })
-    .getByRole("button", { name: "Relive this game" });
-  await fixtureA.click();
-
-  const memoryCard = page.locator("article");
-  await expect(memoryCard).toBeVisible({ timeout: 20_000 });
-  await expect(memoryCard).toContainText("VGK 5, CAR 4 (2OT)");
-
-  const momentRows = memoryCard.locator("ol > li");
-  await expect(momentRows).toHaveCount(3);
-  await expect(momentRows.first()).toContainText(/overtime|OT/i);
-
-  // The deterministic recap fallback (lib/server/recap.ts buildDeterministicRecap)
-  // renders session.viewZone into the "Your night" paragraph (e.g. "near centre
-  // ice") whenever a saved plan's plannedGameId matches the relived game -- true
-  // here since the family-chip plan above and Fixture A both use gameId
-  // 2025030413. Hard assertion: a regression in that sentence should fail the suite.
-  await expect(memoryCard).toContainText(/centre/i);
-
-  // ---- 5. Reset ----
+  // ---- 4. Reset ----
   // ResetControl only renders on /plan; navigate back there to reach it.
   await page.goto("/plan");
   await page.getByRole("button", { name: "Reset" }).click();

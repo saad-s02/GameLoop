@@ -18,39 +18,23 @@ export default function Home() {
           <span className="h-0.5 flex-1 rounded-full bg-line-blue/50" />
         </div>
         <p className="max-w-md text-[15px] leading-6 text-frost">
-          An adaptive game-day copilot demo. Plan your night at Harbourview Arena, or relive a real Stanley Cup Playoffs game.
+          An adaptive game-day copilot demo. Plan your night at Harbourview Arena.
         </p>
       </div>
-      <div className="grid w-full max-w-2xl grid-cols-1 gap-4 sm:grid-cols-2">
-        <Link
-          href="/plan"
-          className="group flex flex-col gap-3 rounded-card border border-steel bg-boards p-6 shadow-rink motion-safe:transition-all motion-safe:duration-[var(--t-micro)] motion-safe:hover:-translate-y-0.5 hover:border-steel-bright hover:bg-glass"
-        >
-          <span className="font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-blue-glow">
-            Before puck drop
-          </span>
-          <span className="font-display text-2xl font-semibold uppercase tracking-wide text-ice">
-            Plan My Night
-          </span>
-          <span className="text-sm leading-6 text-frost">
-            Tell us about your group and we will build a step-by-step arrival, food, and seating plan.
-          </span>
-        </Link>
-        <Link
-          href="/relive"
-          className="group flex flex-col gap-3 rounded-card border border-steel bg-boards p-6 shadow-rink motion-safe:transition-all motion-safe:duration-[var(--t-micro)] motion-safe:hover:-translate-y-0.5 hover:border-steel-bright hover:bg-glass"
-        >
-          <span className="font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-sodium">
-            After the horn
-          </span>
-          <span className="font-display text-2xl font-semibold uppercase tracking-wide text-ice">
-            Relive the Game
-          </span>
-          <span className="text-sm leading-6 text-frost">
-            Pick a showcase game and get a Personal Game Memory built from the real play-by-play.
-          </span>
-        </Link>
-      </div>
+      <Link
+        href="/plan"
+        className="group flex w-full max-w-md flex-col gap-3 rounded-card border border-steel bg-boards p-6 shadow-rink motion-safe:transition-all motion-safe:duration-[var(--t-micro)] motion-safe:hover:-translate-y-0.5 hover:border-steel-bright hover:bg-glass"
+      >
+        <span className="font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-blue-glow">
+          Before puck drop
+        </span>
+        <span className="font-display text-2xl font-semibold uppercase tracking-wide text-ice">
+          Plan My Night
+        </span>
+        <span className="text-sm leading-6 text-frost">
+          Tell us about your group and we will build a step-by-step arrival, food, and seating plan.
+        </span>
+      </Link>
     </main>
   );
 }

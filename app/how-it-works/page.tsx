@@ -25,10 +25,6 @@ const PRODUCTION_PATHS: { label: string; detail: string }[] = [
       "production use would alert users to disruptions automatically instead of relying on this demo's manual disruption buttons.",
   },
   {
-    label: "Video generation",
-    detail: "production use would add real video or animation generation for game recaps instead of the prose-only Personal Game Memory.",
-  },
-  {
     label: "Mobile apps",
     detail: "production use would ship native iOS and Android apps instead of this single responsive web page.",
   },

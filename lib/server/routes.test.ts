@@ -1,9 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { NextRequest } from "next/server";
-import { GameMemorySchema, TraceEnvelope, TraceEnvelopeSchema } from "../planning/schemas";
+import { TraceEnvelope, TraceEnvelopeSchema } from "../planning/schemas";
 import { signAccess } from "./access";
 import { POST as planPOST } from "../../app/api/plan/route";
-import { POST as relivePOST } from "../../app/api/relive/route";
 import { POST as warmupPOST } from "../../app/api/warmup/route";
 import { POST as accessPOST } from "../../app/api/access/route";
 
@@ -248,62 +247,6 @@ describe("POST /api/plan", () => {
       const gone = [...resultEvent.result.diff!.invalidatedStepIds, ...resultEvent.result.diff!.replacedSteps.map((r) => r.oldStepId)];
       expect(gone.some((id) => id.startsWith("transit:"))).toBe(true);
     }
-  });
-});
-
-describe("POST /api/relive", () => {
-  it("demo mode: moment_package, decision, recap_result, done", async () => {
-    const req = jsonRequest(
-      "http://localhost/api/relive",
-      { mode: "relive", gameId: "2025030413", live: false, demo: true },
-      { cookie: accessCookieHeader() },
-    );
-    const res = await relivePOST(req);
-    expect(res.status).toBe(200);
-
-    const envelopes = await drainEnvelopes(res);
-    const types = envelopes.map((e) => e.event.type);
-    expect(types).toEqual(["moment_package", "decision", "recap_result", "done"]);
-
-    const recapEnvelope = envelopes.find((e) => e.event.type === "recap_result")!;
-    if (recapEnvelope.event.type === "recap_result") {
-      const memory = GameMemorySchema.parse(recapEnvelope.event.memory);
-      expect(memory.scoreLine.length).toBeGreaterThan(0);
-      expect(memory.yourNight).toBeUndefined(); // no sessionContext supplied
-    }
-  });
-
-  it("drops an invalid sessionContext with a fallback_used event but still completes", async () => {
-    const req = jsonRequest(
-      "http://localhost/api/relive",
-      { mode: "relive", gameId: "2025030413", live: false, demo: true, sessionContext: { junk: true } },
-      { cookie: accessCookieHeader() },
-    );
-    const res = await relivePOST(req);
-    const envelopes = await drainEnvelopes(res);
-    const types = envelopes.map((e) => e.event.type);
-    expect(types[0]).toBe("fallback_used");
-    expect(types).toContain("moment_package");
-    expect(types[types.length - 1]).toBe("done");
-  });
-
-  it("returns 401 without a valid access cookie", async () => {
-    const req = jsonRequest("http://localhost/api/relive", { mode: "relive", gameId: "2025030413", live: false, demo: true });
-    const res = await relivePOST(req);
-    expect(res.status).toBe(401);
-  });
-
-  it("returns 400 for an invalid body", async () => {
-    const req = jsonRequest("http://localhost/api/relive", { mode: "plan", gameId: "2025030413" }, { cookie: accessCookieHeader() });
-    const res = await relivePOST(req);
-    expect(res.status).toBe(400);
-  });
-
-  it("returns 413 for an oversized body", async () => {
-    const rawBody = JSON.stringify({ mode: "relive", gameId: "2025030413", padding: "x".repeat(11 * 1024) });
-    const req = jsonRequest("http://localhost/api/relive", null, { cookie: accessCookieHeader(), rawBody });
-    const res = await relivePOST(req);
-    expect(res.status).toBe(413);
   });
 });
 
