@@ -219,12 +219,17 @@ export function ReasoningDisclosure({
     ? arrivalsRef.current.get(`${lastEnvelope.requestId}:${lastEnvelope.seq}`)
     : undefined;
 
-  // Open while the trace streams in, auto-collapse once it completes. A
-  // manual toggle wins over that default for the rest of this turn; the next
-  // fresh stream (a retry, or this component re-mounted for a new live turn)
-  // clears the override and starts the cycle over. A turn that mounts
-  // already completed starts folded to its signals summary.
-  const [open, setOpen] = useState(status === "streaming");
+  // Stay folded through the whole turn so the streaming narrative below is
+  // never pushed off screen. When a live trace finishes while still folded,
+  // raise an `invite` flag: the summary picks up an unread dot and a short
+  // glow so the reader knows the finished reasoning is there to open. A
+  // manual open answers the invite and wins for the rest of this turn; the
+  // next fresh stream (a retry, or this component reused for a new live
+  // turn) clears everything and starts the cycle over. A turn that mounts
+  // already completed is a frozen past turn, not a live completion, so it
+  // starts folded with no invite.
+  const [open, setOpen] = useState(false);
+  const [invite, setInvite] = useState(false);
   const userToggledRef = useRef(false);
   const prevStatusRef = useRef<TraceStreamStatus>(status);
   useEffect(() => {
@@ -232,9 +237,10 @@ export function ReasoningDisclosure({
     prevStatusRef.current = status;
     if (status === "streaming" && prevStatus !== "streaming") {
       userToggledRef.current = false;
-      setOpen(true);
-    } else if (status === "done" && !userToggledRef.current) {
       setOpen(false);
+      setInvite(false);
+    } else if (status === "done" && prevStatus !== "done" && !userToggledRef.current) {
+      setInvite(true);
     }
   }, [status]);
 
@@ -267,7 +273,7 @@ export function ReasoningDisclosure({
           </button>
         )}
       </div>
-      <details className="log-details" open={open}>
+      <details className={`log-details${invite && !open ? " log-invite" : ""}`} open={open}>
         {/* preventDefault cancels the native toggle so React alone owns `open`;
             a programmatic open change can then never masquerade as user intent
             (the native toggle event fires for programmatic changes too). */}
@@ -275,10 +281,19 @@ export function ReasoningDisclosure({
           onClick={(e) => {
             e.preventDefault();
             userToggledRef.current = true;
+            setInvite(false);
             setOpen((o) => !o);
           }}
-          className="log-summary flex cursor-pointer list-none items-center gap-1.5 font-mono text-xs font-medium uppercase tracking-[0.08em] text-frost hover:text-ice [&::-webkit-details-marker]:hidden"
+          className={`log-summary flex cursor-pointer list-none items-center gap-1.5 font-mono text-xs font-medium uppercase tracking-[0.08em] [&::-webkit-details-marker]:hidden ${
+            invite && !open ? "text-ice" : "text-frost hover:text-ice"
+          }`}
         >
+          {invite && !open && (
+            <span
+              aria-hidden="true"
+              className="h-1.5 w-1.5 shrink-0 rounded-full bg-sodium shadow-[0_0_6px_rgba(232,179,75,0.7)]"
+            />
+          )}
           {COPY.decisionLogSummary(cardEvents.length)}
         </summary>
         <div className="log-details-body mt-4 flex flex-col gap-4">

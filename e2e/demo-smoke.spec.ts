@@ -10,10 +10,12 @@ import { test, expect, Locator } from "@playwright/test";
 test.setTimeout(60_000);
 
 /**
- * The reasoning disclosure opens while streaming and auto-collapses on
- * completion (see components/ReasoningDisclosure.tsx). Click its summary
- * strip to expand before asserting on row content, guarded on the current
- * open state so this never re-collapses an already-open disclosure.
+ * The reasoning disclosure stays folded through the whole turn so the
+ * streaming narrative is never pushed off screen; on completion it flags an
+ * invite (an unread dot and a brief glow) but stays folded until opened (see
+ * components/ReasoningDisclosure.tsx). Click its summary strip to expand
+ * before asserting on row content, guarded on the current open state so this
+ * never re-collapses an already-open disclosure.
  */
 async function expandReasoning(turn: Locator) {
   const details = turn.locator("details.log-details");

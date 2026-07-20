@@ -223,6 +223,15 @@ body {
       background-position: -50% 0;
     }
   }
+  @keyframes invite-glow {
+    0%,
+    100% {
+      text-shadow: none;
+    }
+    50% {
+      text-shadow: 0 0 10px rgb(232 179 75 / 0.5);
+    }
+  }
 
   /* SSE entrances: new rows rise as frames land; the stream is the stagger. */
   .log-row,
@@ -282,6 +291,17 @@ body {
   /* Decision log summary strip: hover color glide. */
   .log-summary {
     transition: color var(--t-micro) var(--ease-glide);
+  }
+
+  /* Decision log invite: a live trace that finishes folded draws the eye
+     with a short sodium glow, then settles. Not an ambient pulse -- it runs
+     a fixed few times and clears the moment the log is opened -- so it stays
+     within the "only the streaming node pulses continuously" rule. The
+     brighter summary text and the leading unread dot (both set in the
+     component) are the reduced-motion-safe state cue on their own; this glow
+     is the motion layer added on top. */
+  .log-invite > .log-summary {
+    animation: invite-glow 1.3s var(--ease-glide) 3;
   }
 
   /* Primary CTA ready-state: an always-on low-alpha outline (not the
