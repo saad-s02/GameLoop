@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { loadShowcaseGame } from "../data/load";
+import { loadShowcaseGame } from "../data/showcaseGame";
 import { decisionSummary, fallbackNarrative, redirectSummary } from "./summarize";
 import { PlanResult } from "./schemas";
 

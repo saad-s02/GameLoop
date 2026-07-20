@@ -10,7 +10,7 @@ import { routeLabel } from "@/lib/planning/candidates";
 import { extractPlanRequest, extractRefinement, explainPlanStream } from "@/lib/ai/outputs";
 import { buildExplainInput } from "@/lib/server/explainInput";
 import { mergeConstraints, summarizeConstraintValue } from "@/lib/planning/merge";
-import { loadShowcaseGame } from "@/lib/data/load";
+import { loadShowcaseGame } from "@/lib/data/showcaseGame";
 import demoExtractions from "@/lib/data/demo-extractions.json";
 
 const BODY_CHAR_CAP = 10_000;

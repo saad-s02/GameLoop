@@ -1,18 +1,14 @@
 import venueJson from "./venue.json";
 import transitJson from "./transit-snapshot.json";
-import gameA from "./showcase-game-a.json";
-import gameB from "./showcase-game-b.json";
-import { ShowcaseGame, ShowcaseGameSchema, TransitOption, TransitOptionSchema, Venue, VenueSchema } from "../planning/schemas";
+import { TransitOption, TransitOptionSchema, Venue, VenueSchema } from "../planning/schemas";
 
 export function loadVenue(): Venue { return VenueSchema.parse(venueJson); }
 export function loadTransit(): TransitOption[] {
   return (transitJson as { options: unknown[] }).options.map((o) => TransitOptionSchema.parse(o));
 }
-export function loadShowcaseGame(gameId: string): ShowcaseGame {
-  if (gameId === "2025030413") return ShowcaseGameSchema.parse(gameA);
-  if (gameId === "2025030313") return ShowcaseGameSchema.parse(gameB);
-  throw new Error(`unknown showcase game: ${gameId}`);
-}
+// loadShowcaseGame moved to ./showcaseGame.ts (belt-and-suspenders for Wave 2 review
+// I-1): keeping it here would pull the showcase-game-a/b.json fixtures into any
+// bundle that reaches loadVenue, including client bundles that only need the venue.
 export function listShowcaseGames() {
   return [
     { gameId: "2025030413", label: "Stanley Cup Final Game 3 (2OT thriller)" },

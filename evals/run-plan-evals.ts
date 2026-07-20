@@ -27,7 +27,7 @@ import { Constraint, PlanRequest, PlanResult } from "../lib/planning/schemas";
 import { buildDeterministicRecap, buildWarmupMomentPackage, resolveSessionContext } from "../lib/server/recap";
 import { buildExplainInput } from "../lib/server/explainInput";
 import { fetchLiveShowcaseGame } from "../lib/games/client";
-import { loadShowcaseGame } from "../lib/data/load";
+import { loadShowcaseGame } from "../lib/data/showcaseGame";
 import { buildMomentPackage } from "../lib/games/moments";
 
 // ---------- case file loading ----------

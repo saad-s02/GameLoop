@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { loadShowcaseGame } from "../data/load";
+import { loadShowcaseGame } from "../data/showcaseGame";
 import { buildMomentPackage } from "../games/moments";
 import { GameMemorySchema, MomentPackageSchema, SessionContext } from "../planning/schemas";
 import { buildDeterministicRecap, buildWarmupMomentPackage, resolveSessionContext } from "./recap";

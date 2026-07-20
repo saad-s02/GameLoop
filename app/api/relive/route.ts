@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import { ReliveApiInputSchema } from "@/lib/planning/schemas";
 import { createTraceStream, SSE_HEADERS } from "@/lib/trace/sse";
 import { verifyAccess } from "@/lib/server/access";
-import { loadShowcaseGame } from "@/lib/data/load";
+import { loadShowcaseGame } from "@/lib/data/showcaseGame";
 import { buildMomentPackage } from "@/lib/games/moments";
 import { fetchLiveShowcaseGame } from "@/lib/games/client";
 import { generateRecap } from "@/lib/ai/outputs";

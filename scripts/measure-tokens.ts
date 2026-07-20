@@ -1,18 +1,18 @@
 // scripts/measure-tokens.ts
 //
 // Deviation from the Task 14 brief: the brief names this file scripts/measure-tokens.mjs, but a
-// plain .mjs file cannot resolve the project's relative TS imports (lib/data/load,
+// plain .mjs file cannot resolve the project's relative TS imports (lib/data/showcaseGame,
 // lib/games/moments) without a build step, and shelling out defeats the point of a calibration
 // script. This is written as scripts/measure-tokens.ts instead and run the same way as
 // evals/run-plan-evals.ts, under tsx:
 //   node --env-file=.env.local --import tsx scripts/measure-tokens.ts
 //
-// Reads lib/data/showcase-game-a.json (via lib/data/load's loadShowcaseGame), builds the
+// Reads lib/data/showcase-game-a.json (via lib/data/showcaseGame's loadShowcaseGame), builds the
 // Fixture A moment package via lib/games/moments, and sends that package as a single user
 // message to the Anthropic count_tokens endpoint. Prints input_tokens and exits non-zero when
 // the count is at or above the 4000-token budget.
 
-import { loadShowcaseGame } from "../lib/data/load";
+import { loadShowcaseGame } from "../lib/data/showcaseGame";
 import { buildMomentPackage } from "../lib/games/moments";
 
 const TOKEN_BUDGET = 4000;

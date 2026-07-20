@@ -1,4 +1,4 @@
-import { loadShowcaseGame } from "../data/load";
+import { loadShowcaseGame } from "../data/showcaseGame";
 import { buildMomentPackage } from "../games/moments";
 import {
   GameMemory,

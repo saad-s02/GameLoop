@@ -1,5 +1,6 @@
 import { performance } from "node:perf_hooks";
-import { loadShowcaseGame, loadTransit, loadVenue } from "../data/load";
+import { loadTransit, loadVenue } from "../data/load";
+import { loadShowcaseGame } from "../data/showcaseGame";
 import { DisruptionId, PlanRequest, TraceEvent } from "./schemas";
 import { PlannerInput, applyDisruptions } from "./disruptions";
 

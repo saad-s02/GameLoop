@@ -280,9 +280,12 @@ body {
      focus-visible ring's box-shadow, so the two never compete under the
      cascade layers) so "enabled" reads unmistakably different from the
      muted disabled look; the outline itself is a state, not motion, so it
-     still renders under reduced motion. Only the hover brightening glides. */
+     still renders under reduced motion. Both the outline and the hover
+     background glide; background-color is listed explicitly here since an
+     unlayered shorthand would otherwise clobber the utilities-layer
+     transition-colors that would normally cover it. */
   .cta-ready {
-    transition: outline-color var(--t-micro) var(--ease-glide);
+    transition: outline-color var(--t-micro) var(--ease-glide), background-color var(--t-micro) var(--ease-glide);
   }
 
   /* Skeleton timeline bars: a light band sweeps over the flat steel base
