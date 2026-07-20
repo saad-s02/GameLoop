@@ -33,6 +33,14 @@ describe("COPY.severityLabel", () => {
   });
 });
 
+describe("COPY.planBuildingHeading", () => {
+  it("is a short plain-prose heading, no ellipsis character or em dash", () => {
+    expect(COPY.planBuildingHeading).toBe("Building tonight's plan");
+    expect(COPY.planBuildingHeading).not.toContain("…");
+    expect(COPY.planBuildingHeading).not.toContain("—");
+  });
+});
+
 describe("COPY.heroSentence", () => {
   const basePlan: ItineraryPlan = {
     planId: "plan-test1",

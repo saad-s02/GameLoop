@@ -34,6 +34,10 @@ export const COPY = {
   followUpSend: "Update plan",
   historyHeading: "What you have told us",
   assumedHeading: "Assumed for this plan",
+  /** Hero-slot heading for SkeletonTimeline, shown while Tonight's Plan
+   * streams in and no plan is on screen yet. A title, not a narration line:
+   * the decision log's streaming rows already narrate progress underneath. */
+  planBuildingHeading: "Building tonight's plan",
   decisionLogSummary: (signalCount: number) =>
     `Plan built from ${signalCount} signal${signalCount === 1 ? "" : "s"} · View reasoning`,
   fallbackUsed: (reason: string) => `Wrote a plain summary without the live narrator: ${reason}`,

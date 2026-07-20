@@ -89,9 +89,12 @@ body {
   /*
     The lit sheet: the Decision Log's surface. A frost veil over a cold
     vertical gradient makes it the one surface lighter than the page,
-    with a brighter top edge where the light catches the glass.
+    with a brighter top edge where the light catches the glass. The skeleton
+    hero (.ice-sheet-surfaced, components/SkeletonTimeline.tsx) shares this
+    exact geometry so the swap from placeholder to real plan never jumps.
   */
-  .ice-sheet {
+  .ice-sheet,
+  .ice-sheet-surfaced {
     position: relative;
     border-radius: var(--radius-sheet);
     border: 1px solid rgb(148 170 196 / 0.16);
@@ -151,6 +154,17 @@ body {
     opacity: 0.5;
     filter: saturate(0.7);
   }
+
+  /*
+    Skeleton timeline placeholder bars (components/SkeletonTimeline.tsx):
+    quiet steel blocks, flat and motionless by default. That flat look is
+    exactly what prefers-reduced-motion users see -- the shimmer sweep is
+    added on top only inside the motion block below.
+  */
+  .skeleton-bar {
+    border-radius: var(--radius-well);
+    background-color: var(--color-steel);
+  }
 }
 
 /*
@@ -196,6 +210,14 @@ body {
     }
     50% {
       opacity: 0.5;
+    }
+  }
+  @keyframes shimmer {
+    from {
+      background-position: 150% 0;
+    }
+    to {
+      background-position: -50% 0;
     }
   }
 
@@ -261,5 +283,13 @@ body {
      still renders under reduced motion. Only the hover brightening glides. */
   .cta-ready {
     transition: outline-color var(--t-micro) var(--ease-glide);
+  }
+
+  /* Skeleton timeline bars: a light band sweeps over the flat steel base
+     (declared in the components layer above) while the plan builds. */
+  .skeleton-bar {
+    background-image: linear-gradient(100deg, transparent 30%, rgb(233 240 246 / 0.18) 50%, transparent 70%);
+    background-size: 200% 100%;
+    animation: shimmer 1.6s ease-in-out infinite;
   }
 }

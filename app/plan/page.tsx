@@ -20,6 +20,7 @@ import { ConstraintContract } from "@/components/ConstraintContract";
 import { ConstraintsStrip } from "@/components/ConstraintsStrip";
 import { ActivityPanel } from "@/components/ActivityPanel";
 import { ItineraryTimeline } from "@/components/ItineraryTimeline";
+import { SkeletonTimeline } from "@/components/SkeletonTimeline";
 import { ConsideredRejected } from "@/components/ConsideredRejected";
 import { DisruptionControls } from "@/components/DisruptionControls";
 import { MemoryPanel, readStoredSession, SESSION_STORAGE_KEY, SESSION_UPDATED_EVENT } from "@/components/MemoryPanel";
@@ -412,7 +413,7 @@ function PlanPageInner() {
           </section>
         )}
 
-        {lastPlanResult?.feasible && lastPlanResult.plan && (
+        {lastPlanResult?.feasible && lastPlanResult.plan ? (
           <div
             ref={resultsRef}
             tabIndex={-1}
@@ -435,6 +436,14 @@ function PlanPageInner() {
               priorSteps={priorPlanSteps}
             />
           </div>
+        ) : (
+          // No plan on screen yet (fresh submit, or a replan following an
+          // infeasible result): the hero slot fills with the skeleton
+          // instead of sitting empty until plan_result lands. A replan over
+          // an existing feasible plan takes the branch above instead --
+          // that plan stays visible, dimmed via .replan-dim, so this never
+          // stacks a skeleton over it.
+          status === "streaming" && <SkeletonTimeline />
         )}
 
         {submittedBody && (
