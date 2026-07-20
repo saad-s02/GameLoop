@@ -55,7 +55,7 @@ export default function EnterPage() {
           <button
             type="submit"
             disabled={status === "checking" || code.length === 0}
-            className="rounded-well bg-ice px-4 py-2 text-sm font-semibold text-bowl motion-safe:transition-colors hover:bg-ice/90 disabled:cursor-not-allowed disabled:opacity-50"
+            className="cta-ready rounded-well bg-ice px-4 py-2 text-sm font-semibold text-bowl outline outline-2 outline-offset-2 outline-blue-glow/35 motion-safe:transition-colors hover:bg-ice/90 hover:outline-blue-glow/65 disabled:cursor-not-allowed disabled:opacity-50 disabled:outline-transparent disabled:hover:outline-transparent"
           >
             {status === "checking" ? "Checking…" : "Enter"}
           </button>

@@ -253,4 +253,13 @@ body {
   .log-summary {
     transition: color var(--t-micro) var(--ease-glide);
   }
+
+  /* Primary CTA ready-state: an always-on low-alpha outline (not the
+     focus-visible ring's box-shadow, so the two never compete under the
+     cascade layers) so "enabled" reads unmistakably different from the
+     muted disabled look; the outline itself is a state, not motion, so it
+     still renders under reduced motion. Only the hover brightening glides. */
+  .cta-ready {
+    transition: outline-color var(--t-micro) var(--ease-glide);
+  }
 }

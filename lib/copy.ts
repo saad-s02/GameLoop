@@ -1,4 +1,5 @@
 import { ItineraryPlan, PriorityTier } from "@/lib/planning/schemas";
+import { PUCK_DROP_CLOCK, toNormalizedMinutes } from "@/lib/planning/time";
 
 const MILESTONE_LABEL: Record<string, string> = {
   doors: "doors",
@@ -59,4 +60,30 @@ export const COPY = {
     }
     return `In by ${seatStep.clock}.`;
   },
+  /**
+   * Puck-drop value for the /plan tonight's-game eyebrow: a live countdown
+   * only inside a sane pre-game window (strictly after now, at most 12
+   * hours out), otherwise the static scheduled time. A demo fixture's game
+   * night rarely lands on the real calendar date, so only time-of-day is
+   * compared, in normalized minutes from puck drop, never a time-string
+   * comparison (CLAUDE.md: all time math in normalized minutes). `prefix`
+   * is the frost label text; `value` is the sodium mono figure.
+   */
+  puckDropEyebrow: (
+    nowClock: string,
+    puckDropClock: string = PUCK_DROP_CLOCK,
+  ): { mode: "countdown" | "static"; prefix: string; value: string } => {
+    const minutesUntil = -toNormalizedMinutes(nowClock, puckDropClock);
+    if (minutesUntil > 0 && minutesUntil <= 12 * 60) {
+      const h = Math.floor(minutesUntil / 60);
+      const m = minutesUntil % 60;
+      return { mode: "countdown", prefix: "Puck drop in", value: h === 0 ? `${m}m` : `${h}h ${m}m` };
+    }
+    return { mode: "static", prefix: "Puck drop", value: puckDropClock };
+  },
+  /** MemoryPanel empty state: an invitation, not a dead end. The literal
+   * "Nothing saved yet." phrase stays verbatim (the demo smoke spec asserts
+   * on it); the preview names the three field groups the panel will fill in. */
+  memoryEmptyLead: "Nothing saved yet. Plan a night and this remembers it for next time.",
+  memoryEmptyPreviewItems: ["Party", "Dietary needs", "Seat section and arrival"],
 } as const;

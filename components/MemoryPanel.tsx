@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { SessionContext, SessionContextSchema } from "@/lib/planning/schemas";
+import { COPY } from "@/lib/copy";
 
 export const SESSION_STORAGE_KEY = "gameloop.session.v1";
 export const SESSION_UPDATED_EVENT = "gameloop:session-updated";
@@ -71,7 +72,19 @@ export function MemoryPanel() {
         </button>
       </div>
       {!session ? (
-        <p className="text-sm text-frost">Nothing saved yet.</p>
+        <div className="flex flex-col gap-2">
+          <p className="text-sm text-frost">{COPY.memoryEmptyLead}</p>
+          <ul className="flex flex-col gap-1">
+            {COPY.memoryEmptyPreviewItems.map((item) => (
+              <li key={item} className="flex items-center gap-1.5 text-xs text-frost">
+                <span aria-hidden="true" className="text-frost">
+                  &middot;
+                </span>
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
       ) : (
         <div>
           <Row

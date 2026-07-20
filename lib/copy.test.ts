@@ -93,3 +93,79 @@ describe("COPY.heroSentence", () => {
     expect(COPY.heroSentence(undefined)).toBeUndefined();
   });
 });
+
+describe("COPY.puckDropEyebrow", () => {
+  it("shows a countdown inside the sane pre-game window", () => {
+    expect(COPY.puckDropEyebrow("15:49", "19:30")).toEqual({
+      mode: "countdown",
+      prefix: "Puck drop in",
+      value: "3h 41m",
+    });
+  });
+
+  it("drops the hour figure once inside the final hour", () => {
+    expect(COPY.puckDropEyebrow("19:00", "19:30")).toEqual({
+      mode: "countdown",
+      prefix: "Puck drop in",
+      value: "30m",
+    });
+  });
+
+  it("includes the exact 12-hour boundary", () => {
+    expect(COPY.puckDropEyebrow("07:30", "19:30")).toEqual({
+      mode: "countdown",
+      prefix: "Puck drop in",
+      value: "12h 0m",
+    });
+  });
+
+  it("degrades to the static clock just past the 12-hour boundary", () => {
+    expect(COPY.puckDropEyebrow("07:29", "19:30")).toEqual({
+      mode: "static",
+      prefix: "Puck drop",
+      value: "19:30",
+    });
+  });
+
+  it("degrades to the static clock long before puck drop", () => {
+    expect(COPY.puckDropEyebrow("06:00", "19:30")).toEqual({
+      mode: "static",
+      prefix: "Puck drop",
+      value: "19:30",
+    });
+  });
+
+  it("degrades to the static clock once puck drop has passed", () => {
+    expect(COPY.puckDropEyebrow("20:00", "19:30")).toEqual({
+      mode: "static",
+      prefix: "Puck drop",
+      value: "19:30",
+    });
+  });
+
+  it("excludes the exact instant of puck drop rather than showing a zero countdown", () => {
+    expect(COPY.puckDropEyebrow("19:30", "19:30")).toEqual({
+      mode: "static",
+      prefix: "Puck drop",
+      value: "19:30",
+    });
+  });
+
+  it("defaults puckDropClock to the fixture's own PUCK_DROP_CLOCK constant", () => {
+    expect(COPY.puckDropEyebrow("15:49")).toEqual({
+      mode: "countdown",
+      prefix: "Puck drop in",
+      value: "3h 41m",
+    });
+  });
+});
+
+describe("COPY memory empty-state preview", () => {
+  it("keeps the literal 'Nothing saved yet.' phrase the demo smoke spec asserts on", () => {
+    expect(COPY.memoryEmptyLead).toContain("Nothing saved yet.");
+  });
+
+  it("previews exactly the three field groups the panel will populate", () => {
+    expect(COPY.memoryEmptyPreviewItems).toEqual(["Party", "Dietary needs", "Seat section and arrival"]);
+  });
+});

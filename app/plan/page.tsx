@@ -14,7 +14,7 @@ import {
   SessionContextSchema,
   TraceEvent,
 } from "@/lib/planning/schemas";
-import { loadVenue } from "@/lib/data/load";
+import { loadShowcaseGame, loadVenue } from "@/lib/data/load";
 import { useTraceStream } from "@/components/useTraceStream";
 import { ConstraintContract } from "@/components/ConstraintContract";
 import { ConstraintsStrip } from "@/components/ConstraintsStrip";
@@ -25,10 +25,19 @@ import { DisruptionControls } from "@/components/DisruptionControls";
 import { MemoryPanel, readStoredSession, SESSION_STORAGE_KEY, SESSION_UPDATED_EVENT } from "@/components/MemoryPanel";
 import { ResetControl } from "@/components/ResetControl";
 import { FollowUpComposer, QuickChip } from "@/components/FollowUpComposer";
+import { SourceBadge } from "@/components/SourceBadge";
 import { COPY } from "@/lib/copy";
 
 // Matches the "tonight" showcase game hardcoded in Task 9's loadPlannerInput.
 const DEMO_GAME_ID = "2025030413";
+
+/** Viewer's local wall-clock time of day, "HH:MM". Client-only: the server
+ * has no notion of the viewer's clock, so this is read after mount rather
+ * than seeded during SSR (see the null-until-mounted state below). */
+function currentClock(): string {
+  const d = new Date();
+  return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+}
 
 const CHIPS: { id: NonNullable<PlanApiInput["chipId"]>; label: string; text: string }[] = [
   {
@@ -66,8 +75,25 @@ function PlanPageInner() {
   const searchParams = useSearchParams();
   const demo = searchParams.get("demo") === "1";
   const venue = useMemo(() => loadVenue(), []);
+  const game = useMemo(() => loadShowcaseGame(DEMO_GAME_ID), []);
   const resultsRef = useRef<HTMLDivElement | null>(null);
   const infeasibleRef = useRef<HTMLDivElement | null>(null);
+
+  // Tonight's-game eyebrow: null until the client mounts, so the puck-drop
+  // countdown never depends on a server-side notion of "now" (see
+  // currentClock above), then refreshed on a coarse one-minute interval --
+  // a text update, not animation, so no reduced-motion concern.
+  const [nowClock, setNowClock] = useState<string | null>(null);
+  useEffect(() => {
+    const tick = () => setNowClock(currentClock());
+    tick();
+    const id = setInterval(tick, 60_000);
+    return () => clearInterval(id);
+  }, []);
+  const puckDrop = nowClock
+    ? COPY.puckDropEyebrow(nowClock, game.puckDropAt)
+    : { mode: "static" as const, prefix: "Puck drop", value: game.puckDropAt };
+  const matchupLabel = `${game.homeTeam.commonName} versus ${game.awayTeam.commonName}`;
 
   const [text, setText] = useState("");
   const [chipId, setChipId] = useState<PlanApiInput["chipId"]>(undefined);
@@ -274,7 +300,20 @@ function PlanPageInner() {
   return (
     <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-8 px-6 py-10 md:flex-row md:items-start">
       <div className="flex min-w-0 flex-1 flex-col gap-7">
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-2">
+          <div
+            aria-label="Tonight's game"
+            className="flex flex-wrap items-center gap-x-2 gap-y-1.5 text-[11px]"
+          >
+            <span className="font-mono font-medium uppercase tracking-[0.14em] text-frost">Tonight</span>
+            <span aria-hidden="true" className="text-frost">&middot;</span>
+            <span className="font-mono text-frost">{matchupLabel}</span>
+            <span aria-hidden="true" className="text-frost">&middot;</span>
+            <span className="font-mono text-frost">
+              {puckDrop.prefix} <span className="text-sodium tabular-nums">{puckDrop.value}</span>
+            </span>
+            <SourceBadge source={game.source} title="Tonight's matchup and puck drop, from the NHL snapshot fixture" />
+          </div>
           <h1 className="font-display text-3xl font-bold uppercase tracking-wide text-ice">Plan My Night</h1>
           <p className="text-sm text-frost">Tell us about your group in your own words, or start from an example.</p>
         </div>
@@ -320,7 +359,7 @@ function PlanPageInner() {
           <button
             type="submit"
             disabled={status === "streaming" || !text.trim()}
-            className="inline-flex min-h-11 items-center justify-center self-start rounded-well bg-ice px-4 py-2 text-sm font-semibold text-bowl motion-safe:transition-colors hover:bg-ice/90 disabled:cursor-not-allowed disabled:opacity-50 sm:min-h-0"
+            className="cta-ready inline-flex min-h-11 items-center justify-center self-start rounded-well bg-ice px-4 py-2 text-sm font-semibold text-bowl outline outline-2 outline-offset-2 outline-blue-glow/35 motion-safe:transition-colors hover:bg-ice/90 hover:outline-blue-glow/65 disabled:cursor-not-allowed disabled:opacity-50 disabled:outline-transparent disabled:hover:outline-transparent sm:min-h-0"
           >
             {status === "streaming" && !lastPlanResult ? "Planning…" : "Plan my night"}
           </button>
