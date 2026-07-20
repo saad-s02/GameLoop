@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function Home() {
   return (
     <main className="flex flex-1 flex-col items-center justify-center gap-12 px-6 py-20">
-      <div className="flex flex-col items-center gap-5 text-center">
+      <div className="arrive arrive-1 flex flex-col items-center gap-5 text-center">
         <p className="font-mono text-xs font-medium uppercase tracking-[0.2em] text-frost">
           Game-day copilot &middot; Harbourview Arena
         </p>

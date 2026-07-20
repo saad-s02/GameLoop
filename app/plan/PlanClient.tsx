@@ -306,7 +306,7 @@ function PlanClientInner({ eyebrow }: { eyebrow: PlanEyebrow }) {
         <div className="flex flex-col gap-2">
           <div
             aria-label="Tonight's game"
-            className="flex flex-wrap items-center gap-x-2 gap-y-1.5 text-[11px]"
+            className="arrive arrive-1 flex flex-wrap items-center gap-x-2 gap-y-1.5 border-l-2 border-sodium py-0.5 pl-2.5 text-[11px]"
           >
             <span className="font-mono font-medium uppercase tracking-[0.14em] text-frost">Tonight</span>
             <span aria-hidden="true" className="text-frost">&middot;</span>
@@ -317,12 +317,12 @@ function PlanClientInner({ eyebrow }: { eyebrow: PlanEyebrow }) {
             </span>
             <SourceBadge source={eyebrow.source} title="Tonight's matchup and puck drop, from the NHL snapshot fixture" />
           </div>
-          <h1 className="font-display text-3xl font-bold uppercase tracking-wide text-ice">Plan My Night</h1>
-          <p className="text-sm text-frost">Tell us about your group in your own words, or start from an example.</p>
+          <h1 className="arrive arrive-2 font-display text-3xl font-bold uppercase tracking-wide text-ice">Plan My Night</h1>
+          <p className="arrive arrive-2 text-sm text-frost">Tell us about your group in your own words, or start from an example.</p>
         </div>
 
         <form onSubmit={onSubmit} className="flex flex-col gap-3">
-          <div className="flex flex-wrap gap-2">
+          <div className="arrive arrive-3 flex flex-wrap gap-2">
             {CHIPS.map((chip) => (
               <button
                 key={chip.id}
@@ -423,7 +423,7 @@ function PlanClientInner({ eyebrow }: { eyebrow: PlanEyebrow }) {
             aria-busy={isReplanning}
             className={`ice-sheet replan-wrap scroll-mt-20 p-6${isReplanning ? " replan-dim" : ""}`}
           >
-            <h2 className="mb-1 font-display text-lg font-semibold uppercase tracking-[0.06em] text-ice">
+            <h2 className="mb-1 font-display text-lg font-semibold uppercase tracking-[0.06em] text-ice-green">
               Tonight&apos;s plan
             </h2>
             {heroSentence && (
@@ -486,7 +486,7 @@ function PlanClientInner({ eyebrow }: { eyebrow: PlanEyebrow }) {
         )}
       </div>
 
-      <aside className="flex w-full flex-col gap-4 md:sticky md:top-20 md:w-80">
+      <aside className="arrive arrive-4 flex w-full flex-col gap-4 md:sticky md:top-20 md:w-80">
         <MemoryPanel />
         <ResetControl />
       </aside>

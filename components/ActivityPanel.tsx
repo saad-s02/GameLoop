@@ -152,7 +152,10 @@ function EventCard({
 }) {
   const promoted = VERDICT_TYPES.includes(envelope.event.type);
   return (
-    <li className="log-row grid grid-cols-[4rem_1.375rem_1fr] gap-x-3">
+    <li className="log-row relative grid grid-cols-[4rem_1.375rem_1fr] gap-x-3">
+      {isStreamingRow && (
+        <span aria-hidden="true" className="absolute -left-4 inset-y-0 w-0.5 bg-sodium" />
+      )}
       <span className="pt-0.5 text-right font-mono text-xs tabular-nums text-frost">
         #{String(envelope.seq).padStart(2, "0")}
       </span>

@@ -74,3 +74,5 @@ The Decision Log keeps its content and its streaming choreography intact, but it
 Tonight's Plan grew a real timeline to earn the promotion: a solid connector line down a left gutter, reusing the Decision Log's spine idea in structural blue instead of the log's red, a filled dot per stop colored by phase, and a small glyph per step kind beside its clock. The line is always solid. Dashed stays reserved exclusively for SIMULATED provenance, on this timeline as everywhere else. Color is never the only signal on a dot; the glyph and the step's own title carry the meaning too.
 
 Everything else in this document, the palette, type, surfaces, and motion sections, still holds. Only the assignment of the Ice treatment and the shape of the Decision Log change.
+
+Also on 2026-07-19: the body lamp-field gradient alphas (`app/globals.css`) were raised from 0.05 warm and 0.04 cool to 0.09 warm and 0.065 cool, so the arena lighting reads as visible on first paint instead of nearly flat, with AA re-verified for frost text in the brightened top zone at the new values.

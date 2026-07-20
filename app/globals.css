@@ -62,10 +62,13 @@
 body {
   background-color: var(--color-bowl);
   /* The arena lamp field: one warm sodium pool over one cool wash, fixed
-     so it behaves like lighting, not like a card decoration. */
+     so it behaves like lighting, not like a card decoration. Alphas raised
+     2026-07-19 (0.05/0.04 to 0.09/0.065, docs/superpowers/2026-07-19-polish-research.md
+     rank 6) so the field reads as light in the bowl instead of a flat page;
+     re-verified AA for frost text in the brightened top zone at these values. */
   background-image:
-    radial-gradient(90rem 42rem at 50% -12rem, rgb(232 179 75 / 0.05), transparent 62%),
-    radial-gradient(64rem 30rem at 50% -8rem, rgb(127 169 220 / 0.04), transparent 55%);
+    radial-gradient(90rem 42rem at 50% -12rem, rgb(232 179 75 / 0.09), transparent 62%),
+    radial-gradient(64rem 30rem at 50% -8rem, rgb(127 169 220 / 0.065), transparent 55%);
   background-attachment: fixed;
   color: var(--color-ice);
   font-family: var(--font-sans);
@@ -294,5 +297,40 @@ body {
     background-image: linear-gradient(100deg, transparent 30%, rgb(233 240 246 / 0.18) 50%, transparent 70%);
     background-size: 200% 100%;
     animation: shimmer 1.6s ease-in-out infinite;
+  }
+
+  /* First-paint entrances: static page chrome (the eyebrow strip, the H1 and
+     subhead, the chip row, the memory aside) fades and rises once on initial
+     mount via @starting-style. The base state below is fully visible, so
+     browsers without @starting-style support -- and reduced-motion users,
+     who never enter this block at all -- both see instant, complete content.
+     That is the sanctioned degradation for this technique; no @supports
+     guard needed. Nothing already covered by the rise-in keyframe set above
+     (.log-row, .plan-step, .memory-row, .log-details-body, diff badges,
+     memory ranks) or the skeleton gets this class, to avoid double motion. */
+  .arrive {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity var(--t-move) var(--ease-glide),
+      transform var(--t-move) var(--ease-glide);
+  }
+  .arrive-1 {
+    transition-delay: 0ms;
+  }
+  .arrive-2 {
+    transition-delay: 60ms;
+  }
+  .arrive-3 {
+    transition-delay: 120ms;
+  }
+  .arrive-4 {
+    transition-delay: 180ms;
+  }
+  @starting-style {
+    .arrive {
+      opacity: 0;
+      transform: translateY(8px);
+    }
   }
 }
