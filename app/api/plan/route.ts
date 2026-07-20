@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { randomUUID } from "node:crypto";
 import { Constraint, ItineraryStep, PlanApiInputSchema, PlanRequest, PlanRequestSchema } from "@/lib/planning/schemas";
 import { createTraceStream, SSE_HEADERS } from "@/lib/trace/sse";
+import { chunkNarrative } from "@/lib/trace/narrative";
 import { verifyAccess } from "@/lib/server/access";
 import { evaluate } from "@/lib/planning/evaluate";
 import { loadPlannerInput } from "@/lib/planning/adapters";
@@ -15,6 +16,7 @@ import demoExtractions from "@/lib/data/demo-extractions.json";
 
 const BODY_CHAR_CAP = 10_000;
 const REQUEST_BUDGET_MS = 30_000;
+const NARRATIVE_CHUNK_MS = 45;
 
 function demoRequest(chipId: string): PlanRequest {
   return PlanRequestSchema.parse((demoExtractions as Record<string, unknown>)[chipId]);
@@ -43,6 +45,24 @@ export async function POST(req: NextRequest) {
   const signal = AbortSignal.any([req.signal, AbortSignal.timeout(REQUEST_BUDGET_MS)]);
 
   (async () => {
+    const sleep = (ms: number) =>
+      new Promise<void>((resolve) => {
+        if (signal.aborted) return resolve();
+        // Remove the abort listener when the timer fires normally, so a
+        // multi-chunk narrative does not pile up listeners on `signal` (Node
+        // warns past ten) across the life of one request.
+        const onAbort = () => { clearTimeout(t); resolve(); };
+        const t = setTimeout(() => { signal.removeEventListener("abort", onAbort); resolve(); }, ms);
+        signal.addEventListener("abort", onAbort, { once: true });
+      });
+    const streamNarrative = async (text: string) => {
+      const parts = chunkNarrative(text);
+      for (let i = 0; i < parts.length; i++) {
+        if (signal.aborted) break;
+        emit({ type: "response_chunk", text: parts[i]! });
+        if (i < parts.length - 1) await sleep(NARRATIVE_CHUNK_MS);
+      }
+    };
     try {
       // First-frame latency: emit before any model round-trip so the Decision Log
       // never sits empty waiting on extraction (PRD 12 / spec section 7, sub-750ms).
@@ -239,10 +259,10 @@ export async function POST(req: NextRequest) {
           }
         } catch {
           emit({ type: "fallback_used", reason: "explanation failed; deterministic summary shown" });
-          emit({ type: "response_chunk", text: fallbackNarrative(result) });
+          await streamNarrative(fallbackNarrative(result));
         }
       } else {
-        emit({ type: "response_chunk", text: fallbackNarrative(result) });
+        await streamNarrative(fallbackNarrative(result));
       }
 
       emit({ type: "done" });
