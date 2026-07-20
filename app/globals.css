@@ -122,6 +122,26 @@ body {
   }
 
   /*
+    Tonight's Plan timeline spine: the same solid-line-plus-docking-dot idea
+    as the log, in the itinerary's own narrower gutter. Structural blue
+    (connectors, per DESIGN.md), always solid; dashed stays reserved for
+    SIMULATED provenance and never appears on this line.
+  */
+  .itinerary-list {
+    position: relative;
+  }
+  .itinerary-list::before {
+    content: "";
+    position: absolute;
+    top: 0.375rem;
+    bottom: 0.375rem;
+    left: calc(0.625rem - 1px);
+    width: 2px;
+    border-radius: 1px;
+    background: rgb(61 111 176 / 0.4);
+  }
+
+  /*
     Replan dim: the previous result stays on the page but visibly steps
     back behind the glass while the new plan streams in. The dim is a
     state change (it applies under reduced motion too); only the
@@ -183,6 +203,13 @@ body {
   .log-row,
   .plan-step,
   .memory-row {
+    animation: rise-in var(--t-move) var(--ease-glide) both;
+  }
+
+  /* Decision log disclosure: reveal fades and rises in on expand, whether
+     the user opens it or the stream forces it open. Collapse is instant
+     either way, native <details> already does that for free. */
+  .log-details[open] > .log-details-body {
     animation: rise-in var(--t-move) var(--ease-glide) both;
   }
 

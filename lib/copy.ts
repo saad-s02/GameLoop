@@ -18,4 +18,6 @@ export const COPY = {
   followUpSend: "Update plan",
   historyHeading: "What you have told us",
   assumedHeading: "Assumed for this plan",
+  decisionLogSummary: (signalCount: number) =>
+    `Plan built from ${signalCount} signal${signalCount === 1 ? "" : "s"} · View reasoning`,
 } as const;

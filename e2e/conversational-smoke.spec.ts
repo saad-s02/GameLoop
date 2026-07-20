@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, Locator } from "@playwright/test";
 
 /**
  * Conversational flows, all in demo mode against the poisoned-key webServer:
@@ -13,6 +13,20 @@ async function enter(page: import("@playwright/test").Page) {
   await page.getByLabel("Access code").fill(process.env.SMOKE_ACCESS_CODE ?? "letmein");
   await page.getByRole("button", { name: "Enter" }).click();
   await page.waitForURL(/\/plan/);
+}
+
+/**
+ * The decision log's <details> opens while streaming and auto-collapses on
+ * completion (see components/ActivityPanel.tsx). Click its summary chip to
+ * expand it before asserting on log row content -- guarded on the current
+ * open state so this never accidentally re-collapses an already-open log.
+ */
+async function expandDecisionLog(decisionLog: Locator) {
+  const details = decisionLog.locator("details.log-details");
+  const isOpen = await details.evaluate((el) => (el as HTMLDetailsElement).open);
+  if (!isOpen) {
+    await decisionLog.locator("details.log-details > summary").click();
+  }
 }
 
 test("answer a clarification inline: vague chip, party steppers, merged replan", async ({ page }) => {
@@ -33,10 +47,15 @@ test("answer a clarification inline: vague chip, party steppers, merged replan",
   await expect(contractCard).not.toContainText("How many adults");
 
   const decisionLog = page.locator('section[aria-label="Decision log"]');
-  const itineraryList = decisionLog.locator("xpath=following::ol[1]");
+  // The itinerary now renders inside the "Tonight's plan" hero, which the
+  // flipped page order puts before the Decision Log section.
+  const itineraryList = page.locator(`[aria-label="Tonight's plan"] ol`);
   await expect(itineraryList).toBeVisible();
 
-  // The answer reads as a visible constraint_adjusted in the log.
+  // The answer reads as a visible constraint_adjusted in the log. Expand the
+  // log first: the merged replan is a fresh stream that has already
+  // completed and auto-collapsed by this point.
+  await expandDecisionLog(decisionLog);
   await expect(decisionLog).toContainText("Added in your follow-up.");
   // No food preference was stated, so the food timing assumption surfaces with provenance.
   await expect(page.locator('section[aria-label="Assumed for this plan"]')).toContainText("assumed");
@@ -49,7 +68,9 @@ test("follow-up refinement: family plan, quick chip change, diff and history", a
   await page.getByRole("button", { name: "Plan my night" }).click();
 
   const decisionLog = page.locator('section[aria-label="Decision log"]');
-  const itineraryList = decisionLog.locator("xpath=following::ol[1]");
+  // The itinerary now renders inside the "Tonight's plan" hero, which the
+  // flipped page order puts before the Decision Log section.
+  const itineraryList = page.locator(`[aria-label="Tonight's plan"] ol`);
   await expect(itineraryList).toBeVisible();
   await expect(itineraryList.locator("li", { hasText: "18:15" })).toBeVisible();
 
@@ -60,7 +81,10 @@ test("follow-up refinement: family plan, quick chip change, diff and history", a
   await expect(itineraryList).toContainText(/kept/);
   await expect(itineraryList).toContainText(/replaced|dropped/);
 
-  // The change is logged as a constraint adjustment and remembered in the history thread.
+  // The change is logged as a constraint adjustment and remembered in the
+  // history thread. Expand the log first: this refinement is a fresh stream
+  // that has already completed and auto-collapsed by this point.
+  await expandDecisionLog(decisionLog);
   await expect(decisionLog).toContainText("Updated in your follow-up.");
   await expect(page.locator('section[aria-label="What you have told us"]')).toContainText("Arriving at 6:00 instead");
 

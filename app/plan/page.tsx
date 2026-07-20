@@ -355,10 +355,6 @@ function PlanPageInner() {
           </section>
         )}
 
-        {submittedBody && (
-          <ActivityPanel events={events} status={status} streamText={streamText} onRetry={retry} />
-        )}
-
         {lastPlanResult && !lastPlanResult.feasible && (
           <section
             ref={infeasibleRef}
@@ -382,7 +378,7 @@ function PlanPageInner() {
             tabIndex={-1}
             aria-label="Tonight's plan"
             aria-busy={isReplanning}
-            className={`replan-wrap scroll-mt-20${isReplanning ? " replan-dim" : ""}`}
+            className={`ice-sheet replan-wrap scroll-mt-20 p-6${isReplanning ? " replan-dim" : ""}`}
           >
             <h2 className="mb-3 font-display text-lg font-semibold uppercase tracking-[0.06em] text-ice">
               Tonight&apos;s plan
@@ -396,6 +392,10 @@ function PlanPageInner() {
               priorSteps={priorPlanSteps}
             />
           </div>
+        )}
+
+        {submittedBody && (
+          <ActivityPanel events={events} status={status} streamText={streamText} onRetry={retry} />
         )}
 
         {lastPlanResult && !lastPlanResult.feasible && lastPlanResult.bestAlternative && (

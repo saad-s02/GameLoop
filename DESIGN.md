@@ -62,3 +62,15 @@ The painted line under the lit ice. One 2px red center line runs the Decision Lo
 ## What was considered and rejected
 
 A red goal-line sweep behind the decision title (second signature device, cut for restraint). Big Shoulders for body text (display face, poor at paragraph sizes). A neon accent on near-black (the templated dark-UI look this language exists to avoid). Light-theme support (dark only is locked for the demo).
+
+## Addendum: the hero flip (2026-07-19)
+
+The polish research pass (docs/superpowers/2026-07-19-polish-research.md) found that page composition inverted the product's own priority. The Decision Log, an internal reasoning trace, carried the one Ice treatment on the page and rendered first. Tonight's Plan, the thing the user actually asked for, rendered second as a flat, uncarded list with less visual confidence than the trace that produced it. The owner reviewed this and approved a conscious reversal of this document's own thesis, recorded here rather than treated as a quiet drift.
+
+The Ice treatment moves from the Decision Log to Tonight's Plan. The plan now renders immediately after the constraint contract and assumptions, wrapped in `.ice-sheet` with generous padding, so it is the one surface on the page lighter than its surroundings, the thing the arena lights are actually on. The memory card keeps `radius-sheet` as the second hero, unchanged.
+
+The Decision Log keeps its content and its streaming choreography intact, but its container drops to the plain `boards` card recipe used by every other utility section, and its list of events now sits behind a native `<details>` element. Collapsed, all that shows is a summary chip reading "Plan built from N signals · View reasoning." It opens automatically while the trace is streaming, since watching the decisions arrive is still worth watching, and it auto-collapses once the stream completes. A user who manually opens or closes it is respected for the rest of that plan; the next fresh stream starts the cycle over.
+
+Tonight's Plan grew a real timeline to earn the promotion: a solid connector line down a left gutter, reusing the Decision Log's spine idea in structural blue instead of the log's red, a filled dot per stop colored by phase, and a small glyph per step kind beside its clock. The line is always solid. Dashed stays reserved exclusively for SIMULATED provenance, on this timeline as everywhere else. Color is never the only signal on a dot; the glyph and the step's own title carry the meaning too.
+
+Everything else in this document, the palette, type, surfaces, and motion sections, still holds. Only the assignment of the Ice treatment and the shape of the Decision Log change.

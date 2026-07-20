@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { SyntheticEvent, useEffect, useRef, useState } from "react";
 import { TraceEnvelope, TraceEvent } from "@/lib/planning/schemas";
 import { COPY } from "@/lib/copy";
 import { SourceBadge } from "./SourceBadge";
@@ -217,8 +217,31 @@ export function ActivityPanel({
     ? arrivalsRef.current.get(`${lastEnvelope.requestId}:${lastEnvelope.seq}`)
     : undefined;
 
+  // Open while the trace streams in (the streaming rows are part of the show),
+  // auto-collapse once it completes. A manual toggle wins over that default
+  // for the rest of this plan; the next fresh stream (a new plan, or a retry)
+  // clears the override and starts the cycle over.
+  const [open, setOpen] = useState(true);
+  const userToggledRef = useRef(false);
+  const prevStatusRef = useRef<TraceStreamStatus>(status);
+  useEffect(() => {
+    const prevStatus = prevStatusRef.current;
+    prevStatusRef.current = status;
+    if (status === "streaming" && prevStatus !== "streaming") {
+      userToggledRef.current = false;
+      setOpen(true);
+    } else if (status === "done" && !userToggledRef.current) {
+      setOpen(false);
+    }
+  }, [status]);
+
+  const handleToggle = (e: SyntheticEvent<HTMLDetailsElement>) => {
+    userToggledRef.current = true;
+    setOpen(e.currentTarget.open);
+  };
+
   return (
-    <section aria-label="Decision log" className="ice-sheet flex flex-col gap-4 p-5">
+    <section aria-label="Decision log" className="flex flex-col gap-4 rounded-card border border-steel bg-boards p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="font-display text-xl font-semibold uppercase tracking-[0.06em] text-ice">
           Decision log
@@ -244,18 +267,25 @@ export function ActivityPanel({
           )}
         </div>
       </div>
-      {streamText && (
-        <p className="rounded-card border border-steel bg-well/60 p-3 text-sm leading-6 text-ice/90">{streamText}</p>
-      )}
-      <ol className="log-list flex flex-col gap-5">
-        {cardEvents.map((envelope) => (
-          <EventCard
-            key={envelope.seq}
-            envelope={envelope}
-            isStreamingRow={status === "streaming" && envelope.seq === lastSeq}
-          />
-        ))}
-      </ol>
+      <details className="log-details" open={open} onToggle={handleToggle}>
+        <summary className="flex cursor-pointer list-none items-center gap-1.5 font-mono text-xs font-medium uppercase tracking-[0.08em] text-frost motion-safe:transition-colors hover:text-ice [&::-webkit-details-marker]:hidden">
+          {COPY.decisionLogSummary(cardEvents.length)}
+        </summary>
+        <div className="log-details-body mt-4 flex flex-col gap-4">
+          {streamText && (
+            <p className="rounded-card border border-steel bg-well/60 p-3 text-sm leading-6 text-ice/90">{streamText}</p>
+          )}
+          <ol className="log-list flex flex-col gap-5">
+            {cardEvents.map((envelope) => (
+              <EventCard
+                key={envelope.seq}
+                envelope={envelope}
+                isStreamingRow={status === "streaming" && envelope.seq === lastSeq}
+              />
+            ))}
+          </ol>
+        </div>
+      </details>
     </section>
   );
 }

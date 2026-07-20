@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, Locator } from "@playwright/test";
 
 /**
  * Seeded demo smoke: walks the exact scripted demo sequence end to end
@@ -10,6 +10,20 @@ import { test, expect } from "@playwright/test";
  */
 
 test.setTimeout(60_000);
+
+/**
+ * The decision log's <details> opens while streaming and auto-collapses on
+ * completion (see components/ActivityPanel.tsx). Click its summary chip to
+ * expand it before asserting on log row content -- guarded on the current
+ * open state so this never accidentally re-collapses an already-open log.
+ */
+async function expandDecisionLog(decisionLog: Locator) {
+  const details = decisionLog.locator("details.log-details");
+  const isOpen = await details.evaluate((el) => (el as HTMLDetailsElement).open);
+  if (!isOpen) {
+    await decisionLog.locator("details.log-details > summary").click();
+  }
+}
 
 test("scripted demo sequence: access, plan, disruption, relive, reset", async ({ page }) => {
   // ---- 1. Access flow ----
@@ -35,13 +49,11 @@ test("scripted demo sequence: access, plan, disruption, relive, reset", async ({
   // per the required sequence.
   await expect(contractCard).toContainText("gluten-free");
 
-  // The itinerary <ol> (ItineraryTimeline) has no aria-label of its own; it is
-  // the first <ol> that appears in the DOM after the Decision Log section
-  // (ActivityPanel's own <ol> of trace events), per the render order in
-  // app/plan/page.tsx. Locating it structurally avoids ambiguity with the
-  // Decision Log's "Raw event" JSON dumps, which also contain step titles
-  // and clock strings once a plan_result event has streamed in.
-  const itineraryList = decisionLog.locator("xpath=following::ol[1]");
+  // The itinerary <ol> (ItineraryTimeline) now renders inside the "Tonight's
+  // plan" hero, which the flipped page order puts *before* the Decision Log
+  // section, so it is located by that wrapper's aria-label rather than by
+  // DOM position relative to the log.
+  const itineraryList = page.locator(`[aria-label="Tonight's plan"] ol`);
   await expect(itineraryList).toBeVisible();
 
   const transitStep = itineraryList.locator("li", { hasText: "18:15" });
@@ -50,7 +62,9 @@ test("scripted demo sequence: access, plan, disruption, relive, reset", async ({
 
   // Decision Log: the constraint_adjusted card renders "You said 6:18; ..."
   // directly as visible text (not just inside a collapsed "Raw event" JSON
-  // blob), echoing the family chip's stated train time.
+  // blob), echoing the family chip's stated train time. Expand the log first,
+  // since by now the stream has completed and it has auto-collapsed.
+  await expandDecisionLog(decisionLog);
   await expect(decisionLog).toContainText("6:18");
 
   // ---- 3. Disruption: train delayed +18 min ----
@@ -62,6 +76,9 @@ test("scripted demo sequence: access, plan, disruption, relive, reset", async ({
   // The "warmups" ask is the seated_by(warmups) constraint; once the delay
   // pushes seating past warmups it flips from satisfied to traded, and the
   // deterministic decision summary reports it verbatim as "traded: seated_by".
+  // The disruption re-plan is a fresh stream, so the log has auto-collapsed
+  // again by the time it completes; expand it again before asserting.
+  await expandDecisionLog(decisionLog);
   await expect(decisionLog).toContainText(/traded:\s*seated_by/);
 
   // ---- 4. Relive: Fixture A ----
