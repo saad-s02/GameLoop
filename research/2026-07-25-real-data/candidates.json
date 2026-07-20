@@ -1,0 +1,503 @@
+{
+  "meta": {
+    "purpose": "Reduced, structured research findings for rigging GameLoop's demo to the real weekend of 2026-07-24 to 2026-07-26 in Toronto. Not raw API dumps or scraped HTML. Shaped for easy transformation into app fixtures, loosely following lib/data/venue.json's field-naming conventions (id, name, source, priceCad-style fields, dietaryFlags).",
+    "generatedAt": "2026-07-20",
+    "targetWeekend": { "start": "2026-07-24", "end": "2026-07-26" },
+    "realCity": "Toronto, Ontario, Canada",
+    "arenaRef": { "real": "Scotiabank Arena, 40 Bay St", "fictionalInApp": "Harbourview Arena" },
+    "unionStationAddress": "65 Front St W, Toronto, ON M5J 1E6",
+    "walkArenaToUnionMinutes": { "value": 5, "range": "2-7", "confidence": "verified", "source": "https://www.upexpress.com/en/discover-toronto-blog/how-to-get-to-scotiabank-arena-by-up-express-train" },
+    "dietaryEnumNote": "Task scoped research to gluten-free, halal, vegetarian, nut-free. Actual lib/planning/schemas.ts DietaryNeedSchema has 6 values: gluten-free, vegetarian, vegan, nut-free, dairy-free, halal."
+  },
+  "events": [
+    {
+      "id": "event-tame-impala-jul25",
+      "name": "Tame Impala: The Deadbeat Tour (with Djo)",
+      "venue": "Scotiabank Arena",
+      "date": "2026-07-25",
+      "dayOfWeek": "Saturday",
+      "startTime": "19:00",
+      "type": "concert",
+      "confidence": "verified",
+      "sourceUrls": [
+        "https://www.scotiabankarena.com/events/detail/tame-impala-1",
+        "https://www.axs.com/events/1330939/tame-impala-tickets",
+        "https://gotickets.com/tickets/1454193/tame-impala-tickets/scotiabank-arena-toronto-on-7-25-2026",
+        "https://www.songkick.com/concerts/43044304-tame-impala-at-scotiabank-arena"
+      ],
+      "accessedAt": "2026-07-20",
+      "notes": "Strongest real, walkable anchor for the target weekend. Doors time not published in any source checked."
+    },
+    {
+      "id": "event-tame-impala-jul26",
+      "name": "Tame Impala: The Deadbeat Tour (with Djo)",
+      "venue": "Scotiabank Arena",
+      "date": "2026-07-26",
+      "dayOfWeek": "Sunday",
+      "startTime": "19:00",
+      "type": "concert",
+      "confidence": "verified",
+      "sourceUrls": [
+        "https://www.scotiabankarena.com/events/detail/tame-impala-1",
+        "https://www.axs.com/events/1330964/tame-impala-tickets",
+        "https://www.songkick.com/concerts/43044307-tame-impala-at-scotiabank-arena"
+      ],
+      "accessedAt": "2026-07-20",
+      "notes": "Second night of the two-night stand."
+    },
+    {
+      "id": "event-scotiabank-jul24-none",
+      "name": "No Scotiabank Arena event found",
+      "venue": "Scotiabank Arena",
+      "date": "2026-07-24",
+      "dayOfWeek": "Friday",
+      "startTime": null,
+      "type": "none",
+      "confidence": "single-source-negative",
+      "sourceUrls": ["https://www.scotiabankarena.com/events"],
+      "accessedAt": "2026-07-20",
+      "notes": "Negative finding, only official listing and one aggregator checked."
+    },
+    {
+      "id": "event-nhl-offseason",
+      "name": "NHL offseason confirmation",
+      "venue": "Scotiabank Arena",
+      "date": null,
+      "type": "league-status",
+      "confidence": "verified",
+      "sourceUrls": [
+        "https://www.nhl.com/news/nhl-home-openers-for-2026-27-season",
+        "https://sports.yahoo.com/articles/nhl-2026-27-schedule-start-150126427.html"
+      ],
+      "accessedAt": "2026-07-20",
+      "notes": "2026-27 regular season opens 2026-09-29; preseason 2026-09-19 to 2026-09-26. FLAG: NHL.com coverage refers to Carolina as 'defending Stanley Cup champion', which conflicts with the app's existing showcase-game-a.json (Vegas Golden Knights won 5-4 in 2OT, 2026-06-06). Not adjudicated in this research; outside scope."
+    },
+    {
+      "id": "event-bluejays-away",
+      "name": "Toronto Blue Jays away at Boston Red Sox (Fenway Park)",
+      "venue": "Rogers Centre",
+      "date": null,
+      "type": "away-series",
+      "confidence": "verified",
+      "sourceUrls": [
+        "https://www.baseball-reference.com/previews/2026/BOS202607250.shtml",
+        "https://www.mlb.com/bluejays/schedule/2026/fullseason"
+      ],
+      "accessedAt": "2026-07-20",
+      "notes": "Fri Jul 24 7:15pm ET, Sat Jul 25 4:10pm ET, Sun Jul 26 1:35pm ET, all at Fenway Park. No Blue Jays home games this weekend; next home game 2026-07-31 vs St. Louis Cardinals 19:07."
+    },
+    {
+      "id": "event-bmofield-worldcup",
+      "name": "FIFA World Cup 2026 match (Portugal vs Croatia, Round of 32)",
+      "venue": "BMO Field",
+      "date": "2026-07-02",
+      "type": "sport-other",
+      "confidence": "single-source",
+      "sourceUrls": ["https://www.bmofield.com/events/detail/fifa-world-cup-26"],
+      "accessedAt": "2026-07-20",
+      "notes": "Outside target weekend, included for context only. BMO Field hosted World Cup matches June 12 to July 2, 2026."
+    },
+    {
+      "id": "event-torontofc-paused",
+      "name": "Toronto FC (MLS) paused for World Cup, no July home games",
+      "venue": "BMO Field",
+      "date": null,
+      "type": "league-status",
+      "confidence": "verified",
+      "sourceUrls": ["https://www.torontofc.ca/news/toronto-fc-announce-schedule-for-the-2026-mls-season"],
+      "accessedAt": "2026-07-20",
+      "notes": "MLS paused May 25 to July 16, 2026 for World Cup; TFC home stretch resumes August 2026."
+    },
+    {
+      "id": "event-argos-away",
+      "name": "Toronto Argonauts (CFL) away, no BMO Field home game that weekend",
+      "venue": "BMO Field",
+      "date": "2026-07-25",
+      "type": "league-status",
+      "confidence": "single-source",
+      "sourceUrls": ["https://www.argonauts.ca/schedule/2026/", "https://en.wikipedia.org/wiki/2026_Toronto_Argonauts_season"],
+      "accessedAt": "2026-07-20",
+      "notes": "Argos at BC Place (Vancouver) vs BC Lions on 2026-07-25. First home game back at BMO Field after World Cup disruption is 2026-08-06 vs Calgary."
+    }
+  ],
+  "restaurants": [
+    {
+      "id": "resto-union-chicken",
+      "name": "Union Chicken",
+      "address": "65 Front St W (York Concourse, Union Station), Toronto, ON",
+      "walkMinutesFromArena": { "value": 5, "confidence": "estimated", "method": "published address, no mapping API used" },
+      "cuisine": "Halal fried and rotisserie chicken",
+      "priceLevel": "$$",
+      "rating": { "value": 3.6, "scale": 5, "source": "Tripadvisor", "reviewCountNote": "ranked ~1229 of 5810 Toronto restaurants; a separate Yelp listing shows 177 reviews" },
+      "hours": { "fri": "11:30-22:00", "sat": "11:30-22:00", "sun": "11:30-20:00", "confidence": "single-source" },
+      "openByPregame1700": true,
+      "dietaryFlags": ["halal"],
+      "dietaryEvidence": {
+        "halal": { "status": "self-described", "certifier": null, "confidence": "single-source" }
+      },
+      "sourceUrls": [
+        "https://www.unionchicken.com/union-station",
+        "https://www.tripadvisor.ca/Restaurant_Review-g155019-d12228271-Reviews-Union_Chicken-Toronto_Ontario.html"
+      ],
+      "accessedAt": "2026-07-20",
+      "source": "web-research"
+    },
+    {
+      "id": "resto-paramount-fine-foods-union",
+      "name": "Paramount Fine Foods (Union Station)",
+      "address": "65 Front St W, Union Station Food Court Unit 471, Toronto, ON M5J 1E6",
+      "walkMinutesFromArena": { "value": 5, "confidence": "estimated" },
+      "cuisine": "Lebanese / Middle Eastern",
+      "priceLevel": "$$",
+      "rating": { "value": 3.6, "scale": 5, "source": "Tripadvisor", "reviewCountNote": "ranked ~1692 of 5797 Toronto restaurants" },
+      "hours": { "fri": "10:00-21:00", "sat": "10:00-21:00", "sun": "10:00-21:00", "confidence": "single-source" },
+      "openByPregame1700": true,
+      "dietaryFlags": ["halal"],
+      "dietaryEvidence": {
+        "halal": { "status": "certified-strong-single-source", "certifier": "Halal Monitoring Authority (HMA)", "confidence": "single-source-strong", "note": "HMA's own site hosts a page for this exact outlet at the URLs below, but certificate text was not readable in this pass; recommend direct confirmation before printing as a hard claim." }
+      },
+      "sourceUrls": [
+        "https://hmacanada.org/paramount-fine-foods-union-station/",
+        "https://hmacanada.org/hma-certified-restaurants/paramount-fine-foods-union-station/",
+        "https://paramountfinefoods.com/menu-locations/union-station/"
+      ],
+      "accessedAt": "2026-07-20",
+      "source": "web-research"
+    },
+    {
+      "id": "resto-holy-cow-japanese-steakhouse",
+      "name": "Holy Cow Japanese Steakhouse",
+      "address": "254 Queen St W, Toronto, ON M5V 1Z8",
+      "walkMinutesFromArena": { "value": 17, "confidence": "estimated", "note": "outside 12-minute target radius" },
+      "cuisine": "Japanese steakhouse / hibachi",
+      "priceLevel": "$$",
+      "rating": { "value": null, "scale": 5, "source": "Yelp", "reviewCountNote": "205 reviews, star value not captured" },
+      "hours": { "fri": "11:00-22:00", "sat": "11:00-22:00", "sun": "11:00-22:00", "confidence": "single-source" },
+      "openByPregame1700": true,
+      "dietaryFlags": ["halal"],
+      "dietaryEvidence": {
+        "halal": { "status": "self-described", "certifier": null, "confidence": "single-source", "note": "\"Most of the menu is halal, no pork or alcohol served.\"" }
+      },
+      "sourceUrls": ["https://www.zabihah.com/restaurants/08dd3295-9660-44d2-89f7-6ad9965c8bf8/holy-cow-toronto-on"],
+      "accessedAt": "2026-07-20",
+      "source": "web-research",
+      "notes": "Included despite exceeding the 12-minute radius because in-radius certified halal sit-down options are thin."
+    },
+    {
+      "id": "resto-byblos-downtown",
+      "name": "Byblos Downtown",
+      "address": "11 Duncan St, Toronto, ON M5V 3M2",
+      "walkMinutesFromArena": { "value": 14, "confidence": "estimated", "note": "likely just outside 12-minute target" },
+      "cuisine": "Upscale Eastern Mediterranean",
+      "priceLevel": "$$$",
+      "rating": { "value": null, "scale": 5, "source": null, "reviewCountNote": "not captured in this pass" },
+      "hours": { "fri": null, "sat": null, "sun": null, "confidence": "not-retrieved" },
+      "openByPregame1700": null,
+      "dietaryFlags": ["halal-friendly"],
+      "dietaryEvidence": {
+        "halal": { "status": "halal-friendly-uncertain", "certifier": null, "confidence": "single-source", "note": "\"A variety of halal meat options\" among a seafood-forward menu; not described as a fully halal kitchen." }
+      },
+      "sourceUrls": ["https://thehalalfood.ca/directory/listing/byblos-downtown/", "https://byblosdowntown.com/"],
+      "accessedAt": "2026-07-20",
+      "source": "web-research",
+      "notes": "Hours and rating are a gap, flagged for follow-up."
+    },
+    {
+      "id": "resto-sultans-mediterranean-grill",
+      "name": "Sultan's Mediterranean Grill (TD Centre / Exchange Tower PATH locations)",
+      "address": "100 Wellington St W (TD Centre) and 130 King St W (Exchange Tower), Toronto, ON",
+      "walkMinutesFromArena": { "value": 10, "confidence": "estimated" },
+      "cuisine": "Mediterranean / shawarma / falafel",
+      "priceLevel": "$",
+      "rating": { "value": 4.5, "scale": 5, "source": "Yelp (one listing)", "reviewCountNote": "404 reviews on one listing; Tripadvisor shows 3.5 on another listing" },
+      "hours": { "fri": "10:30-15:00", "sat": "closed", "sun": "closed", "confidence": "verified" },
+      "openByPregame1700": false,
+      "dietaryFlags": ["halal"],
+      "dietaryEvidence": {
+        "halal": { "status": "certified-single-source", "certifier": "Halal Monitoring Authority (HMA)", "confidence": "single-source", "note": "Certification claim not independently cross-checked against HMA's own directory in this pass, unlike Paramount Fine Foods above." }
+      },
+      "sourceUrls": [
+        "https://www.yelp.ca/biz/sultans-mediterranean-grill-toronto-2",
+        "https://sultansgrill.ca/"
+      ],
+      "accessedAt": "2026-07-20",
+      "source": "web-research",
+      "notes": "GAP EXAMPLE: geographically the best-placed certified-halal candidate but confirmed CLOSED both Saturday and Sunday at both PATH locations checked, illustrating the Financial District weekday-lunch-only pattern."
+    },
+    {
+      "id": "resto-sumaq-iraqi-charcoal-grill",
+      "name": "Sumaq Iraqi Charcoal Grill (Downtown / Queen St W)",
+      "address": "467 Queen St W, Toronto, ON",
+      "walkMinutesFromArena": { "value": 17, "confidence": "estimated", "note": "outside 12-minute target radius" },
+      "cuisine": "Iraqi charcoal grill / Middle Eastern",
+      "priceLevel": "$$",
+      "rating": { "value": 4.5, "scale": 5, "source": "aggregated across locations", "reviewCountNote": "over 9000 reviews across all Sumaq locations, not separated by location" },
+      "hours": { "fri": "11:00-03:00", "sat": "11:00-03:00", "sun": "11:00-01:00", "confidence": "single-source" },
+      "openByPregame1700": true,
+      "dietaryFlags": ["halal"],
+      "dietaryEvidence": {
+        "halal": { "status": "certified", "certifier": "Canada Halal EC (CHEC)", "confidence": "single-source-strong", "note": "Listed on the certifier's own restaurant directory." }
+      },
+      "sourceUrls": ["https://canadahalalec.com/certified-restaurants/sumaq-iraqi-charcoal-grill/"],
+      "accessedAt": "2026-07-20",
+      "source": "web-research",
+      "notes": "Outside walk radius but one of the only fully third-party-certified, high-review-volume halal options found."
+    },
+    {
+      "id": "resto-wvrst-union",
+      "name": "WVRST (Union Station)",
+      "address": "65 Front St W, Toronto, ON M5J 1E6",
+      "walkMinutesFromArena": { "value": 5, "confidence": "estimated" },
+      "cuisine": "German-style beer hall, sausages and fries",
+      "priceLevel": "$$",
+      "rating": { "value": 4.3, "scale": 5, "source": "Restaurant Guru", "reviewCountNote": "1606 reviews; Google rating ~4.4 cited separately" },
+      "hours": { "fri": "11:30-22:00", "sat": "11:30-22:00", "sun": "11:30-20:00", "confidence": "single-source" },
+      "openByPregame1700": true,
+      "dietaryFlags": ["gluten-free"],
+      "dietaryEvidence": {
+        "glutenFree": { "status": "gf-options-good-practice", "confidence": "single-source", "note": "All sausages reported GF; fries use a dedicated fryer used for nothing else. Not a dedicated GF kitchen (buns not GF)." }
+      },
+      "sourceUrls": ["https://wvrst.com/", "https://torontounion.ca/locations/wvrst/"],
+      "accessedAt": "2026-07-20",
+      "source": "web-research"
+    },
+    {
+      "id": "resto-venezolano-union",
+      "name": "Venezolano (Union Station)",
+      "address": "65 Front St W, Toronto, ON M5J 1E6",
+      "walkMinutesFromArena": { "value": 5, "confidence": "estimated" },
+      "cuisine": "Venezuelan (arepas, empanadas)",
+      "priceLevel": "$$",
+      "rating": { "value": 4.5, "scale": 5, "source": "delivery-platform aggregator", "reviewCountNote": "not captured; delivery-app ratings tend to skew high" },
+      "hours": { "fri": "09:00-21:00", "sat": "09:00-21:00", "sun": "09:00-21:00", "confidence": "single-source" },
+      "openByPregame1700": true,
+      "dietaryFlags": ["gluten-free"],
+      "dietaryEvidence": {
+        "glutenFree": { "status": "gf-options-celiac-caution", "confidence": "single-source", "note": "Most menu naturally GF (corn arepas), staff reportedly cross-contact aware, but explicitly NOT a dedicated GF facility; desserts not GF." }
+      },
+      "sourceUrls": ["https://torontounion.ca/locations/venezolano/", "https://www.findmeglutenfree.com/biz/venezolano/5127153608163328"],
+      "accessedAt": "2026-07-20",
+      "source": "web-research"
+    },
+    {
+      "id": "resto-kupfert-kim-brookfield",
+      "name": "Kupfert & Kim (Brookfield Place)",
+      "address": "181 Bay St, Concourse Level Food Court, Toronto, ON M5J 2T3",
+      "walkMinutesFromArena": { "value": 9, "confidence": "estimated" },
+      "cuisine": "Vegan, gluten-free bowls, salads, smoothies",
+      "priceLevel": "$$",
+      "rating": { "value": null, "scale": 5, "source": null, "reviewCountNote": "rating figures found (4.8, #1 of 8) were for a different, weekday-only King St W location and not confirmed for this one" },
+      "hours": { "fri": null, "sat": "11:00-15:30", "sun": "closed", "confidence": "verified" },
+      "openByPregame1700": false,
+      "dietaryFlags": ["gluten-free", "vegetarian", "vegan"],
+      "dietaryEvidence": {
+        "glutenFree": { "status": "whole-menu-gf-by-concept", "confidence": "single-source" },
+        "vegetarian": { "status": "whole-menu-vegan-by-concept", "confidence": "single-source" }
+      },
+      "sourceUrls": ["https://www.yelp.com/biz/kupfert-and-kim-toronto-4", "http://www.kupfertandkim.com/locations"],
+      "accessedAt": "2026-07-20",
+      "source": "web-research",
+      "notes": "GAP EXAMPLE: strongest branded GF/vegan concept in the district but closes 15:30 Saturday and closed entirely Sunday, unusable for a 17:00+ pre-game window."
+    },
+    {
+      "id": "resto-fresh-kitchen-front",
+      "name": "Fresh Kitchen + Juice Bar (Front)",
+      "address": "47 Front St E, Toronto, ON",
+      "walkMinutesFromArena": { "value": 13, "confidence": "estimated", "note": "borderline, at or just past the 12-minute target" },
+      "cuisine": "100% vegan bowls, burgers, juices",
+      "priceLevel": "$$",
+      "rating": { "value": null, "scale": 5, "source": null, "reviewCountNote": "~902 reviews aggregated across sources, star value not captured" },
+      "hours": { "fri": "11:00-22:00", "sat": "10:30-22:00", "sun": "10:30-22:00", "confidence": "single-source" },
+      "openByPregame1700": true,
+      "dietaryFlags": ["vegetarian", "vegan"],
+      "dietaryEvidence": {
+        "vegetarian": { "status": "fully-vegan-restaurant", "confidence": "single-source", "note": "Nothing on the menu contains meat, dairy, or eggs; the cleanest vegetarian/vegan claim in this list." }
+      },
+      "sourceUrls": ["https://www.freshkitchens.ca/en/locations/on/toronto/47-front-street-east"],
+      "accessedAt": "2026-07-20",
+      "source": "web-research"
+    },
+    {
+      "id": "resto-bangkok-buri-union",
+      "name": "Bangkok Buri (Union Station food court)",
+      "address": "65 Front St W, Toronto, ON",
+      "walkMinutesFromArena": { "value": 5, "confidence": "estimated" },
+      "cuisine": "Thai",
+      "priceLevel": "$$",
+      "rating": { "value": 3.4, "scale": 5, "source": "Tripadvisor", "reviewCountNote": "ranked ~3650 of 5757 Toronto restaurants" },
+      "hours": { "fri": "11:00-23:00", "sat": "11:00-19:00", "sun": "11:00-19:00", "confidence": "single-source" },
+      "openByPregame1700": true,
+      "dietaryFlags": ["vegetarian", "vegan", "gluten-free"],
+      "dietaryEvidence": {
+        "vegetarian": { "status": "strong-vegetarian-options", "confidence": "single-source", "note": "Sauces reported vegan and gluten-free; tofu and vegetable swaps available. Not a dedicated vegetarian restaurant." }
+      },
+      "sourceUrls": ["https://www.findmeglutenfree.com/biz/bangkok-buri/4734032275963904"],
+      "accessedAt": "2026-07-20",
+      "source": "web-research",
+      "notes": "Closes 19:00 both weekend days, fine for pre-game only."
+    },
+    {
+      "id": "resto-real-sports-bar-grill",
+      "name": "Real Sports Bar & Grill",
+      "address": "15 York St, Toronto, ON M5J 2Z2",
+      "walkMinutesFromArena": { "value": 2, "confidence": "estimated", "note": "physically attached to the arena" },
+      "cuisine": "North American sports-bar pub food",
+      "priceLevel": "$$$",
+      "rating": { "value": 4.9, "scale": 5, "source": "Restaurant Guru", "reviewCountNote": "9133 reviews; a separate Yelp listing at the same address shows 575 reviews" },
+      "hours": { "fri": "11:30-24:00", "sat": "11:30-24:00", "sun": "11:30-23:00", "confidence": "single-source" },
+      "openByPregame1700": true,
+      "dietaryFlags": ["gluten-free"],
+      "dietaryEvidence": {
+        "glutenFree": { "status": "gf-aware-not-celiac-safe", "confidence": "single-source", "note": "Named GF items exist (salmon poke bowl, garlic fingers) but at least one allergy-tracking source states this is not a dedicated GF facility, cross-contact risk from fryers." }
+      },
+      "sourceUrls": ["https://www.realsports.ca/", "https://www.findmeglutenfree.com/biz/real-sports/6551523626975232"],
+      "accessedAt": "2026-07-20",
+      "source": "web-research",
+      "notes": "Highest review volume of any candidate; the iconic no-brainer pre-game anchor given direct arena attachment."
+    },
+    {
+      "id": "resto-steam-whistle-kitchen",
+      "name": "Steam Whistle Kitchen (at the Roundhouse)",
+      "address": "255 Bremner Blvd, Bay 6, Toronto, ON M5V 3M9",
+      "walkMinutesFromArena": { "value": 8, "confidence": "estimated" },
+      "cuisine": "Canadian pub classics, brewery",
+      "priceLevel": "$$",
+      "rating": { "value": 4.6, "scale": 5, "source": "Google (cited); Restaurant Guru shows 4.8 with 4070 reviews", "reviewCountNote": "4070 reviews on Restaurant Guru" },
+      "hours": { "fri": "11:00-22:00", "sat": "11:00-22:00", "sun": "11:00-20:00", "confidence": "single-source" },
+      "openByPregame1700": true,
+      "dietaryFlags": [],
+      "dietaryEvidence": {},
+      "sourceUrls": ["https://steamwhistle.ca/pages/kitchen"],
+      "accessedAt": "2026-07-20",
+      "source": "web-research",
+      "notes": "Iconic Toronto landmark building and brewery, no dietary certifications found; included for its iconic-quick-pregame value."
+    },
+    {
+      "id": "resto-blondies-pizza-union",
+      "name": "Blondies Pizza (Union Station)",
+      "address": "65 Front St W, Toronto, ON M5J 1E6",
+      "walkMinutesFromArena": { "value": 6, "confidence": "estimated" },
+      "cuisine": "Gourmet pizza by the slice",
+      "priceLevel": "$",
+      "rating": { "value": 4.0, "scale": 5, "source": "Tripadvisor", "reviewCountNote": "not separately captured" },
+      "hours": { "fri": "11:00-20:30", "sat": "11:00-20:30", "sun": "11:00-20:30", "confidence": "verified" },
+      "openByPregame1700": true,
+      "dietaryFlags": [],
+      "dietaryEvidence": {},
+      "sourceUrls": ["https://union.blondiespizza.ca/"],
+      "accessedAt": "2026-07-20",
+      "source": "web-research",
+      "notes": "Plain quick, kid-friendly, iconic-to-the-station option, not a dietary-coverage pick."
+    },
+    {
+      "id": "resto-amano-italian-kitchen-union",
+      "name": "Amano Italian Kitchen (Union Station)",
+      "address": "65 Front St W, Toronto, ON M5J 1E6",
+      "walkMinutesFromArena": { "value": 6, "confidence": "estimated" },
+      "cuisine": "House-made pasta, Italian, wine bar",
+      "priceLevel": "$$$",
+      "rating": { "value": 4.6, "scale": 5, "source": "OpenTable", "reviewCountNote": "not captured" },
+      "hours": { "fri": null, "sat": "11:30-21:00", "sun": "closed", "confidence": "verified" },
+      "openByPregame1700": null,
+      "dietaryFlags": [],
+      "dietaryEvidence": {
+        "glutenFree": { "status": "uncertain-not-found", "confidence": "not-retrieved", "note": "Pasta restaurants are a high celiac cross-contact risk category per general research; no GF pasta claim found for this specific restaurant." }
+      },
+      "sourceUrls": ["https://www.eatamano.com/union-station"],
+      "accessedAt": "2026-07-20",
+      "source": "web-research",
+      "notes": "GAP EXAMPLE: closed Sunday entirely, one of two target dates unusable."
+    }
+  ],
+  "transit": {
+    "lakeshoreEast": {
+      "constructionForTargetWeekend": {
+        "found": false,
+        "confidence": "reasonably-confident-negative",
+        "note": "No disruption found for 2026-07-25/26 on the line's own construction notices page; next listed disruption starts 2026-09-26. Corroborated by a separate service-alert search that surfaced disruptions on Barrie, Lakeshore West, UP Express, and Kitchener lines for that weekend but never mentioned Lakeshore East.",
+        "sourceUrls": ["https://www.gotransit.com/en/the-future-and-go/construction-notices/lakeshore-east-construction"]
+      },
+      "unionArrivals1630to1930": {
+        "retrieved": false,
+        "note": "Schedule tool (transsee.ca) ignored requested date parameter and returned a Monday 2026-07-20 weekday schedule both times queried. Not usable as a Saturday schedule. Recommend pulling the actual GO Transit Saturday timetable directly at build time.",
+        "existingAppSnapshotCaveat": "lib/data/transit-snapshot.json is explicitly a Tuesday 2026-07-14 weekday snapshot per its own notes field; using it unmodified for a Saturday 'tonight' is a real day-type mismatch."
+      },
+      "accessedAt": "2026-07-20"
+    },
+    "lakeshoreWest": {
+      "constructionForTargetWeekend": {
+        "found": true,
+        "confidence": "verified",
+        "reason": "Planned construction at Exhibition Station for the future Ontario Line subway",
+        "frequency": "every 30 minutes on 2026-07-25 and 2026-07-26",
+        "specificShifts": [
+          "normal 08:47 westbound Union departure leaves 2 minutes earlier",
+          "westbound trains between 09:17 and 00:17 shift 2 minutes earlier",
+          "19:22 Union departure moves to 19:08",
+          "one late-night train skips Exhibition GO entirely"
+        ],
+        "sourceUrls": [
+          "https://www.chch.com/chch-news/planned-construction-for-lakeshore-west-go-line-july-25-july-26/"
+        ]
+      },
+      "normalWeekendFrequency": {
+        "note": "15-minute weekend daytime/evening service between Oakville GO and Union restored starting 2026-05-02 (announced 2026-04-14); hourly base West Harbour-Union; ~30 minutes further out normally. Unclear whether the July 25-26 'every 30 minutes' figure is a temporary drop from 15 minutes or the unaffected outer-line frequency.",
+        "confidence": "uncertain",
+        "sourceUrls": ["https://www.metrolinx.com/en/projects-and-programs/lakeshore-west-line-go-expansion/15-minute-weekend-service-returns-to-lakeshore-west-line"]
+      },
+      "unionArrivals1630to1930": {
+        "retrieved": false,
+        "note": "Same schedule-tool limitation as Lakeshore East; not usable as a Saturday schedule."
+      },
+      "accessedAt": "2026-07-20"
+    },
+    "upExpress": {
+      "constructionForTargetWeekend": {
+        "found": true,
+        "confidence": "verified",
+        "detail": "UP Express trains replaced by GO buses on 2026-07-25 and 2026-07-26 for planned construction; no UP Express service at Bloor, Mount Dennis, and Weston stations during the closure.",
+        "sourceUrls": [
+          "https://www.chch.com/chch-news/planned-construction-for-lakeshore-west-go-line-july-25-july-26/",
+          "https://www.upexpress.com/en/planned-construction"
+        ]
+      },
+      "normalWeekendFrequency": {
+        "value": "every 15 minutes, first train 06:00, last train 01:00",
+        "confidence": "single-source",
+        "note": "Sourced figure traced to a Metrolinx PDF labeled for a different June 2026 event window; moot for the target weekend regardless since it is under construction disruption."
+      },
+      "appFixtureRelevance": "lib/data/transit-snapshot.json only models Lakeshore East/West GO trains, not UP Express, so this is informational only.",
+      "accessedAt": "2026-07-20"
+    }
+  },
+  "dietaryGroundRules": {
+    "halal": {
+      "certificationBodiesOntario": [
+        { "name": "Halal Monitoring Authority (HMA)", "location": "Scarborough, ON", "url": "https://hmacanada.org/" },
+        { "name": "Islamic Food and Nutrition Council of Canada (IFANCC)", "location": "Mississauga, ON", "url": "https://www.ifancc.org/" },
+        { "name": "ISNA Canada Halal Certification", "url": "https://isnahalal.com/" },
+        { "name": "Canadian Halal Food Certifying Agency (CHFCA)", "url": "https://www.chfcahalal.com/" },
+        { "name": "Canada Halal EC (CHEC)", "url": "https://canadahalalec.com/" }
+      ],
+      "regulatoryNote": "Certifying organizations are not government-regulated in Canada; 'halal certified' is only as trustworthy as the named certifier.",
+      "threeTierLanguage": ["certified halal (named, checkable certifier on record for the exact outlet)", "self-described halal (restaurant's own claim, no named certifier)", "halal-friendly / halal options available (partial menu or soft language)"],
+      "sourceUrls": ["https://www.cbc.ca/news/canada/halal-certification-1.3519910", "https://hmacanada.org/understanding-halal-and-halal-certification-why-halal-certification-matters/"]
+    },
+    "glutenFree": {
+      "distinction": "celiac-safe (dedicated GF kitchen, separate fryers/prep/utensils, trained staff) vs gluten-free options (GF ingredients in a shared kitchen that also handles wheat/barley/rye, trace cross-contact possible)",
+      "crossContactRiskNote": "Roughly a third of restaurant dishes labeled gluten-free in one crowd-sourced study still tested positive for gluten; pizza and pasta are the highest-risk categories.",
+      "ontarioRegulatoryNote": "Ontario has no mandatory restaurant menu allergen-disclosure law found in this research, unlike packaged retail food under federal Health Canada priority-allergen rules.",
+      "sourceUrls": ["https://www.beyondceliac.org/gluten-free-diet/cross-contact/", "https://www.sweetfin.com/blog/celiac-friendly-restaurant-checklist"]
+    },
+    "vegetarian": {
+      "distinction": "fully vegetarian/vegan menu by concept (no cross-contact category) vs vegetarian/vegan options within an omnivore menu (shared kitchen, cross-contact possible)",
+      "sourceUrls": []
+    },
+    "nutFree": {
+      "finding": "Thinnest category researched; no findable, citable nut-allergy policy for any of the 15 candidate restaurants.",
+      "generalPattern": "Only about 16 percent of a sampled set of Toronto restaurant menus carried any allergy disclaimer at all in one academic source; where present, disclaimers are almost always a generic cross-contact statement, not nut-specific.",
+      "recommendation": "Do not print a nut-free badge for any real restaurant in this candidate list. Reuse the app's existing lib/copy.ts dietaryDisclaimer pattern ('Cross-contact information is unavailable; confirm with venue staff.') for real restaurants too.",
+      "sourceUrls": ["https://www.sciencedirect.com/science/article/pii/S0362028X25000857"]
+    }
+  }
+}
