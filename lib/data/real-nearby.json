@@ -5,7 +5,7 @@
     {
       "id": "union-chicken",
       "name": "Union Chicken",
-      "rating": { "value": 3.6, "source": "Tripadvisor", "reviewNote": "ranked about 1,229 of 5,810 Toronto-area listings; a separate Yelp listing shows 177 reviews" },
+      "rating": { "value": 3.6, "source": "Tripadvisor", "reviewNote": "ranked about 1,229 of 5,810 area listings; a separate Yelp listing shows 177 reviews" },
       "walkMinutes": 5,
       "priceLevel": "$$",
       "openWeekendEvenings": true,
@@ -80,14 +80,14 @@
     {
       "id": "bangkok-buri",
       "name": "Bangkok Buri (Union Station food court)",
-      "rating": { "value": 3.4, "source": "Tripadvisor", "reviewNote": "ranked about 3,650 of 5,757 listings; closes 19:00 weekend evenings, pre-game only" },
+      "rating": { "value": 3.4, "source": "Tripadvisor", "reviewNote": "ranked about 3,650 of 5,757 area listings" },
       "walkMinutes": 5,
       "priceLevel": "$$",
       "openWeekendEvenings": true,
       "iconic": false,
       "evidence": [
-        { "need": "vegetarian", "tier": "friendly", "line": "Sauces reported vegan with tofu and vegetable swaps available; a vegetarian-friendly menu in a shared kitchen, not a vegetarian restaurant." },
-        { "need": "vegan", "tier": "friendly", "line": "Sauces reported vegan with tofu and vegetable swaps available; a vegetarian-friendly menu in a shared kitchen, not a vegetarian restaurant." }
+        { "need": "vegetarian", "tier": "friendly", "line": "Sauces reported vegan with tofu and vegetable swaps available; a vegetarian-friendly menu in a shared kitchen, not a vegetarian restaurant. Closes 19:00 on weekend evenings, a pre-game stop only." },
+        { "need": "vegan", "tier": "friendly", "line": "Sauces reported vegan with tofu and vegetable swaps available; a vegetarian-friendly menu in a shared kitchen, not a vegetarian restaurant. Closes 19:00 on weekend evenings, a pre-game stop only." }
       ],
       "sourceUrl": "https://www.findmeglutenfree.com/biz/bangkok-buri/4734032275963904",
       "accessedAt": "2026-07-20",

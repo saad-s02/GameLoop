@@ -49,4 +49,15 @@ describe("real-nearby fixture", () => {
       "steam-whistle",
     ]);
   });
+
+  it("never names the real city or venue in any renderable text field", () => {
+    // The card renders name, reviewNote, and evidence lines. Station names
+    // inside restaurant names are permitted by the spec's hybrid stance;
+    // the city and the real arena are not. sourceUrl is excluded: it is an
+    // href attribute, never visible text.
+    for (const e of entries) {
+      const visible = [e.name, e.rating?.reviewNote ?? "", ...e.evidence.map((ev) => ev.line)].join(" ");
+      expect(visible).not.toMatch(/Toronto|Scotiabank/i);
+    }
+  });
 });

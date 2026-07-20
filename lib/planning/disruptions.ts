@@ -64,8 +64,10 @@ export function applyDisruptions(input: PlannerInput, disruptions: DisruptionId[
         // The verified 2026-07-25/26 weekend: Ontario Line construction at
         // Exhibition reduces Lakeshore West service (UP Express is replaced
         // by GO buses that weekend and is not modeled in this snapshot).
-        // Modeled as Lakeshore West dropping to its West Harbour base
-        // trips; Lakeshore East is unaffected per the same research pass.
+        // Modeled as Lakeshore West dropping to its hourly West Harbour
+        // base trips, a demo abstraction one notch stronger than the
+        // headline 30 minute construction figure; Lakeshore East is
+        // unaffected per the same research pass.
         // Source: research/2026-07-25-real-data/report.md section 3.
         next.transitOptions = next.transitOptions.filter(
           (o) => !o.routeId.endsWith("-LW") || o.origin.includes("West Harbour"),
