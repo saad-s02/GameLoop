@@ -27,7 +27,7 @@ const TYPE_LABEL: Record<Constraint["type"], string> = {
   food_preference: "Food",
 };
 
-/** A word-or-two value summary per constraint type, distinct from ConstraintContract's full sentence form. */
+/** A word-or-two value summary per constraint type, deliberately terser than a full sentence. */
 function summarizeValue(c: Constraint): string {
   switch (c.type) {
     case "arrival":
@@ -53,7 +53,7 @@ function summarizeValue(c: Constraint): string {
  * Horizontal strip of one chip per constraint outcome: type, a word-or-two value
  * summary, and the satisfied/traded/violated status as an icon plus a plain-text
  * label (never color alone). Mirrors the chip styling conventions used by
- * ConstraintContract's PriorityChip and ItineraryTimeline's DiffBadge.
+ * ItineraryTimeline's DiffBadge and NearbyRealOptions' evidence tier chips.
  */
 export function ConstraintsStrip({ outcomes }: { outcomes: ConstraintOutcome[] }) {
   if (outcomes.length === 0) return null;

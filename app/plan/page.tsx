@@ -1,5 +1,6 @@
 import { loadShowcaseGame } from "@/lib/data/showcaseGame";
-import PlanClient from "./PlanClient";
+import { loadRealNearby } from "@/lib/data/realNearby";
+import PlanWorkspace from "./PlanWorkspace";
 
 // Matches the "tonight" showcase game hardcoded in Task 9's loadPlannerInput.
 const DEMO_GAME_ID = "2025030413";
@@ -11,5 +12,5 @@ export default function PlanPage() {
     puckDropAt: g.puckDropAt,
     source: g.source,
   };
-  return <PlanClient eyebrow={eyebrow} />;
+  return <PlanWorkspace eyebrow={eyebrow} realNearby={loadRealNearby()} />;
 }

@@ -231,6 +231,11 @@ body {
     animation: rise-in var(--t-move) var(--ease-glide) both;
   }
 
+  /* Chat turns: the same rise-in entrance as log rows; the thread is the stagger. */
+  .turn-arrive {
+    animation: rise-in var(--t-move) var(--ease-glide) both;
+  }
+
   /* Decision log disclosure: reveal fades and rises in on expand, whether
      the user opens it or the stream forces it open. Collapse is instant
      either way, native <details> already does that for free. */

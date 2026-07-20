@@ -14,7 +14,7 @@ const SKELETON_ROW_COUNT = 3;
  * placeholder bar below is decorative scaffolding, not information, so the
  * whole row list is aria-hidden; the one real content here is the heading
  * text, read once like any other heading -- no extra live region, since
- * ActivityPanel's own aria-live status already announces stream progress.
+ * ReasoningDisclosure's own aria-live status already announces stream progress.
  */
 export function SkeletonTimeline() {
   return (

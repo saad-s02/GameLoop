@@ -44,8 +44,8 @@ export function AssistantTurn({
           {a.reason} Resolved to {a.resolved}.
         </p>
       ))}
-      {seg.assumptions.map((a) => (
-        <p key={a.field} className="flex items-start gap-2 rounded-card border border-sodium/40 bg-sodium/10 p-3 text-sm leading-6 text-ice">
+      {seg.assumptions.map((a, i) => (
+        <p key={`${a.field}-${i}`} className="flex items-start gap-2 rounded-card border border-sodium/40 bg-sodium/10 p-3 text-sm leading-6 text-ice">
           <span aria-hidden="true" className="font-mono text-sodium">~</span>
           <span>
             <span className="mr-1.5 font-mono text-[10.5px] font-medium uppercase tracking-[0.08em] text-sodium">
@@ -55,7 +55,12 @@ export function AssistantTurn({
           </span>
         </p>
       ))}
-      {turn.streamText && <p className="text-[15px] leading-7 text-ice/90">{turn.streamText}</p>}
+      {/* An infeasible result suppresses the narrative fallback: its text
+          repeats the turnInfeasible line below and points at a "below the
+          Decision Log" region that does not exist in the chat workspace. */}
+      {turn.streamText && seg.planResult?.feasible !== false && (
+        <p className="text-[15px] leading-7 text-ice/90">{turn.streamText}</p>
+      )}
       {!turn.streamText && seg.body && <p className="text-[15px] leading-7 text-ice/90">{seg.body}</p>}
       {seg.clarification && (
         <div className="rounded-card border border-sodium/40 bg-sodium/10 p-3.5 text-sm text-sodium">

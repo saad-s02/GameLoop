@@ -29,8 +29,17 @@ describe("ChatComposer", () => {
     );
     const textarea = container.querySelector("textarea")!;
     expect(textarea.disabled).toBe(true);
-    expect(container.textContent).toContain(COPY.followUpDemoNote);
+    // Fresh composer: the note points at the suggested prompts, not the
+    // quick chips, which only exist once a plan context is on screen.
+    expect(container.textContent).toContain(COPY.composerFreshDemoNote);
     expect(queryByRole("button", { name: "Plan my night" })).toBeNull();
+  });
+
+  it("demo mode after a plan: the note points at the quick chips", () => {
+    const { container } = render(
+      <ChatComposer demo disabled={false} hasPlanContext onSuggestedPrompt={noop} onQuickChip={noop} onSubmitText={noop} />,
+    );
+    expect(container.textContent).toContain(COPY.followUpDemoNote);
   });
 
   it("after a plan: quick chips replace the prompts and fire onQuickChip", () => {

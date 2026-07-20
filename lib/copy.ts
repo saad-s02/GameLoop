@@ -119,6 +119,10 @@ export const COPY = {
   suggestedPromptsLabel: "Try one of these",
   composerFreshPlaceholder:
     "e.g. We're a family of four, need gluten-free food, and want to be seated before warmups.",
+  /** Demo-mode note under the fresh composer, where the visible affordance is
+   * the suggested prompts (quick chips only exist after a plan). */
+  composerFreshDemoNote:
+    "Free-text requests use the live model. In demo mode, start from one of the examples above.",
   /** Assistant confirmation closing a plan turn, echoing the hero sentence. */
   turnPlanReady: (hero?: string): string =>
     hero ? `Tonight's plan is ready. ${hero}` : "Tonight's plan is ready. Details in the plan panel.",

@@ -3,6 +3,7 @@ import { cleanup, render } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { ChatTurn } from "@/lib/chat/turns";
 import { PlanResult, TraceEvent } from "@/lib/planning/schemas";
+import { COPY } from "@/lib/copy";
 import { AssistantTurn } from "./AssistantTurn";
 
 // This project's vitest config does not set `test.globals: true`, so
@@ -67,6 +68,25 @@ describe("AssistantTurn", () => {
     const { container } = render(<AssistantTurn turn={t} isLive={false} />);
     expect(container.textContent).toContain("assumed");
     expect(container.textContent).toContain("Lakeshore West arriving 18:15");
+  });
+
+  it("an infeasible result shows one message, not the narrative fallback plus the panel pointer", () => {
+    const infeasible: PlanResult = {
+      feasible: false,
+      violations: ["budget: over by $20"],
+      adjustments: [],
+      candidateStats: { evaluated: 10, feasible: 0 },
+    };
+    const t = turn(
+      [
+        { type: "plan_result", result: infeasible },
+        { type: "done" },
+      ],
+      { streamText: "This request cannot be satisfied as stated: budget: over by $20. The closest feasible alternative is shown below the Decision Log. (Plain summary, written without the live narrator.)" },
+    );
+    const { container } = render(<AssistantTurn turn={t} isLive={false} />);
+    expect(container.textContent).toContain(COPY.turnInfeasible);
+    expect(container.textContent).not.toContain("below the Decision Log");
   });
 
   it("renders the terminal decision as the body when no plan landed", () => {

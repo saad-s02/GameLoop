@@ -1,96 +1,86 @@
 import { test, expect, Locator } from "@playwright/test";
 
 /**
- * Seeded demo smoke: walks the exact scripted demo sequence end to end
- * against the real built app (access -> plan -> disruption -> reset),
- * asserting on markup that actually exists in components/ and app/
- * rather than guessed attribute names. Runs entirely in demo mode: see
- * playwright.config.ts for why ANTHROPIC_API_KEY is deliberately
- * poisoned for the webServer so no step ever depends on a live model call.
+ * Seeded demo smoke on the chat workspace: access -> suggested prompt ->
+ * July 25 weekend service -> train delay -> real places -> reset, all in
+ * demo mode against the poisoned-key webServer (playwright.config.ts), so
+ * no step ever depends on a live model call.
  */
 
 test.setTimeout(60_000);
 
 /**
- * The decision log's <details> opens while streaming and auto-collapses on
- * completion (see components/ActivityPanel.tsx). Click its summary chip to
- * expand it before asserting on log row content -- guarded on the current
- * open state so this never accidentally re-collapses an already-open log.
+ * The reasoning disclosure opens while streaming and auto-collapses on
+ * completion (see components/ReasoningDisclosure.tsx). Click its summary
+ * strip to expand before asserting on row content, guarded on the current
+ * open state so this never re-collapses an already-open disclosure.
  */
-async function expandDecisionLog(decisionLog: Locator) {
-  const details = decisionLog.locator("details.log-details");
+async function expandReasoning(turn: Locator) {
+  const details = turn.locator("details.log-details");
   const isOpen = await details.evaluate((el) => (el as HTMLDetailsElement).open);
   if (!isOpen) {
-    await decisionLog.locator("details.log-details > summary").click();
+    await turn.locator("details.log-details > summary").click();
   }
 }
 
-test("scripted demo sequence: access, plan, disruption, reset", async ({ page }) => {
+test("scripted demo sequence: access, prompt, July 25 service, delay, real places, reset", async ({ page }) => {
   // ---- 1. Access flow ----
   await page.goto("/enter");
   await page.getByLabel("Access code").fill(process.env.SMOKE_ACCESS_CODE ?? "letmein");
   await page.getByRole("button", { name: "Enter" }).click();
   await page.waitForURL(/\/plan/);
 
-  // ---- 2. Plan demo: family chip ----
-  // The task's suggested selector text ("I'm bringing my dad and two kids...")
-  // is the sentence the chip *fills into the textarea*, not the chip button's
-  // own visible label -- app/plan/page.tsx renders CHIPS[].label ("Family +
-  // gluten-free") as the button text. Selecting by that real accessible name
-  // instead.
+  // ---- 2. Suggested prompt submits immediately as a user turn ----
   await page.goto("/plan?demo=1");
   await page.getByRole("button", { name: "Family + gluten-free" }).click();
-  await page.getByRole("button", { name: "Plan my night" }).click();
 
-  const contractCard = page.locator('section[aria-label="Constraint contract"]');
-  const decisionLog = page.locator('section[aria-label="Decision log"]');
+  const thread = page.locator('[aria-label="Conversation"]');
+  await expect(thread).toContainText("I'm bringing my dad and two kids");
 
-  // Contract card must appear (and be checked) before the itinerary content,
-  // per the required sequence.
-  await expect(contractCard).toContainText("gluten-free");
-
-  // The itinerary <ol> (ItineraryTimeline) now renders inside the "Tonight's
-  // plan" hero, which the flipped page order puts *before* the Decision Log
-  // section, so it is located by that wrapper's aria-label rather than by
-  // DOM position relative to the log.
-  const itineraryList = page.locator(`[aria-label="Tonight's plan"] ol`);
+  const panel = page.locator('[aria-label="Plan panel"]');
+  const itineraryList = panel.locator(`[aria-label="Tonight's plan"] ol`);
   await expect(itineraryList).toBeVisible();
-
   const transitStep = itineraryList.locator("li", { hasText: "18:15" });
   await expect(transitStep).toBeVisible();
   await expect(transitStep).toContainText("SNAPSHOT");
 
-  // The auto-collapse contract: once the stream completes, the log folds to
-  // its summary strip. Pin that state before the first manual expand (a
-  // manual toggle wins for the rest of the plan).
-  const logDetails = decisionLog.locator("details.log-details");
-  await expect(logDetails).toHaveJSProperty("open", false);
+  // Collapse contract: once the stream completes, the disclosure folds to
+  // its signals summary. The snap adjustment renders inside the turn.
+  const firstTurn = thread.locator('[data-role="assistant-turn"]').last();
+  await expect(firstTurn.locator("details.log-details")).toHaveJSProperty("open", false);
+  await expect(firstTurn).toContainText("You said 6:18");
+  await expandReasoning(firstTurn);
+  await expect(firstTurn).toContainText("Request parsed");
 
-  // Decision Log: the constraint_adjusted card renders "You said 6:18; ..."
-  // directly as visible text (not just inside a collapsed "Raw event" JSON
-  // blob), echoing the family chip's stated train time. Expand the log first,
-  // since by now the stream has completed and it has auto-collapsed.
-  await expandDecisionLog(decisionLog);
-  await expect(decisionLog).toContainText("6:18");
-
-  // ---- 3. Disruption: train delayed +18 min ----
-  await page.getByRole("button", { name: "Train delayed +18 min" }).click();
-
+  // ---- 3. July 25 weekend service: Lakeshore West thins, arrival re-snaps ----
+  await page.getByRole("button", { name: "July 25 weekend service" }).click();
+  await expect(itineraryList.locator("li", { hasText: "18:12" })).toBeVisible();
+  await expect(itineraryList).toContainText("Lakeshore East");
   await expect(itineraryList).toContainText(/replaced|dropped/);
-  await expect(itineraryList).toContainText("18:33");
+  const julyTurn = thread.locator('[data-role="assistant-turn"]').last();
+  await expect(julyTurn).toContainText("18:12 (Lakeshore East)");
 
-  // The "warmups" ask is the seated_by(warmups) constraint; once the delay
-  // pushes seating past warmups it flips from satisfied to traded, and the
-  // deterministic decision summary reports it verbatim as "traded: seated_by".
-  // The disruption re-plan is a fresh stream, so the manual-toggle override
-  // resets and the log must auto-collapse again once it completes, even
-  // though it was open when the replan started.
-  await expect(logDetails).toHaveJSProperty("open", false);
-  await expandDecisionLog(decisionLog);
-  await expect(decisionLog).toContainText(/traded:\s*seated_by/);
+  // ---- 4. Train delayed +18: stacks on the July 25 service ----
+  await page.getByRole("button", { name: "Train delayed +18 min" }).click();
+  await expect(itineraryList).toContainText("18:30");
+  // Seating slips past warmups; the deterministic decision summary reports
+  // the trade verbatim. The disruption replan is a fresh stream, so the
+  // disclosure must auto-collapse again before the manual expand.
+  const delayTurn = thread.locator('[data-role="assistant-turn"]').last();
+  await expect(delayTurn.locator("details.log-details")).toHaveJSProperty("open", false);
+  await expandReasoning(delayTurn);
+  await expect(delayTurn).toContainText(/traded:\s*seated_by/);
 
-  // ---- 4. Reset ----
-  // ResetControl only renders on /plan; navigate back there to reach it.
+  // ---- 5. Real places: research-labeled, evidence tier, provenance ----
+  const realPlaces = panel.locator('[aria-label="Real places near the arena"]');
+  await expect(realPlaces).toBeVisible();
+  await expect(realPlaces).toContainText("research notes");
+  await expect(realPlaces).toContainText("WVRST");
+  await expect(realPlaces).toContainText("dedicated fryer");
+  await expect(realPlaces).toContainText("SNAPSHOT");
+  await expect(realPlaces).toContainText("2026-07-20");
+
+  // ---- 6. Reset ----
   await page.goto("/plan");
   await page.getByRole("button", { name: "Reset" }).click();
   await page.waitForURL((url) => url.pathname === "/");

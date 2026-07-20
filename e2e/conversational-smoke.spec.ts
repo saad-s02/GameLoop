@@ -1,9 +1,10 @@
 import { test, expect, Locator } from "@playwright/test";
 
 /**
- * Conversational flows, all in demo mode against the poisoned-key webServer:
- * proves the zero-LLM guarantee holds through the clarification-answer and
- * follow-up-refinement paths.
+ * Conversational flows in the chat workspace, all in demo mode against the
+ * poisoned-key webServer: proves the zero-LLM guarantee holds through the
+ * clarification-answer and follow-up-refinement paths, plus the 390px
+ * mobile stack.
  */
 
 test.setTimeout(60_000);
@@ -15,79 +16,86 @@ async function enter(page: import("@playwright/test").Page) {
   await page.waitForURL(/\/plan/);
 }
 
-/**
- * The decision log's <details> opens while streaming and auto-collapses on
- * completion (see components/ActivityPanel.tsx). Click its summary chip to
- * expand it before asserting on log row content -- guarded on the current
- * open state so this never accidentally re-collapses an already-open log.
- */
-async function expandDecisionLog(decisionLog: Locator) {
-  const details = decisionLog.locator("details.log-details");
+async function expandReasoning(turn: Locator) {
+  const details = turn.locator("details.log-details");
   const isOpen = await details.evaluate((el) => (el as HTMLDetailsElement).open);
   if (!isOpen) {
-    await decisionLog.locator("details.log-details > summary").click();
+    await turn.locator("details.log-details > summary").click();
   }
 }
 
-test("answer a clarification inline: vague chip, party steppers, merged replan", async ({ page }) => {
+test("clarification answered inline in the thread: vague prompt, steppers, merged replan", async ({ page }) => {
   await enter(page);
   await page.goto("/plan?demo=1");
   await page.getByRole("button", { name: "Short on details" }).click();
-  await page.getByRole("button", { name: "Plan my night" }).click();
 
-  const contractCard = page.locator('section[aria-label="Constraint contract"]');
-  await expect(contractCard).toContainText("How many adults and how many children are going?");
+  const thread = page.locator('[aria-label="Conversation"]');
+  await expect(thread).toContainText("How many adults and how many children are going?");
 
   await page.getByLabel("Adults").fill("1");
   await page.getByLabel("Children").fill("2");
   await page.getByRole("button", { name: "Use this" }).click();
 
-  // The merged contract shows the answered party and the question card is gone.
-  await expect(contractCard).toContainText("1 adult, 2 children");
-  await expect(contractCard).not.toContainText("How many adults");
+  // The answer becomes a user turn and the merged replan lands in the panel.
+  await expect(thread).toContainText("1 adult, 2 children");
+  const panel = page.locator('[aria-label="Plan panel"]');
+  await expect(panel.locator(`[aria-label="Tonight's plan"] ol`)).toBeVisible();
 
-  const decisionLog = page.locator('section[aria-label="Decision log"]');
-  // The itinerary now renders inside the "Tonight's plan" hero, which the
-  // flipped page order puts before the Decision Log section.
-  const itineraryList = page.locator(`[aria-label="Tonight's plan"] ol`);
-  await expect(itineraryList).toBeVisible();
-
-  // The answer reads as a visible constraint_adjusted in the log. Expand the
-  // log first: the merged replan is a fresh stream that has already
-  // completed and auto-collapsed by this point.
-  await expandDecisionLog(decisionLog);
-  await expect(decisionLog).toContainText("Added in your follow-up.");
-  // No food preference was stated, so the food timing assumption surfaces with provenance.
-  await expect(page.locator('section[aria-label="Assumed for this plan"]')).toContainText("assumed");
+  // The merge reads as a visible adjustment inside the new turn, and the
+  // unstated food preference surfaces as an assumption with provenance.
+  const lastTurn = thread.locator('[data-role="assistant-turn"]').last();
+  await expect(lastTurn).toContainText("Added in your follow-up.");
+  await expect(lastTurn).toContainText("assumed");
 });
 
-test("follow-up refinement: family plan, quick chip change, diff and history", async ({ page }) => {
+test("refinement quick chip: replan diff in the panel, adjustment in the turn", async ({ page }) => {
   await enter(page);
   await page.goto("/plan?demo=1");
   await page.getByRole("button", { name: "Family + gluten-free" }).click();
-  await page.getByRole("button", { name: "Plan my night" }).click();
 
-  const decisionLog = page.locator('section[aria-label="Decision log"]');
-  // The itinerary now renders inside the "Tonight's plan" hero, which the
-  // flipped page order puts before the Decision Log section.
-  const itineraryList = page.locator(`[aria-label="Tonight's plan"] ol`);
+  const panel = page.locator('[aria-label="Plan panel"]');
+  const itineraryList = panel.locator(`[aria-label="Tonight's plan"] ol`);
   await expect(itineraryList).toBeVisible();
   await expect(itineraryList.locator("li", { hasText: "18:15" })).toBeVisible();
 
   await page.getByRole("button", { name: "Arriving at 6:00 instead" }).click();
 
-  // 18:00 snaps to the 18:12 Lakeshore East train; the transit step is replaced, stable steps keep badges.
+  // 18:00 snaps to the 18:12 Lakeshore East train; the transit step is
+  // replaced, stable steps keep their badges.
   await expect(itineraryList).toContainText("18:12");
   await expect(itineraryList).toContainText(/kept/);
   await expect(itineraryList).toContainText(/replaced|dropped/);
 
-  // The change is logged as a constraint adjustment and remembered in the
-  // history thread. Expand the log first: this refinement is a fresh stream
-  // that has already completed and auto-collapsed by this point.
-  await expandDecisionLog(decisionLog);
-  await expect(decisionLog).toContainText("Updated in your follow-up.");
-  await expect(page.locator('section[aria-label="What you have told us"]')).toContainText("Arriving at 6:00 instead");
+  const thread = page.locator('[aria-label="Conversation"]');
+  // The transcript is the history thread: the chip label is the user turn.
+  await expect(thread).toContainText("Arriving at 6:00 instead");
+  const refTurn = thread.locator('[data-role="assistant-turn"]').last();
+  // Collapse contract on the replan path, then the visible adjustment.
+  await expect(refTurn.locator("details.log-details")).toHaveJSProperty("open", false);
+  await expect(refTurn).toContainText("Updated in your follow-up.");
 
-  // Free text is disabled in demo mode with honest copy.
-  await expect(page.locator('section[aria-label="Follow-up"]')).toContainText("quick chips");
+  // Free text is honestly disabled in demo mode.
+  const composer = page.locator('[aria-label="Composer"]');
+  await expect(composer).toContainText("quick chips");
+  await expect(composer.locator("textarea")).toBeDisabled();
+});
+
+test("mobile 390px: panel stacks below the thread with a working jump control", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await enter(page);
+  await page.goto("/plan?demo=1");
+
+  const jump = page.getByRole("link", { name: "Jump to plan" });
+  await expect(jump).toBeVisible();
+
+  await page.getByRole("button", { name: "Family + gluten-free" }).click();
+  const panel = page.locator('[aria-label="Plan panel"]');
+  await expect(panel.locator(`[aria-label="Tonight's plan"] ol`)).toBeVisible();
+
+  const threadBox = await page.locator('[aria-label="Conversation"]').boundingBox();
+  const panelBox = await panel.boundingBox();
+  expect(panelBox!.y).toBeGreaterThan(threadBox!.y);
+
+  await jump.click();
+  await expect(panel).toBeInViewport();
 });

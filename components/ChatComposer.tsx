@@ -158,7 +158,9 @@ export function ChatComposer({
           />
         </label>
         {demo ? (
-          <p className="text-[13px] leading-5 text-frost">{COPY.followUpDemoNote}</p>
+          <p className="text-[13px] leading-5 text-frost">
+            {hasPlanContext ? COPY.followUpDemoNote : COPY.composerFreshDemoNote}
+          </p>
         ) : (
           <div className="flex items-center justify-between gap-2">
             <button
