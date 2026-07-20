@@ -1,5 +1,6 @@
 import { ItineraryPlan, PriorityTier, SourceClass } from "@/lib/planning/schemas";
 import { PUCK_DROP_CLOCK, toNormalizedMinutes } from "@/lib/planning/time";
+import { EvidenceTier } from "@/lib/data/realNearbySchema";
 
 const MILESTONE_LABEL: Record<string, string> = {
   doors: "doors",
@@ -18,6 +19,12 @@ const PROVENANCE_PLAIN: Record<SourceClass, string> = {
   live: "Checked right now.",
   snapshot: "From a saved copy of the real schedule.",
   simulated: "Invented for this demo.",
+};
+
+const EVIDENCE_TIER_LABEL: Record<EvidenceTier, string> = {
+  certified: "CERTIFIED",
+  "self-described": "SELF-DESCRIBED",
+  friendly: "FRIENDLY",
 };
 
 export const COPY = {
@@ -108,4 +115,26 @@ export const COPY = {
    * SourceBadge on the How It Works plain-language lead so the visual
    * vocabulary is taught, not just described. */
   provenancePlainExplain: (source: SourceClass): string => PROVENANCE_PLAIN[source],
+  /** Chat workspace. The composer label before any plan exists. */
+  suggestedPromptsLabel: "Try one of these",
+  composerFreshPlaceholder:
+    "e.g. We're a family of four, need gluten-free food, and want to be seated before warmups.",
+  /** Assistant confirmation closing a plan turn, echoing the hero sentence. */
+  turnPlanReady: (hero?: string): string =>
+    hero ? `Tonight's plan is ready. ${hero}` : "Tonight's plan is ready. Details in the plan panel.",
+  turnInfeasible:
+    "This request cannot be satisfied as stated. The closest feasible alternative is in the plan panel.",
+  jumpToPlan: "Jump to plan",
+  /**
+   * Real-places card. Hand-written UI copy, never model output: the card
+   * names real restaurants while the model prompts' NO_GEOGRAPHY rule stays
+   * intact, so this copy must never name the real city or venue either.
+   */
+  realNearbyHeading: "Real places near the arena",
+  realNearbyLead:
+    "Real restaurants from research notes, near the real station this demo's fictional arena stands in for. Shown for reference; the planner does not choose or rank them.",
+  realNearbyWalkNote: "Walk times are estimates from published addresses, not a mapping service.",
+  realNearbyAbsence: (need: string): string =>
+    `No researched restaurant near the arena has a verifiable ${need} policy. Cross-contact information is unavailable; confirm directly with the restaurant.`,
+  evidenceTierLabel: (tier: EvidenceTier): string => EVIDENCE_TIER_LABEL[tier],
 } as const;

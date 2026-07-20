@@ -192,3 +192,32 @@ describe("COPY.provenanceLead", () => {
     expect(COPY.provenanceLead).not.toContain("—");
   });
 });
+
+describe("chat workspace copy", () => {
+  it("turnPlanReady echoes the hero sentence and degrades without one", () => {
+    expect(COPY.turnPlanReady("In by 18:40, seated before warmups.")).toBe(
+      "Tonight's plan is ready. In by 18:40, seated before warmups.",
+    );
+    expect(COPY.turnPlanReady(undefined)).toBe(
+      "Tonight's plan is ready. Details in the plan panel.",
+    );
+  });
+
+  it("realNearbyAbsence names the need and points at the venue confirmation pattern", () => {
+    const s = COPY.realNearbyAbsence("nut-free");
+    expect(s).toContain("nut-free");
+    expect(s).toContain("confirm directly with the restaurant");
+  });
+
+  it("the real-places lead disclaims planner involvement and never names the real city", () => {
+    expect(COPY.realNearbyLead).toContain("research notes");
+    expect(COPY.realNearbyLead).toContain("planner does not choose");
+    expect(COPY.realNearbyLead).not.toMatch(/Toronto|Scotiabank|Union Station/);
+  });
+
+  it("evidence tier labels are the tier words in caps", () => {
+    expect(COPY.evidenceTierLabel("certified")).toBe("CERTIFIED");
+    expect(COPY.evidenceTierLabel("self-described")).toBe("SELF-DESCRIBED");
+    expect(COPY.evidenceTierLabel("friendly")).toBe("FRIENDLY");
+  });
+});
