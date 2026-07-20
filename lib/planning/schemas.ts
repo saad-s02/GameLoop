@@ -345,6 +345,7 @@ export const DisruptionIdSchema = z.enum([
   "gf-stand-closed",
   "milestone-puck-drop",
   "add-accessibility",
+  "july25-weekend-service",
 ]);
 export type DisruptionId = z.infer<typeof DisruptionIdSchema>;
 
