@@ -91,11 +91,12 @@ function EventBody({ event }: { event: TraceEvent }) {
         </p>
       );
     case "candidate_evaluated":
+      // The raw score is an internal ranking metric, not shown here; it stays
+      // available in this row's own "Raw event" details below. Violations, when
+      // present, are the meaningful part of this row's primary text.
       return (
         <p className="text-sm leading-6">
-          <span className="font-mono text-[13px]">{event.planId}</span> scored{" "}
-          <span className="font-mono text-[13px] tabular-nums">{event.score.toFixed(1)}</span>
-          {event.violations.length > 0 ? ` (${event.violations.join("; ")})` : ""}
+          Candidate evaluated.{event.violations.length > 0 ? ` ${event.violations.join("; ")}.` : " Feasible."}
         </p>
       );
     case "decision":
@@ -118,7 +119,7 @@ function EventBody({ event }: { event: TraceEvent }) {
     case "recap_result":
       return <p className="text-sm leading-6">Personal Game Memory generated.</p>;
     case "fallback_used":
-      return <p className="text-sm leading-6">Fell back to a deterministic summary: {event.reason}</p>;
+      return <p className="text-sm leading-6">{COPY.fallbackUsed(event.reason)}</p>;
     case "error":
       return <p className="text-sm leading-6 text-red-lamp">{event.message}</p>;
     case "done":

@@ -90,7 +90,6 @@ export function MemoryPanel() {
           {session.arrivalChoice && (
             <Row label="Arrival" value={`${session.arrivalChoice.mode}, ${session.arrivalChoice.scheduledArrival}`} provenance="from your request" />
           )}
-          <Row label="Selected plan" value={session.selectedPlanId} provenance="from selected plan" />
           <Row label="Saved" value={new Date(session.createdAt).toLocaleString()} provenance="this device" />
         </div>
       )}

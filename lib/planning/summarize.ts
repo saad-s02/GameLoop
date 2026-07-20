@@ -26,12 +26,12 @@ export function fallbackNarrative(result: PlanResult): string {
   if (!result.feasible) {
     return (
       `This request cannot be satisfied as stated: ${result.violations.join("; ")}. ` +
-      `The closest feasible alternative is shown below the Decision Log. (Deterministic summary; the narrative model was unavailable.)`
+      `The closest feasible alternative is shown below the Decision Log. (Plain summary, written without the live narrator.)`
     );
   }
   const p = result.plan!;
   return (
     `${decisionSummary(result)} Enter at ${p.steps.find((s) => s.kind === "gate")?.title ?? "the gate"}, ` +
-    `seated by ${p.steps.find((s) => s.kind === "seat")?.clock ?? ""}. (Deterministic summary; the narrative model was unavailable.)`
+    `seated by ${p.steps.find((s) => s.kind === "seat")?.clock ?? ""}. (Plain summary, written without the live narrator.)`
   );
 }

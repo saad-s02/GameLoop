@@ -269,6 +269,7 @@ function PlanPageInner() {
   };
 
   const isReplanning = status === "streaming" && lastPlanResult !== null;
+  const heroSentence = lastPlanResult?.feasible ? COPY.heroSentence(lastPlanResult.plan) : undefined;
 
   return (
     <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-8 px-6 py-10 md:flex-row md:items-start">
@@ -380,9 +381,12 @@ function PlanPageInner() {
             aria-busy={isReplanning}
             className={`ice-sheet replan-wrap scroll-mt-20 p-6${isReplanning ? " replan-dim" : ""}`}
           >
-            <h2 className="mb-3 font-display text-lg font-semibold uppercase tracking-[0.06em] text-ice">
+            <h2 className="mb-1 font-display text-lg font-semibold uppercase tracking-[0.06em] text-ice">
               Tonight&apos;s plan
             </h2>
+            {heroSentence && (
+              <p className="mb-4 font-display text-2xl font-bold tracking-wide text-ice md:text-3xl">{heroSentence}</p>
+            )}
             <ConstraintsStrip outcomes={lastPlanResult.plan.constraintOutcomes} />
             <ItineraryTimeline
               plan={lastPlanResult.plan}

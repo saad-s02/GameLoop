@@ -2,14 +2,23 @@ import { ItineraryPlan } from "@/lib/planning/schemas";
 
 /**
  * Differentiator sentences are computed here, client-side, from the two
- * plans' own numeric fields (score, walkingMinutes, waitMinutes). The
- * locked schemas.ts PlanResult carries no `runnerUpDeltas` field, so these
- * are derived directly rather than read off the trace stream.
+ * plans' own numeric fields (walkingMinutes, waitMinutes). The locked
+ * schemas.ts PlanResult carries no `runnerUpDeltas` field, so these are
+ * derived directly rather than read off the trace stream. The plans' raw
+ * `score` values are an internal ranking metric with no real-world meaning
+ * to a user, so they never appear here; walking and waiting minutes already
+ * carry the comparison.
  */
 function buildDifferentiators(selected: ItineraryPlan, runnerUp: ItineraryPlan): string[] {
   const out: string[] = [];
   if (selected.gateId !== runnerUp.gateId) {
-    out.push(`The runner-up enters at ${runnerUp.gateId} instead of ${selected.gateId}.`);
+    const runnerUpGate = runnerUp.steps.find((s) => s.kind === "gate")?.title;
+    const selectedGate = selected.steps.find((s) => s.kind === "gate")?.title;
+    out.push(
+      runnerUpGate && selectedGate
+        ? `The runner-up enters at ${runnerUpGate} instead of ${selectedGate}.`
+        : "The runner-up enters at a different gate.",
+    );
   }
   const walkDelta = runnerUp.walkingMinutes - selected.walkingMinutes;
   if (walkDelta !== 0) {
@@ -23,8 +32,27 @@ function buildDifferentiators(selected: ItineraryPlan, runnerUp: ItineraryPlan):
       `The runner-up ${waitDelta > 0 ? "adds" : "saves"} ${Math.abs(waitDelta)} waiting minute${Math.abs(waitDelta) === 1 ? "" : "s"} versus the selected plan.`,
     );
   }
-  out.push(`Selected plan scores ${(selected.score - runnerUp.score).toFixed(1)} points higher.`);
+  if (out.length === 0) {
+    out.push("The selected plan ranked higher overall.");
+  }
   return out;
+}
+
+/**
+ * Human label for the runner-up: gate name, food stand name(s), and arrival
+ * clock, all read directly off the plan's own steps and transitArrival
+ * fields (the same data ItineraryTimeline renders for the selected plan).
+ * Never the raw candidateId, which is an internal tie-break key
+ * ("gate-1|stand-harbour-fresh|18:15|pickup-after-seating") with no meaning
+ * to a user.
+ */
+function runnerUpLabel(runnerUp: ItineraryPlan): string {
+  const gateTitle = runnerUp.steps.find((s) => s.kind === "gate")?.title;
+  const foodTitles = runnerUp.steps
+    .filter((s) => s.kind === "food")
+    .map((s) => s.title.replace(/^Pick up food at /, ""));
+  const parts = [gateTitle, foodTitles.join(" and ") || undefined, runnerUp.transitArrival ? `arriving ${runnerUp.transitArrival}` : undefined];
+  return parts.filter((p): p is string => Boolean(p)).join(", ");
 }
 
 export function ConsideredRejected({ selected, runnerUp }: { selected: ItineraryPlan; runnerUp?: ItineraryPlan }) {
@@ -46,16 +74,8 @@ export function ConsideredRejected({ selected, runnerUp }: { selected: Itinerary
       <h2 className="font-display text-base font-semibold uppercase tracking-[0.06em] text-frost">
         Considered and rejected
       </h2>
-      <p className="mt-1.5 text-sm text-ice">
-        Runner-up: <span className="font-mono text-[13px] text-blue-glow">{runnerUp.candidateId}</span>
-      </p>
-      <dl className="mt-3 grid grid-cols-3 gap-2 text-sm">
-        <div>
-          <dt className="font-mono text-[10.5px] uppercase tracking-[0.08em] text-frost">Score</dt>
-          <dd className="mt-0.5 font-mono text-[13px] tabular-nums text-ice">
-            {runnerUp.score.toFixed(1)} <span className="text-frost">(selected {selected.score.toFixed(1)})</span>
-          </dd>
-        </div>
+      <p className="mt-1.5 text-sm text-ice">Runner-up: {runnerUpLabel(runnerUp)}</p>
+      <dl className="mt-3 grid grid-cols-2 gap-2 text-sm">
         <div>
           <dt className="font-mono text-[10.5px] uppercase tracking-[0.08em] text-frost">Walking</dt>
           <dd className="mt-0.5 font-mono text-[13px] tabular-nums text-ice">

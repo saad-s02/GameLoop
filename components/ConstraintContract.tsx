@@ -4,32 +4,28 @@ import { useState } from "react";
 import { Constraint, PriorityTier } from "@/lib/planning/schemas";
 import { COPY } from "@/lib/copy";
 
-const PRIORITY_LABEL: Record<PriorityTier, string> = {
-  hard: "HARD",
-  high: "HIGH",
-  medium: "MEDIUM",
-  low: "LOW",
-};
-const PRIORITY_MARK: Record<PriorityTier, string> = {
-  hard: "!!!",
-  high: "!!",
-  medium: "!",
-  low: "-",
-};
 const PRIORITY_STYLE: Record<PriorityTier, string> = {
   hard: "border-red-lamp/40 bg-red-lamp/10 text-red-lamp",
   high: "border-sodium/40 bg-sodium/10 text-sodium",
   medium: "border-steel-bright bg-glass text-ice/90",
   low: "border-steel bg-glass/60 text-frost",
 };
+// Dot color per tier, always paired with the mono-caps word from
+// COPY.severityLabel below: color alone never carries the meaning.
+const PRIORITY_DOT: Record<PriorityTier, string> = {
+  hard: "bg-red-lamp",
+  high: "bg-sodium",
+  medium: "bg-frost",
+  low: "bg-frost",
+};
 
 function PriorityChip({ priority }: { priority: PriorityTier }) {
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded border px-1.5 py-0.5 font-mono text-[10.5px] font-medium uppercase tracking-[0.08em] ${PRIORITY_STYLE[priority]}`}
+      className={`inline-flex items-center gap-1.5 rounded border px-1.5 py-0.5 font-mono text-[10.5px] font-medium uppercase tracking-[0.08em] ${PRIORITY_STYLE[priority]}`}
     >
-      <span aria-hidden="true">{PRIORITY_MARK[priority]}</span>
-      {PRIORITY_LABEL[priority]}
+      <span aria-hidden="true" className={`h-1.5 w-1.5 rounded-full ${PRIORITY_DOT[priority]}`} />
+      {COPY.severityLabel(priority)}
     </span>
   );
 }
