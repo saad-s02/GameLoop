@@ -248,7 +248,14 @@ export function ActivityPanel({
           Decision log
         </h2>
         <div className="flex items-center gap-2">
-          <p aria-live="polite" className="flex items-center gap-2 text-sm text-frost">
+          <p
+            aria-live="polite"
+            className={`flex items-center gap-2 text-sm ${
+              status === "error"
+                ? "rounded-card border border-red-lamp/40 bg-red-lamp/10 px-3 py-1.5 text-red-lamp"
+                : "text-frost"
+            }`}
+          >
             {status === "streaming" && (
               <span aria-hidden="true" className="streaming-dot h-2 w-2 rounded-full bg-sodium" />
             )}
@@ -257,7 +264,7 @@ export function ActivityPanel({
               <span className="font-mono text-xs tabular-nums text-sodium">{formatElapsed(totalMs)}</span>
             )}
           </p>
-          {status === "stalled" && onRetry && (
+          {(status === "stalled" || status === "error") && onRetry && (
             <button
               type="button"
               onClick={onRetry}

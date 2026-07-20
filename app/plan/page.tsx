@@ -290,7 +290,7 @@ function PlanPageInner() {
                   setText(chip.text);
                   setChipId(chip.id);
                 }}
-                className={`rounded-full border px-3 py-1.5 text-sm font-medium motion-safe:transition-colors ${
+                className={`inline-flex min-h-11 items-center justify-center rounded-full border px-3 py-1.5 text-sm font-medium motion-safe:transition-colors sm:min-h-0 ${
                   chipId === chip.id
                     ? "border-blue-glow/60 bg-glass text-ice"
                     : "border-steel text-frost hover:border-steel-bright hover:text-ice"
@@ -320,7 +320,7 @@ function PlanPageInner() {
           <button
             type="submit"
             disabled={status === "streaming" || !text.trim()}
-            className="self-start rounded-well bg-ice px-4 py-2 text-sm font-semibold text-bowl motion-safe:transition-colors hover:bg-ice/90 disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex min-h-11 items-center justify-center self-start rounded-well bg-ice px-4 py-2 text-sm font-semibold text-bowl motion-safe:transition-colors hover:bg-ice/90 disabled:cursor-not-allowed disabled:opacity-50 sm:min-h-0"
           >
             {status === "streaming" && !lastPlanResult ? "Planning…" : "Plan my night"}
           </button>

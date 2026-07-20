@@ -65,7 +65,7 @@ export function MemoryPanel() {
           type="button"
           onClick={clear}
           disabled={!session}
-          className="shrink-0 rounded-well border border-steel-bright px-2 py-1 text-xs font-semibold text-frost motion-safe:transition-colors hover:bg-glass hover:text-ice disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-well border border-steel-bright px-2 py-1 text-xs font-semibold text-frost motion-safe:transition-colors hover:bg-glass hover:text-ice disabled:cursor-not-allowed disabled:opacity-50 sm:min-h-0"
         >
           Clear Memory
         </button>

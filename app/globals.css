@@ -241,4 +241,11 @@ body {
       opacity var(--t-move) var(--ease-glide),
       filter var(--t-move) var(--ease-glide);
   }
+
+  /* Primary nav: color/background glide on the active-tab swap. */
+  .nav-link {
+    transition:
+      color var(--t-micro) var(--ease-glide),
+      background-color var(--t-micro) var(--ease-glide);
+  }
 }
